@@ -1,0 +1,6 @@
+<div class="form-inline">
+    <input #filter (keyup)="tree.treeModel.filterNodes(filter.value)" class="form-text"
+           placeholder="filter nodes" >
+</div>
+
+<tree-root #tree [focused]="true" [nodes]="nodes" class="ds-tree-container" ></tree-root>

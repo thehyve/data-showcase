@@ -1,0 +1,49 @@
+/*
+    This is our main wrapping element,
+    it's made 100vh high to ensure it is always the correct size
+    and then moved into place and padded with negative margin and padding
+*/
+.ds-container {
+    display: flex;
+    overflow: hidden;
+    height: 100vh;
+    position: relative;
+    width: 100%;
+    backface-visibility: hidden;
+    will-change: overflow;
+}
+
+.ds-left-panel,
+.ds-right-panel {
+    overflow: auto;
+    height: auto;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
+}
+
+.ds-left-panel {
+    position: relative;
+    display: inline;
+    width: 20%;
+    background-color: #ededed;
+    margin-left: 0px;
+}
+
+.ds-right-panel {
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    position: relative;
+    width: calc(80% - 10px - 6px);
+    background-color: white;
+}
+
+.gutter {
+    position: relative; /* important (all position that's not `static`) */
+    width: 10px;
+    height: auto;
+    background-color: #e4e4e4;
+    cursor: col-resize;
+    margin-left: 3px;
+    margin-right: 3px;
+}
