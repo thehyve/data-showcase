@@ -96,13 +96,6 @@ task userInterfaceTest(type: NpmTask, dependsOn: 'npmInstall') {
 }
 test.dependsOn(userInterfaceTest)
 
-task userInterfaceIntegrationTest(type: NpmTask, dependsOn: 'npmInstall') {
-    group = 'verification'
-    description = 'Executes user interface integration tests'
-    args = ['run', 'e2e']
-}
-integrationTest.dependsOn(userInterfaceIntegrationTest)
-
 clean {
     delete fileTree(dir: 'src/main/webapp')
 }
