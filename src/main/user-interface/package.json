@@ -5,8 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "buildOnce": "ng build --single-run",
-    "buildProd": "ng build --prod",
+    "buildOnce": "ng build --watch=false",
     "build": "ng build --watch=true",
     "test": "ng test --single-run",
     "lint": "ng lint",

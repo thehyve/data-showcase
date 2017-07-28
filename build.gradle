@@ -75,18 +75,12 @@ node {
     nodeModulesDir = file('src/main/user-interface')
 }
 
-task buildUserInterfaceProd(type: NpmTask, dependsOn: 'npmInstall') {
-    group = 'build'
-    description = 'Compile user interface assets for production'
-    args = ['run', 'buildProd']
-}
-war.dependsOn(buildUserInterfaceProd)
-
 task buildUserInterfaceOnce(type: NpmTask, dependsOn: 'npmInstall') {
     group = 'application'
     description = 'Builds the user interface assets'
     args = ['run', 'buildOnce']
 }
+war.dependsOn(buildUserInterfaceOnce)
 bootRun.dependsOn(buildUserInterfaceOnce)
 
 task buildUserInterface(type: NpmTask, dependsOn: 'npmInstall') {
