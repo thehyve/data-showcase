@@ -1,0 +1,33 @@
+os:
+  - linux
+sudo: true
+language: java
+jdk:
+  - oraclejdk8
+
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - node
+    - node_modules
+    - $HOME/.gradle/caches
+    - $HOME/.gradle/wrapper
+    - $HOME/.m2
+
+before_install:
+  - gradle wrapper
+  - GRADLE_SCRIPT="$(pwd)/gradlew"
+  - ${GRADLE_SCRIPT} --version
+
+install:
+  - ${GRADLE_SCRIPT} assemble
+
+script:
+  - ${GRADLE_SCRIPT} test
+
+notifications:
+  webhooks:
+    on_success: change
+    on_failure: always
