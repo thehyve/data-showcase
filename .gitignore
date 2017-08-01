@@ -31,3 +31,4 @@ gradle/wrapper
 /.gradle
 /gradlew
 /gradlew.bat
+data-showcase-api-e2e/out

@@ -1,0 +1,21 @@
+apply plugin: 'groovy'
+apply plugin: 'java'
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.12'
+    compile 'ch.qos.logback:logback-classic:1.1.7'
+    compile 'org.slf4j:slf4j-api:1.7.20'
+
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile 'io.github.http-builder-ng:http-builder-ng-apache:0.17.0'
+}
+
+tasks.withType(Test) { systemProperties = System.getProperties() }
+
+// Force selected tests to always run, even if Gradle thinks they are up to date
+test.outputs.upToDateWhen {false}
+
+test.testLogging.exceptionFormat = 'full'
+
+// Uncomment to show standard out/error output
+//test.testLogging.showStandardStreams = true

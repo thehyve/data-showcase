@@ -26,9 +26,14 @@ ext {
 version = dataShowcaseVersion
 group = 'nl.thehyve'
 
-repositories {
-    mavenLocal()
-    maven { url 'https://repo.grails.org/grails/core' }
+allprojects {
+    repositories {
+        repositories {
+            mavenLocal()
+            mavenCentral()
+            maven { url 'https://repo.grails.org/grails/core' }
+        }
+    }
 }
 
 dependencies {
