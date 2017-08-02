@@ -1,6 +1,7 @@
 # data-showcase-api-e2e
 ## How to run
-These tests are designed to run against a live environment. By default it is pointed at localhost:8080
+These tests are designed to run against a live environment. By default it is pointed at localhost:8080. The test suite 
+uses [spock](http://spockframework.org/) and [http-builder-ng](https://github.com/http-builder-ng/http-builder-ng).
 
 Running all tests:
 ```
