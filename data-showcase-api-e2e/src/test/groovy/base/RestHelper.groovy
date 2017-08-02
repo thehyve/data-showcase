@@ -18,14 +18,14 @@ class RestHelper {
             }
 
             response.success { FromServer fromServer, body ->
-                assert fromServer.statusCode == (requestMap.statusCode ?: 200): "Un expected status code. expected: " +
+                assert fromServer.statusCode == (requestMap.statusCode ?: 200): "Unexpected status code. expected: " +
                         "${requestMap.statusCode ?: 200} but was ${fromServer.statusCode}. \n" +
                         printResponse(fromServer, body)
                 body
             }
 
             response.failure { FromServer fromServer, body ->
-                assert fromServer.statusCode == requestMap.statusCode: "Un expected status code. expected: " +
+                assert fromServer.statusCode == requestMap.statusCode: "Unexpected status code. expected: " +
                         "${requestMap.statusCode} but was ${fromServer.statusCode}. \n" +
                         printResponse(fromServer, body)
                 body
@@ -48,14 +48,14 @@ class RestHelper {
             }
 
             response.success { FromServer fromServer, body ->
-                assert fromServer.statusCode == (requestMap.statusCode ?: 200): "Un expected status code. expected: " +
+                assert fromServer.statusCode == (requestMap.statusCode ?: 200): "Unexpected status code. expected: " +
                         "${requestMap.statusCode ?: 200} but was ${fromServer.statusCode}. \n" +
                         printResponse(fromServer, body)
                 body
             }
 
             response.failure { FromServer fromServer, body ->
-                assert fromServer.statusCode == requestMap.statusCode: "Un expected status code. expected: " +
+                assert fromServer.statusCode == requestMap.statusCode: "Unexpected status code. expected: " +
                         "${requestMap.statusCode} but was ${fromServer.statusCode}. \n" +
                         printResponse(fromServer, body)
                 body
@@ -78,14 +78,14 @@ class RestHelper {
             }
 
             response.success { FromServer fromServer, body ->
-                assert fromServer.statusCode == (requestMap.statusCode ?: 200): "Un expected status code. expected: " +
+                assert fromServer.statusCode == (requestMap.statusCode ?: 200): "Unexpected status code. expected: " +
                         "${requestMap.statusCode ?: 200} but was ${fromServer.statusCode}. \n" +
                         printResponse(fromServer, body)
                 body
             }
 
             response.failure { FromServer fromServer, body ->
-                assert fromServer.statusCode == requestMap.statusCode: "Un expected status code. expected: " +
+                assert fromServer.statusCode == requestMap.statusCode: "Unexpected status code. expected: " +
                         "${requestMap.statusCode} but was ${fromServer.statusCode}. \n" +
                         printResponse(fromServer, body)
                 body
@@ -106,14 +106,14 @@ class RestHelper {
             }
 
             response.success { FromServer fromServer, body ->
-                assert fromServer.statusCode == (requestMap.statusCode ?: 200): "Un expected status code. expected: " +
+                assert fromServer.statusCode == (requestMap.statusCode ?: 200): "Unexpected status code. expected: " +
                         "${requestMap.statusCode ?: 200} but was ${fromServer.statusCode}. \n" +
                         printResponse(fromServer, body)
                 body
             }
 
             response.failure { FromServer fromServer, body ->
-                assert fromServer.statusCode == requestMap.statusCode: "Un expected status code. expected: " +
+                assert fromServer.statusCode == requestMap.statusCode: "Unexpected status code. expected: " +
                         "${requestMap.statusCode} but was ${fromServer.statusCode}. \n" +
                         printResponse(fromServer, body)
                 body
