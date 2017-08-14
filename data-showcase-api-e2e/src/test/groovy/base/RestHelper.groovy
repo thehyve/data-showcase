@@ -1,8 +1,10 @@
 package base
 
-import config.Config
 import groovyx.net.http.FromServer
 import groovyx.net.http.HttpBuilder
+
+import static config.Config.AUTH_NEEDED
+import static config.Config.DEFAULT_USER
 
 class RestHelper {
 
@@ -13,8 +15,8 @@ class RestHelper {
             request.uri.path = requestMap.path
             request.uri.query = requestMap.query
 
-            if (Config.AUTH_NEEDED) {
-                testContext.getAuthAdapter().authenticate(getRequest(), (requestMap.user ?: 'default'))
+            if (!requestMap.skipOauth && AUTH_NEEDED) {
+                testContext.getAuthAdapter().authenticate(getRequest(), (requestMap.user ?: DEFAULT_USER))
             }
 
             response.success { FromServer fromServer, body ->
@@ -43,8 +45,8 @@ class RestHelper {
             request.contentType = requestMap.contentType ?: ContentTypeFor.JSON
             request.body = requestMap.body
 
-            if (Config.AUTH_NEEDED) {
-                testContext.getAuthAdapter().authenticate(getRequest(), (requestMap.user ?: 'default'))
+            if (!requestMap.skipOauth && AUTH_NEEDED) {
+                testContext.getAuthAdapter().authenticate(getRequest(), (requestMap.user ?: DEFAULT_USER))
             }
 
             response.success { FromServer fromServer, body ->
@@ -73,8 +75,8 @@ class RestHelper {
             request.contentType = requestMap.contentType ?: ContentTypeFor.JSON
             request.body = requestMap.body
 
-            if (Config.AUTH_NEEDED) {
-                testContext.getAuthAdapter().authenticate(getRequest(), (requestMap.user ?: 'default'))
+            if (!requestMap.skipOauth && AUTH_NEEDED) {
+                testContext.getAuthAdapter().authenticate(getRequest(), (requestMap.user ?: DEFAULT_USER))
             }
 
             response.success { FromServer fromServer, body ->
@@ -101,8 +103,9 @@ class RestHelper {
             request.uri.query = requestMap.query
             request.accept = requestMap.acceptType ?: ContentTypeFor.JSON
 
-            if (Config.AUTH_NEEDED) {
-                testContext.getAuthAdapter().authenticate(getRequest(), (requestMap.user ?: 'default'))
+
+            if (!requestMap.skipOauth && AUTH_NEEDED) {
+                testContext.getAuthAdapter().authenticate(getRequest(), (requestMap.user ?: DEFAULT_USER))
             }
 
             response.success { FromServer fromServer, body ->
@@ -113,7 +116,7 @@ class RestHelper {
             }
 
             response.failure { FromServer fromServer, body ->
-                assert fromServer.statusCode == requestMap.statusCode: "Unexpected status code. expected: " +
+                assert fromServer.statusCode == (requestMap.statusCode ?: 400): "Unexpected status code. expected: " +
                         "${requestMap.statusCode} but was ${fromServer.statusCode}. \n" +
                         printResponse(fromServer, body)
                 body
