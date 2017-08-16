@@ -24,7 +24,7 @@ textarea {
 /*
  * style fix for the primeng tree-container in the side-panel
  */
-body .db-tree-container {
+body .ds-tree-container {
     width: auto;
     background-color: transparent;
     border: none;
@@ -37,6 +37,8 @@ body .db-tree-container {
     font-size: small !important;
     height: 1.8em;
     min-width: 150px;
+    margin-top: 10px;
+    margin-left: 10px;
 }
 
 /*
@@ -50,6 +52,13 @@ body .ds-spinner {
 body .ds-spinner.loading {
     display: inline-block;
     visibility: visible;
+}
+
+/*
+ * Change the font size of the legend in checkbox-filter
+ */
+legend {
+    font-size: 16px;
 }
 
 /*

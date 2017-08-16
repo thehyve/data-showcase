@@ -1,0 +1,24 @@
+<div class="checkbox-filter-container">
+
+  <p-panel [toggleable]="true">
+    <div class="ui-g">
+      <div class="ui-g-4">
+        <p-fieldset legend="Keywords" >
+          <p-autoComplete [(ngModel)]="text" [suggestions]="results" (completeMethod)="search($event)"></p-autoComplete>
+        </p-fieldset>
+      </div>
+      <div class="ui-g-4">
+        <p-fieldset legend="Projects">
+          <p-autoComplete [(ngModel)]="text2" [suggestions]="results2" (completeMethod)="search($event)"></p-autoComplete>
+        </p-fieldset>
+      </div>
+      <div class="ui-g-4">
+        <p-fieldset legend="Research lines">
+          <p-autoComplete [(ngModel)]="text3" [suggestions]="results3" (completeMethod)="search($event)"></p-autoComplete>
+        </p-fieldset>
+      </div>
+    </div>
+
+  </p-panel>
+
+</div>
