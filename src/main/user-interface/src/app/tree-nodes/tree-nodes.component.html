@@ -1,6 +1,21 @@
-<div class="form-inline">
-    <input #filter (keyup)="tree.treeModel.filterNodes(filter.value)" class="form-text"
-           placeholder="filter nodes" >
+<div [@notifyState]="registryService.loadingTreeNodes">
+
+    <!-- the search/filter input -->
+    <p-autoComplete [(ngModel)]="searchTerm"
+                    styleClass="ds-tree-filter-input"
+                    placeholder="Filter tree nodes"
+                    (onClear)="onFiltering($event)"
+                    (completeMethod)="onFiltering($event)"></p-autoComplete>
+
+    <!-- the tree itself -->
+    <p-tree [value]="treeNodes"
+            (onNodeExpand)="expandNode($event)"
+            draggableNodes="false"
+            styleClass="ds-tree-container"></p-tree>
+
+    <!-- the spinning icon -->
+    <i class="fa fa-spin fa-refresh fa-fw ds-spinner"
+       [class.loading]="registryService.loadingTreeNodes == 'loading'"></i>
+
 </div>
 
-<tree-root #tree [focused]="true" [nodes]="nodes" class="ds-tree-container" ></tree-root>

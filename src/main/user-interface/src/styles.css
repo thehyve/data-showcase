@@ -1,1 +1,92 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+/*
+  All elements have padding and border
+  included in the element's total width and height
+ */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #FCFCFC;
+    cursor: auto;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+    font-family: 'Roboto', sans-serif;
+}
+
+/*
+ * style fix for the primeng tree-container in the side-panel
+ */
+body .db-tree-container {
+    width: auto;
+    background-color: transparent;
+    border: none;
+}
+
+/*
+ * Style for the search box in the tree-node accordion on the left side
+ */
+.ds-tree-filter-input > input{
+    font-size: small !important;
+    height: 1.8em;
+    min-width: 150px;
+}
+
+/*
+ * style class for loading tree nodes and patient counts
+ */
+body .ds-spinner {
+    display: none;
+    visibility: hidden;
+}
+
+body .ds-spinner.loading {
+    display: inline-block;
+    visibility: visible;
+}
+
+/*
+ * Change the color theme of the accordion in data-selection to NTR blue
+ */
+md2-accordion-tab.md2-accordion-tab-active>.md2-accordion-header {
+    border-color: #00889C !important;
+    box-shadow: 0 1px 0 #00889C !important;
+}
+
+/*
+ * Change the primeng data table border to lightgrey
+ */
+.ui-datatable .ui-datatable-thead>tr>th,
+.ui-datatable .ui-datatable-tfoot>tr>td,
+.ui-datatable .ui-datatable-data>tr>td {
+    border-color: lightgrey;
+}
+
+
+/* Change input placeholder text color */
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: lightgray;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color: lightgray;
+    opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: lightgray;
+    opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: lightgray;
+}
+
+.form-control::-webkit-input-placeholder { color: lightgray; }
+.form-control:-moz-placeholder { color: lightgray; }
+.form-control::-moz-placeholder { color: lightgray; }
+.form-control:-ms-input-placeholder { color: lightgray; }

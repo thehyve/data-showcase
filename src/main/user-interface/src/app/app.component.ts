@@ -1,4 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
+import {RegistryService} from "./services/registry.service";
+import {ResourceService} from "./services/resource.service";
 
 @Component({
   selector: 'app-root',
@@ -16,7 +18,8 @@ export class AppComponent implements OnInit {
   private x_pos: number; // Stores x coordinate of the mouse pointer
   private x_gap: number; // Stores x gap (edge) between mouse and gutter
 
-  constructor() {
+  constructor(private registryService: RegistryService,
+              private resourceService: ResourceService,) {
   }
 
   ngOnInit() {
