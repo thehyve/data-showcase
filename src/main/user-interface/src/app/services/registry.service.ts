@@ -54,10 +54,7 @@ export class RegistryService {
     let count = node['count'];
     let countStr = ' ';
     if (count) {
-      countStr += '(' + count;
-    }
-    if (countStr !== ' ') {
-      countStr += ')';
+      countStr = '(' + count + ')';
     }
     node['label'] = node['name'] + countStr;
 
