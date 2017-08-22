@@ -1,43 +1,147 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ElementRef, AfterViewInit} from '@angular/core';
+import {TreeNode} from 'primeng/components/common/api';
+import {trigger, transition, animate, style} from '@angular/animations';
+import {RegistryService} from '../services/registry.service';
 
 @Component({
-  selector: 'tree-nodes',
+  selector: 'app-tree-nodes',
   templateUrl: './tree-nodes.component.html',
-  styleUrls: ['./tree-nodes.component.css']
+  styleUrls: ['./tree-nodes.component.css'],
+  animations: [
+    trigger('notifyState', [
+      transition('loading => complete', [
+        style({
+          background: 'rgba(51, 156, 144, 0.5)'
+        }),
+        animate('1000ms ease-out', style({
+          background: 'rgba(255, 255, 255, 0.0)'
+        }))
+      ])
+    ])
+  ]
 })
 
+export class TreeNodesComponent implements OnInit, AfterViewInit {
 
-export class TreeNodesComponent implements OnInit {
+  // the tree nodes to be rendered in the tree, a subset of allTreeNodes
+  treeNodes: TreeNode[];
+  // the observer that monitors the DOM element change on the tree
+  observer: MutationObserver;
+  // a utility variable storing temporary information on the node that is being expanded
+  expansionStatus: any;
+  // the search term in the text input box to filter the tree
+  searchTerm: string;
 
-  constructor() { }
+  constructor(private element: ElementRef,
+              public registryService: RegistryService) {
+    this.expansionStatus = {
+      expanded: false,
+      treeNodeElm: null,
+      treeNode: null
+    };
+    this.treeNodes = registryService.treeNodes;
+  }
 
   ngOnInit() {
   }
 
-  //temporal test values
-  nodes = [
-    {
-      id: 1,
-      name: 'domain1',
-      children: [
-        { id: 2, name: 'sub-domain1' },
-        { id: 3, name: 'sub-domain2' }
-      ]
-    },
-    {
-      id: 4,
-      name: 'domain2',
-      children: [
-        { id: 5, name: 'sub-domain2.1' },
-        {
-          id: 6,
-          name: 'sub-domain2.2',
-          children: [
-            { id: 7, name: 'subsub-domain2.2.1' }
-          ]
-        }
-      ]
+  ngAfterViewInit() {
+    this.observer = new MutationObserver(this.update.bind(this));
+    const config = {
+      attributes: false,
+      subtree: true,
+      childList: true,
+      characterData: false
+    };
+
+    this.observer.observe(this.element.nativeElement, config);
+  }
+
+  expandNode(event) {
+    if (event.node) {
+      this.expansionStatus['expanded'] = true;
+      this.expansionStatus['treeNodeElm'] = event.originalEvent.target.parentElement.parentElement;
+      this.expansionStatus['treeNode'] = event.node;
     }
-  ];
+  }
+
+  /**
+   * Recursively filter the tree nodes and return the copied tree nodes that match
+   * @param treeNodes
+   * @param field
+   * @param filterWord
+   * @returns {Array}
+   */
+  filterTreeNodes(treeNodes, field, filterWord) {
+    let result = {
+      hasMatching: false,
+      matchingTreeNodes: [] // matchingTreeNodes is a subset of treeNodes
+    };
+    for (let node of treeNodes) {
+      let nodeCopy = Object.assign({}, node);
+      nodeCopy['expanded'] = true;
+      let fieldString = node[field].toLowerCase();
+      if (fieldString.includes(filterWord)) {
+        result.hasMatching = true;
+        result.matchingTreeNodes.push(nodeCopy);
+      }
+      if (node['children'] && node['children'].length > 0) {
+        let subResult = this.filterTreeNodes(node['children'], field, filterWord);
+        if (subResult.hasMatching) {
+          nodeCopy['children'] = subResult.matchingTreeNodes;
+          result.hasMatching = true;
+          if (result.matchingTreeNodes.indexOf(nodeCopy) === -1) {
+            result.matchingTreeNodes.push(nodeCopy);
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  /**
+   * User typing in the input box of the filter search box triggers this function
+   * @param event
+   */
+  onFiltering(event) {
+    if (this.searchTerm === '') {
+      this.treeNodes = this.registryService.treeNodes;
+    } else {
+      let filterWord = this.searchTerm.toLowerCase();
+      this.treeNodes = this.filterTreeNodes(this.registryService.treeNodes, 'label', filterWord).matchingTreeNodes;
+      console.log('found tree nodes: ', this.treeNodes);
+    }
+  }
+
+  update() {
+    if (this.expansionStatus['expanded']) {
+      let treeNodeElm = this.expansionStatus['treeNodeElm'];
+      let treeNode = this.expansionStatus['treeNode'];
+      let newChildren = treeNodeElm.querySelector('ul.ui-treenode-children').children;
+      this.updateEventListeners(newChildren, treeNode.children);
+
+      this.expansionStatus['expanded'] = false;
+      this.expansionStatus['treeNodeElm'] = null;
+      this.expansionStatus['treeNode'] = null;
+    }
+  }
+
+  /**
+   * Add event listeners to the newly appended tree nodes
+   * @param treeNodeElements
+   * @param treeNodes
+   */
+  updateEventListeners(treeNodeElements, treeNodes) {
+    let index = 0;
+    for (let elm of treeNodeElements) {
+      let dataObject: TreeNode = treeNodes[index];
+
+      let uiTreeNodeChildrenElm = elm.querySelector('.ui-treenode-children');
+      if (uiTreeNodeChildrenElm) {
+        this.updateEventListeners(uiTreeNodeChildrenElm.children, dataObject.children);
+      }
+      index++;
+    }
+  }
 
 }
