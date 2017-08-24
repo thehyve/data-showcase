@@ -56,4 +56,35 @@ export const MockTreeNodes = [
   }
 ];
 
-
+export const MockItemTable = [
+  {
+    "name": "item-1",
+    "description": "Item 1 description",
+    "project": ["project-A"],
+    "researchLine": 'ANTR'
+  },
+  {
+    "name": "item-2",
+    "description": "Item 2 description",
+    "project": ["project-B", "project-C"],
+    "researchLine": 'YNTR'
+  },
+  {
+    "name": "item-3",
+    "description": "Item 3 description",
+    "project": ["project-A"],
+    "researchLine": 'ANTR'
+  },
+  {
+    "name": "item-4",
+    "description": "Item 4 description",
+    "project": ["project-C", "project-D"],
+    "researchLine": 'YNTR'
+  },
+  {
+    "name": "item-5",
+    "description": "Item 5 description",
+    "project": ["project-B"],
+    "researchLine": 'YNTR'
+  },
+];
