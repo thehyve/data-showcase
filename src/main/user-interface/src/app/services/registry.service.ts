@@ -11,7 +11,7 @@ export class RegistryService {
   public treeNodes: TreeNode[] = [];
   // the status indicating the when the tree is being loaded or finished loading
   public loadingTreeNodes: LoadingState = 'complete';
-  public items: Object[] = [];
+  public items = [];
 
   constructor(private resourceService: ResourceService) {
     this.updateDomains();
@@ -90,11 +90,11 @@ export class RegistryService {
 
   updateItemTable(node: Object) {
     console.log(node['label']);
-    this.resourceService.getItems(node['name']).subscribe(
+    this.resourceService.getItems(node['name'])
+      .subscribe(
       (items: object[]) => {
-        items.forEach((function (item) {
-        this.items.push(item)
-        }).bind(this));
+        this.items = items;
+
       },
       err => console.error(err)
     )

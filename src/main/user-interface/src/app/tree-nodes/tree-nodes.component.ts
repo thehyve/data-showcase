@@ -35,7 +35,7 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
   selectedNode: Object;
 
   constructor(private element: ElementRef,
-              public registryService: RegistryService) {
+              private registryService: RegistryService) {
     this.expansionStatus = {
       expanded: false,
       treeNodeElm: null,

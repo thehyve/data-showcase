@@ -18,8 +18,7 @@ export class AppComponent implements OnInit {
   private x_pos: number; // Stores x coordinate of the mouse pointer
   private x_gap: number; // Stores x gap (edge) between mouse and gutter
 
-  constructor(private registryService: RegistryService,
-              private resourceService: ResourceService,) {
+  constructor() {
   }
 
   ngOnInit() {
