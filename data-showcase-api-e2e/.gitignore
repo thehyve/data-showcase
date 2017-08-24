@@ -4,9 +4,6 @@
 /build
 /src/main/webapp/*
 
-# Temporary database
-/*.mv.db
-
 # IDEs and editors
 /.idea
 *.iml
@@ -38,6 +35,3 @@ out
 
 #yarn
 yarn.lock
-
-/node_modules/*
-
