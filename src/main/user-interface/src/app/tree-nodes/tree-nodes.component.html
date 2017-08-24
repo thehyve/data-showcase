@@ -9,8 +9,10 @@
 
     <!-- the tree itself -->
     <p-tree [value]="treeNodes"
+            selectionMode="single"
             (onNodeExpand)="expandNode($event)"
-            draggableNodes="false"
+            [(selection)]="selectedNode"
+            (onNodeSelect)="selectNode($event)"
             styleClass="ds-tree-container"></p-tree>
 
     <!-- the spinning icon -->
