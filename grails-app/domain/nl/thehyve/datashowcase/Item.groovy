@@ -12,6 +12,11 @@ import nl.thehyve.datashowcase.enumeration.ItemType
 class Item {
 
     /**
+     * A unique code for the variable.
+     */
+    String name
+
+    /**
      * The short name of the variable.
      */
     String label
@@ -50,10 +55,9 @@ class Item {
     List<Keyword> keywords
 
     /**
-     * The projects (surveys) the item belongs to.
+     * The project (survey) the item belongs to.
      */
-    static hasMany = [projects: Project]
-    static belongsTo = Project
+    static belongsTo = [project: Project]
 
     /**
      * Summary data for the variable: aggregate values and value frequencies.
@@ -61,7 +65,8 @@ class Item {
     Summary summary
 
     static constraints = {
-        label unique: true
+        name unique: true
+        labelLong nullable: true
         domain nullable: true
     }
 

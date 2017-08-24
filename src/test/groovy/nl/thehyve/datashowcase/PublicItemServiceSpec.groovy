@@ -39,7 +39,9 @@ class PublicItemServiceSpec extends Specification {
             def items = itemService.getItems()
         then: "2 items being returned"
             items.size() == 2
+            items*.name == ['ageA', 'heightB']
             items*.label == ['age', 'height']
+            items*.project == ['Project A', 'Project B']
             that(items*.domain, hasItem('/PI/Basic'))
     }
 

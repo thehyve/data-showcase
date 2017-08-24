@@ -56,6 +56,7 @@ class TestService {
         [keyword1, keyword2, keyword3]*.save()
 
         def item1 = new Item(
+                name: 'ageA',
                 label: 'age',
                 labelLong: 'Age of the subject',
                 itemType: ItemType.Numerical,
@@ -63,6 +64,7 @@ class TestService {
                 constraintJson: '{"type": "concept", "concept_cd": "age"}',
                 keywords: [keyword1, keyword3],
                 domain: domains[0],
+                project: projectA,
                 summary: new Summary(
                         patientCount: 100,
                         observationCount: 102,
@@ -75,10 +77,9 @@ class TestService {
                         .addToValues(new Value(label: 'Young', value: '<= 60', frequency: 30))
                         .addToValues(new Value(label: 'Old', value: '> 60', frequency: 60))
         )
-        .addToProjects(projectA)
-        .addToProjects(projectB)
 
         def item2 = new Item(
+                name: 'heightB',
                 label: 'height',
                 labelLong: 'Height of the subject',
                 itemType: ItemType.Numerical,
@@ -90,9 +91,9 @@ class TestService {
                         dataStability: 15.78
                 ),
                 keywords: [keyword3],
-                domain: null
+                domain: null,
+                project: projectB
         )
-        .addToProjects(projectA)
 
         [item1, item2]*.save()
     }
@@ -121,6 +122,7 @@ class TestService {
         [keyword1, keyword2, keyword3]*.save()
 
         def item1 = new Item(
+                name: 'ageA',
                 label: 'age',
                 labelLong: 'Age of the subject',
                 itemType: ItemType.Numerical,
@@ -128,6 +130,7 @@ class TestService {
                 constraintJson: '{"type": "concept", "concept_cd": "age"}',
                 keywords: [keyword1, keyword3],
                 domain: domains[0],
+                project: projectA,
                 summary: new Summary(
                         patientCount: 100,
                         observationCount: 102,
@@ -135,10 +138,9 @@ class TestService {
                         .addToValues(new Value(label: 'Young', value: '<= 60'))
                         .addToValues(new Value(label: 'Old', value: '> 60'))
         )
-        .addToProjects(projectA)
-        .addToProjects(projectB)
 
         def item2 = new Item(
+                name: 'heightB',
                 label: 'height',
                 labelLong: 'Height of the subject',
                 itemType: ItemType.Numerical,
@@ -150,9 +152,9 @@ class TestService {
                         dataStability: 15.78
                 ),
                 keywords: [keyword3],
-                domain: null
+                domain: null,
+                project: projectB
         )
-        .addToProjects(projectA)
 
         [item1, item2]*.save()
     }

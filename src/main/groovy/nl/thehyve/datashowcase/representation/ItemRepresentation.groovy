@@ -6,6 +6,14 @@ import nl.thehyve.datashowcase.enumeration.ItemType
 @CompileStatic
 abstract class ItemRepresentation {
 
+    /**
+     * A unique code for the variable.
+     */
+    String name
+
+    /**
+     * The short name of the variable.
+     */
     String label
 
     /**
@@ -41,9 +49,9 @@ abstract class ItemRepresentation {
     String domain
 
     /**
-     * The projects (surveys) the item belongs to.
+     * The project (survey) the item belongs to.
      */
-    List<String> projects
+    String project
 
     /**
      * Associated key words.
