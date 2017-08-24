@@ -12,57 +12,6 @@ export const MockTreeNodes = [
         "label": "xxx",
         "itemCount": 20,
         "path": "xxx",
-        "children": [
-          {
-            "id": "item-banana-id-xxx",
-            "name": "item-banana",
-            "fullName": "item-banana-full-name",
-            "label": "xxx",
-            "type": "NUMERIC",
-            "min": "123",
-            "max": "456",
-            "path": "xxx",
-            "description": "xxx",
-            "keywords": ["k1", "k2", "k3"],
-            "valueElements": [
-              {
-                "value": "xxx",
-                "valueLabel": "xxx"
-              },
-              {
-                "value": "xxx",
-                "valueLabel": "xxx"
-              }
-            ],
-            "projects": [
-              {
-                "projectName": "xxx",
-                "projectType": "xxx",
-                "lineOfResearch": "xxx",
-                "projectDescription": "xxx",
-                "projectVersionName": "xxx",
-                "projectVersionCode": "xxx",
-                "projectVersionDescription": "xxx",
-                "coordinator": "xxx",
-                "year": "xxxx"
-              }
-            ]
-          },
-          {
-            "id": "item-orange-id-xxx",
-            "name": "item-orange",
-            "fullName": "item-orange-full-name",
-            "label": "xxx",
-            "path": "xxx"
-          },
-          {
-            "id": "item-kiwi-id-xxx",
-            "name": "item-kiwi",
-            "fullName": "item-kiwi-full-name",
-            "label": "xxx",
-            "path": "xxx"
-          }
-        ]
       },
       {
         "name": "sub-domain-1-B",
@@ -77,27 +26,9 @@ export const MockTreeNodes = [
             "label": "xxx",
             "itemCount": 20,
             "path": "xxx",
-            "children": [
-              {
-                "name": "item-berry",
-                "fullName": "item-berry-full-name",
-                "path": "xxx"
-              },
-              {
-                "name": "item-avocado",
-                "fullName": "item-avocado-full-name",
-                "path": "xxx"
-              }
-            ]
           }
         ]
       },
-      {
-        "name": "item-apple",
-        "fullName": "item-apple-full-name",
-        "label": "xxx",
-        "path": "xxx"
-      }
     ]
   },
   {
@@ -106,7 +37,15 @@ export const MockTreeNodes = [
     "label": "xxx",
     "itemCount": 20,
     "path": "xxx",
-    "children": []
+    "children": [
+      {
+        "name": "sub-domain-2-A",
+        "fullName": "sub-domain-2-A-full-name",
+        "label": "xxx",
+        "itemCount": 20,
+        "path": "xxx",
+      }
+    ]
   },
   {
     "name": "domain-3",
@@ -114,6 +53,38 @@ export const MockTreeNodes = [
     "label": "xxx",
     "itemCount": 20,
     "path": "xxx",
-    "children": []
   }
+];
+
+export const MockItemTable = [
+  {
+    "name": "item-1",
+    "description": "Item 1 description",
+    "project": ["project-A"],
+    "researchLine": 'ANTR'
+  },
+  {
+    "name": "item-2",
+    "description": "Item 2 description",
+    "project": ["project-B", "project-C"],
+    "researchLine": 'YNTR'
+  },
+  {
+    "name": "item-3",
+    "description": "Item 3 description",
+    "project": ["project-A"],
+    "researchLine": 'ANTR'
+  },
+  {
+    "name": "item-4",
+    "description": "Item 4 description",
+    "project": ["project-C", "project-D"],
+    "researchLine": 'YNTR'
+  },
+  {
+    "name": "item-5",
+    "description": "Item 5 description",
+    "project": ["project-B"],
+    "researchLine": 'YNTR'
+  },
 ];

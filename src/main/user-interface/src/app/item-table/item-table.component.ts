@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {RegistryService} from "../services/registry.service";
 
 @Component({
   selector: 'app-item-table',
@@ -7,11 +8,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ItemTableComponent implements OnInit {
 
-  items: Object[];
-
-  constructor() { }
+  constructor(private registryService: RegistryService) {
+  }
 
   ngOnInit() {
+  }
+
+  getItems() {
+    return this.registryService.getItems()
   }
 
 }

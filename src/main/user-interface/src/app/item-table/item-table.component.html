@@ -1,23 +1,24 @@
+{{items}}
 <div class="item-table-container">
 
     <p-panel [toggleable]="true">
 
         <p-dataTable #dt
-                     [value]="items"
+                     [value]="getItems()"
                      [rows]="10" [paginator]="true">
-            <p-column field="itemName" header="Name"
+            <p-column field="name" header="Name"
                       [sortable]="true">
             </p-column>
 
-            <p-column field="itemDescription" header="Description"
+            <p-column field="description" header="Description"
                       [sortable]="true">
             </p-column>
 
-            <p-column field="itemProject" header="Project"
+            <p-column field="project" header="Project"
                       [sortable]="true">
             </p-column>
 
-            <p-column field="itemResearchLine" header="Research Line"
+            <p-column field="researchLine" header="Research Line"
                       [sortable]="true">
             </p-column>
 

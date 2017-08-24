@@ -1,4 +1,4 @@
-import {Component, OnInit, ElementRef, AfterViewInit} from '@angular/core';
+import {Component, OnInit, ElementRef, AfterViewInit, Output} from '@angular/core';
 import {TreeNode} from 'primeng/components/common/api';
 import {trigger, transition, animate, style} from '@angular/animations';
 import {RegistryService} from '../services/registry.service';
@@ -32,8 +32,10 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
   // the search term in the text input box to filter the tree
   searchTerm: string;
 
+  selectedNode: Object;
+
   constructor(private element: ElementRef,
-              public registryService: RegistryService) {
+              private registryService: RegistryService) {
     this.expansionStatus = {
       expanded: false,
       treeNodeElm: null,
@@ -62,6 +64,12 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
       this.expansionStatus['expanded'] = true;
       this.expansionStatus['treeNodeElm'] = event.originalEvent.target.parentElement.parentElement;
       this.expansionStatus['treeNode'] = event.node;
+    }
+  }
+
+  selectNode(event) {
+    if (event.node) {
+      this.registryService.updateItemTable(event.node)
     }
   }
 
