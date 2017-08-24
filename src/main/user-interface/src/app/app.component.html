@@ -9,7 +9,10 @@
 
     <!-- Right panel -->
     <div #rightPanel class="ds-right-panel">
-        <app-text-filter></app-text-filter>
+        <div class="form-inline">
+            <app-text-filter class="center-horizontal" style="padding-top: 10px"></app-text-filter>
+            <i class="fa fa-shopping-cart fa-4x" aria-hidden="true" style="float:right;"></i>
+        </div>
         <app-checkbox-filter></app-checkbox-filter>
         <app-item-table></app-item-table>
     </div>

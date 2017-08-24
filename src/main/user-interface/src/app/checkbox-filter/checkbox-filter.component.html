@@ -4,16 +4,19 @@
     <div class="ui-g">
       <div class="ui-g-4">
         <p-fieldset legend="Keywords" >
+          <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
           <p-autoComplete [(ngModel)]="text" [suggestions]="results" (completeMethod)="search($event)"></p-autoComplete>
         </p-fieldset>
       </div>
       <div class="ui-g-4">
         <p-fieldset legend="Projects">
+          <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
           <p-autoComplete [(ngModel)]="text2" [suggestions]="results2" (completeMethod)="search($event)"></p-autoComplete>
         </p-fieldset>
       </div>
       <div class="ui-g-4">
         <p-fieldset legend="Research lines">
+          <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
           <p-autoComplete [(ngModel)]="text3" [suggestions]="results3" (completeMethod)="search($event)"></p-autoComplete>
         </p-fieldset>
       </div>

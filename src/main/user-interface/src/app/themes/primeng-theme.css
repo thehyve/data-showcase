@@ -94,7 +94,7 @@ body a:hover {
 body .ui-inputtext {
   background: #ffffff;
   padding: 0.5em 0.75em;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  border: 1px solid darkgray;
   -moz-border-radius: 0.25em;
   -webkit-border-radius: 0.25em;
   border-radius: 0.25em;

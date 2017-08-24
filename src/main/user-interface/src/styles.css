@@ -21,6 +21,12 @@ textarea {
     font-family: 'Roboto', sans-serif;
 }
 
+.center-horizontal {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 /*
  * style fix for the primeng tree-container in the side-panel
  */
@@ -35,7 +41,7 @@ body .ds-tree-container {
  */
 .ds-tree-filter-input > input{
     font-size: small !important;
-    height: 1.8em;
+    height: 2.3em;
     min-width: 150px;
     margin-top: 10px;
     margin-left: 10px;
@@ -78,6 +84,22 @@ md2-accordion-tab.md2-accordion-tab-active>.md2-accordion-header {
     border-color: lightgrey;
 }
 
+body .ui-panel .ui-panel-titlebar {
+    background-color: #00889C;
+}
+
+body .ui-fieldset .ui-fieldset-legend {
+    background-color: #e7f3f1;
+}
+
+body .input:focus {
+    border-color: #00889C !important;
+}
+
+
+.form-inline{
+    display: inline-block;
+}
 
 /* Change input placeholder text color */
 ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
@@ -99,3 +121,4 @@ md2-accordion-tab.md2-accordion-tab-active>.md2-accordion-header {
 .form-control:-moz-placeholder { color: lightgray; }
 .form-control::-moz-placeholder { color: lightgray; }
 .form-control:-ms-input-placeholder { color: lightgray; }
+/*#6BC4B7*/
