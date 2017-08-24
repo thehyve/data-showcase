@@ -1,7 +1,7 @@
 import {Component, OnInit, ElementRef, AfterViewInit, Output} from '@angular/core';
 import {TreeNode} from 'primeng/components/common/api';
 import {trigger, transition, animate, style} from '@angular/animations';
-import {RegistryService} from '../services/registry.service';
+import {DataService} from '../services/data.service';
 
 @Component({
   selector: 'app-tree-nodes',
@@ -35,7 +35,7 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
   selectedNode: Object;
 
   constructor(private element: ElementRef,
-              private registryService: RegistryService) {
+              private registryService: DataService) {
     this.expansionStatus = {
       expanded: false,
       treeNodeElm: null,

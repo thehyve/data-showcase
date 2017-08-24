@@ -5,7 +5,7 @@ import {ResourceService} from './resource.service';
 type LoadingState = 'loading' | 'complete';
 
 @Injectable()
-export class RegistryService {
+export class DataService {
 
   // the variable that holds the entire tree structure
   public treeNodes: TreeNode[] = [];

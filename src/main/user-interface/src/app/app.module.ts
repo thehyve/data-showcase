@@ -4,7 +4,7 @@ import {NgModule} from '@angular/core';
 import {AppComponent} from './app.component';
 import {TreeNodesModule} from "./tree-nodes/tree-nodes.module";
 import {FormsModule} from "@angular/forms";
-import {RegistryService} from "./services/registry.service";
+import {DataService} from "./services/data.service";
 import {ResourceService} from "./services/resource.service";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import { TextFilterComponent } from './text-filter/text-filter.component';
@@ -27,7 +27,7 @@ import {CheckboxFilterModule} from "./checkbox-filter/checkbox-filter.module";
   ],
   providers: [
     ResourceService,
-    RegistryService
+    DataService
   ],
   bootstrap: [AppComponent]
 })

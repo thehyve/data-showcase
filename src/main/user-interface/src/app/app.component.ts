@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {RegistryService} from "./services/registry.service";
+import {DataService} from "./services/data.service";
 import {ResourceService} from "./services/resource.service";
 
 @Component({
