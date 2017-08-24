@@ -2,6 +2,7 @@
 
 # compiled output
 /build
+/data-showcase-api-e2e/build
 /src/main/webapp/*
 
 # IDEs and editors

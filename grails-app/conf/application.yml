@@ -1,4 +1,9 @@
 ---
+dataShowcase:
+    # The environment can be public or internal (restricted).
+    environment: public
+
+---
 grails:
     profile: angular
     codegen:
@@ -7,10 +12,17 @@ grails:
         transactionManagement:
             proxies: false
     gorm:
+        failOnError: true
         reactor:
             # Whether to translate GORM events into Reactor events
             # Disabled by default for performance reasons
             events: false
+        default:
+            # Turn off automatic versioning and timestamping by GORM
+            mapping:
+                version: false
+                autoTimestamp: false
+
 info:
     app:
         name: '@info.app.name@'
@@ -73,6 +85,8 @@ grails:
         enabled: false
 ---
 hibernate:
+    show_sql: true
+    format_sql: true
     cache:
         queries: false
         use_second_level_cache: false
@@ -85,13 +99,29 @@ dataSource:
     password: ''
 
 environments:
+    developmentInternal:
+        dataShowcase:
+            environment: internal
+    testInternal:
+        dataShowcase:
+            environment: internal
+---
+environments:
     development:
         dataSource:
-            dbCreate: create-drop
+            dbCreate: create
+            url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+    developmentInternal:
+        dataSource:
+            dbCreate: create
             url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
     test:
         dataSource:
-            dbCreate: update
+            dbCreate: create
+            url: jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+    testInternal:
+        dataSource:
+            dbCreate: create
             url: jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
     production:
         dataSource:
