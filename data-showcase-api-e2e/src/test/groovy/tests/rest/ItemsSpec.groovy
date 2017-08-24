@@ -1,14 +1,17 @@
 package tests.rest
 
 import base.RESTSpec
-import spock.lang.Ignore
 
 class ItemsSpec extends RESTSpec {
 
-    @Ignore
     def "get test"() {
         given:
+        def env = get([path: '/api/environment'])
+        assert env['grailsEnvironment'] == 'test'
+        assert env['environment'] == 'public'
+
         get([path: '/api/test/clearDatabase'])
+        get([path: '/api/test/createPublicData'])
 
         when:
         def response = get([path: '/api/items'])
