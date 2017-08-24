@@ -11,13 +11,6 @@ buildscript {
     }
 }
 
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'war'
-apply plugin: 'org.grails.grails-web'
-apply plugin: 'com.moowork.node'
-apply plugin: 'maven-publish'
-
 ext {
     dataShowcaseVersion = '0.0.1-SNAPSHOT'
     nodeVersion = '7.10.1'
@@ -27,13 +20,18 @@ ext {
 version = dataShowcaseVersion
 group = 'nl.thehyve'
 
-allprojects {
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'war'
+apply plugin: 'org.grails.grails-web'
+apply plugin: 'com.moowork.node'
+apply plugin: 'maven-publish'
+
+repositories {
     repositories {
-        repositories {
-            mavenLocal()
-            mavenCentral()
-            maven { url 'https://repo.grails.org/grails/core' }
-        }
+        mavenLocal()
+        mavenCentral()
+        maven { url 'https://repo.grails.org/grails/core' }
     }
 }
 
