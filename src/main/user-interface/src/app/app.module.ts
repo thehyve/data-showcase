@@ -8,7 +8,6 @@ import {DataService} from "./services/data.service";
 import {ResourceService} from "./services/resource.service";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import { TextFilterComponent } from './text-filter/text-filter.component';
-import { CheckboxFilterComponent } from './checkbox-filter/checkbox-filter.component';
 import {ItemTableModule} from "./item-table/item-table.module";
 import {CheckboxFilterModule} from "./checkbox-filter/checkbox-filter.module";
 

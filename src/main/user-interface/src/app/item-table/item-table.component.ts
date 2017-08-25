@@ -8,14 +8,14 @@ import {DataService} from "../services/data.service";
 })
 export class ItemTableComponent implements OnInit {
 
-  constructor(private registryService: DataService) {
+  constructor(private dataService: DataService) {
   }
 
   ngOnInit() {
   }
 
   getItems() {
-    return this.registryService.getItems()
+    return this.dataService.getItems()
   }
 
 }

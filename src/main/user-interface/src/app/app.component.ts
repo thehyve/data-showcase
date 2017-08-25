@@ -39,7 +39,7 @@ export class AppComponent implements OnInit {
       this.isGutterDragged = true;
       this.x_gap = this.x_pos - gutterElm.offsetLeft;
       return false;
-    }
+    };
 
     let onMouseMove = function (event) {
       this.x_pos = event.pageX;
@@ -51,11 +51,11 @@ export class AppComponent implements OnInit {
         let rightW = bound.width - leftW - 10 - 2 * 3;
         rightPanelElm.style.width = rightW + 'px';
       }
-    }
+    };
 
     let onMouseUp = function (event) {
       this.isGutterDragged = false;
-    }
+    };
 
     gutterElm.addEventListener('mousedown', onMouseDown.bind(this));
     parentContainerElm.addEventListener('mousemove', onMouseMove.bind(this));

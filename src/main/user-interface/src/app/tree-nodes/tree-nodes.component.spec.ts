@@ -1,7 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TreeNodesComponent } from './tree-nodes.component';
-import {AutoCompleteModule, TreeModule} from "primeng/primeng";
 
 describe('TreeNodesComponent', () => {
   let component: TreeNodesComponent;

@@ -1,4 +1,4 @@
-import {Component, OnInit, ElementRef, AfterViewInit, Output} from '@angular/core';
+import {Component, OnInit, ElementRef, AfterViewInit} from '@angular/core';
 import {TreeNode} from 'primeng/components/common/api';
 import {trigger, transition, animate, style} from '@angular/animations';
 import {DataService} from '../services/data.service';
@@ -35,13 +35,13 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
   selectedNode: Object;
 
   constructor(private element: ElementRef,
-              private registryService: DataService) {
+              public dataService: DataService) {
     this.expansionStatus = {
       expanded: false,
       treeNodeElm: null,
       treeNode: null
     };
-    this.treeNodes = registryService.treeNodes;
+    this.treeNodes = dataService.treeNodes;
   }
 
   ngOnInit() {
@@ -69,7 +69,7 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
 
   selectNode(event) {
     if (event.node) {
-      this.registryService.updateItemTable(event.node)
+      this.dataService.updateItemTable(event.node)
     }
   }
 
@@ -113,10 +113,10 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
    */
   onFiltering(event) {
     if (this.searchTerm === '') {
-      this.treeNodes = this.registryService.treeNodes;
+      this.treeNodes = this.dataService.treeNodes;
     } else {
       let filterWord = this.searchTerm.toLowerCase();
-      this.treeNodes = this.filterTreeNodes(this.registryService.treeNodes, 'label', filterWord).matchingTreeNodes;
+      this.treeNodes = this.filterTreeNodes(this.dataService.treeNodes, 'label', filterWord).matchingTreeNodes;
       console.log('found tree nodes: ', this.treeNodes);
     }
   }
