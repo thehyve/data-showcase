@@ -1,4 +1,4 @@
-<div [@notifyState]="registryService.loadingTreeNodes">
+<div [@notifyState]="dataService.loadingTreeNodes">
 
     <!-- the search/filter input -->
     <p-autoComplete [(ngModel)]="searchTerm"
@@ -17,5 +17,5 @@
 
     <!-- the spinning icon -->
     <i class="fa fa-spin fa-refresh fa-fw ds-spinner"
-       [class.loading]="registryService.loadingTreeNodes == 'loading'"></i>
+       [class.loading]="dataService.loadingTreeNodes == 'loading'"></i>
 </div>

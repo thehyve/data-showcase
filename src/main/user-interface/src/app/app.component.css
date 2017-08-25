@@ -26,13 +26,13 @@
     display: inline;
     width: 20%;
     background-color: white;
-    margin-left: 0px;
+    margin-left: 10px;
 }
 
 .ds-right-panel {
     padding-top: 10px;
     padding-left: 10px;
-    padding-right: 10px;
+    padding-right: 20px;
     position: relative;
     width: calc(80% - 10px - 6px);
     background-color: white;

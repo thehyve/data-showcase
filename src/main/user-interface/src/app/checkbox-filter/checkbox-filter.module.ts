@@ -1,7 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {FormsModule} from "@angular/forms";
-import {PanelModule, FieldsetModule, AutoCompleteModule} from "primeng/primeng";
+import {
+  PanelModule, FieldsetModule, AutoCompleteModule, CheckboxModule, DataListModule,
+  ListboxModule
+} from "primeng/primeng";
 import {CheckboxFilterComponent} from "./checkbox-filter.component";
 
 @NgModule({
@@ -10,7 +13,10 @@ import {CheckboxFilterComponent} from "./checkbox-filter.component";
     FormsModule,
     PanelModule,
     FieldsetModule,
-    AutoCompleteModule
+    AutoCompleteModule,
+    CheckboxModule,
+    DataListModule,
+    ListboxModule
   ],
   declarations: [CheckboxFilterComponent],
   exports: [CheckboxFilterComponent]

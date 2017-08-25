@@ -8,7 +8,7 @@ describe('AppComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         TreeNodesComponent,
-        AppComponent,
+        AppComponent
       ],
     }).compileComponents();
   }));

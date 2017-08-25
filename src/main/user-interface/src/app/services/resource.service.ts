@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import {MockItemTable, MockTreeNodes} from "./resource.service.data.mock";
+import { MockItemTable, MockTreeNodes } from "./resource.service.data.mock";
 
 @Injectable()
 export class ResourceService {
