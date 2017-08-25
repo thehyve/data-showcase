@@ -42,7 +42,7 @@ body .ds-tree-container {
 .ds-tree-filter-input > input{
     font-size: small !important;
     height: 2.3em;
-    min-width: 150px;
+    min-width: 200px;
     margin-top: 10px;
     margin-left: 10px;
 }
@@ -61,16 +61,16 @@ body .ds-spinner.loading {
 }
 
 /*
- * Change the font size of the legend in checkbox-filter
+ * Change the font size of the legend - checkbox-filter
  */
 legend {
-    font-size: 16px;
+    font-size: larger;
 }
 
 /*
  * Change the color theme of the accordion in data-selection to NTR blue
  */
-md2-accordion-tab.md2-accordion-tab-active>.md2-accordion-header {
+.md2-accordion-tab.md2-accordion-tab-active>.md2-accordion-header {
     border-color: #00889C !important;
     box-shadow: 0 1px 0 #00889C !important;
 }
@@ -84,18 +84,55 @@ md2-accordion-tab.md2-accordion-tab-active>.md2-accordion-header {
     border-color: lightgrey;
 }
 
-body .ui-panel .ui-panel-titlebar {
-    background-color: #00889C;
+/*
+ * Change the primeng selected listbox item
+ */
+body .ui-listbox-item.ui-corner-all.ui-state-highlight{
+    background-color: white;
+    color: #55595c;
 }
-
+body .ui-listbox.ui-inputtext.ui-widget.ui-widget-content.ui-corner-all {
+    border: none;
+    width: 100%;
+}
+body .ui-inputtext.ui-widget.ui-state-default.ui-corner-all{
+    height: 30px;
+    padding-left: 2px;
+}
+body .ui-listbox .ui-listbox-header .ui-listbox-filter-container {
+    width: calc(100% - 40px);
+    height: 30px;
+    margin-bottom: 0;
+}
+body .ui-listbox-filter-container {
+    padding-left: 25px;
+}
 body .ui-fieldset .ui-fieldset-legend {
     background-color: #e7f3f1;
+    margin-bottom: 0;
+}
+/*
+ * Add scrollbar to listbox-list
+ */
+.ui-listbox-list {
+    max-height: 130px;
+    overflow-x: auto;
+}
+
+/*
+ * Change the primeng titlebar text color
+ */
+body .ui-panel .ui-panel-titlebar .ui-panel-titlebar-icon {
+    color: white;
+}
+
+body .ui-panel .ui-panel-titlebar {
+    background-color: #00889C;
 }
 
 body .input:focus {
     border-color: #00889C !important;
 }
-
 
 .form-inline{
     display: inline-block;

@@ -15,6 +15,7 @@ export class DataService {
 
   constructor(private resourceService: ResourceService) {
     this.updateDomains();
+    this.updateItemTable('');
   }
 
   loadTreeNext(parentNode) {

@@ -58,33 +58,38 @@ export const MockTreeNodes = [
 
 export const MockItemTable = [
   {
-    "name": "item-1",
+    "name": "sbl26_1",
     "description": "Item 1 description",
     "project": "project-A",
-    "researchLine": 'ANTR'
+    "researchLine": 'ANTR',
+    "keywords": ["version", "age"]
   },
   {
-    "name": "item-2",
+    "name": "sbl27_1",
     "description": "Item 2 description",
     "project": "project-B",
-    "researchLine": 'YNTR'
+    "researchLine": 'YNTR',
+    "keywords": ["age"]
   },
   {
-    "name": "item-3",
+    "name": "sbl28_1",
     "description": "Item 3 description",
     "project": "project-A",
-    "researchLine": 'ANTR'
+    "researchLine": 'ANTR',
+    "keywords": ["height"]
   },
   {
-    "name": "item-4",
+    "name": "sbl29_1",
     "description": "Item 4 description",
     "project": "project-C",
-    "researchLine": 'YNTR'
+    "researchLine": 'YNTR',
+    "keywords": ["height", "version"]
   },
   {
-    "name": "item-5",
+    "name": "sbl33_1",
     "description": "Item 5 description",
     "project": "project-B",
-    "researchLine": 'YNTR'
+    "researchLine": 'YNTR',
+    "keywords": ["birth order", "date of birth", "age"]
   },
 ];
