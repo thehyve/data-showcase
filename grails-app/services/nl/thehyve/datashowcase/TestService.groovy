@@ -1,33 +1,22 @@
 package nl.thehyve.datashowcase
 
 import grails.gorm.transactions.Transactional
-import grails.util.Environment
 import nl.thehyve.datashowcase.enumeration.ItemType
-import nl.thehyve.datashowcase.exception.ConfigurationException
+
+import static nl.thehyve.datashowcase.DataShowcaseEnvironment.checkGrailsEnvironment
 
 @Transactional
 class TestService {
-
-    def checkEnvironment(String ... allowedEnvironments) {
-        if (!(Environment.current.name in allowedEnvironments)) {
-            throw new ConfigurationException("Action not allowed in environment ${Environment.current}.")
-        }
-    }
 
     /**
      * Creates and stores test domains.
      */
     def createDomainTestData() {
-        def subdomain1 = new TreeNode(
-                name: 'Basic information',
-                path: '/PI/Basic'
-        )
-        def domain1 = new TreeNode(
-                name: 'Personal information',
-                path: '/PI',
-        )
-                .addToChildren(subdomain1)
-        def domains = [subdomain1, domain1]
+        checkGrailsEnvironment(Constants.DEV_ENVIRONMENTS, Constants.TEST_ENVIRONMENTS)
+
+        def domain1 = new TreeNode(null, 'PI', 'Personal information')
+        def subdomain1 = new TreeNode(domain1, 'Basic', 'Basic information')
+        def domains = [domain1, subdomain1]
         domains*.save()
         domains
     }
@@ -37,7 +26,7 @@ class TestService {
      * non-public items and extensive summary data).
      */
     def createInternalTestData() {
-        checkEnvironment('testInternal', 'developmentInternal')
+        checkGrailsEnvironment(Constants.INTERNAL_ENVIRONMENTS)
 
         def domains = createDomainTestData()
 
@@ -63,7 +52,7 @@ class TestService {
                 publicItem: true,
                 constraintJson: '{"type": "concept", "concept_cd": "age"}',
                 keywords: [keyword1, keyword3],
-                domain: domains[0],
+                domain: domains[1],
                 project: projectA,
                 summary: new Summary(
                         patientCount: 100,
@@ -103,7 +92,7 @@ class TestService {
      * only public items and limited summary data).
      */
     def createPublicTestData() {
-        checkEnvironment('test', 'development')
+        checkGrailsEnvironment(Constants.PUBLIC_ENVIRONMENTS)
 
         def domains = createDomainTestData()
 
@@ -129,7 +118,7 @@ class TestService {
                 publicItem: true,
                 constraintJson: '{"type": "concept", "concept_cd": "age"}',
                 keywords: [keyword1, keyword3],
-                domain: domains[0],
+                domain: domains[1],
                 project: projectA,
                 summary: new Summary(
                         patientCount: 100,

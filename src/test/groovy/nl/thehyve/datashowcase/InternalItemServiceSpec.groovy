@@ -5,6 +5,7 @@ import grails.util.Environment
 import groovy.util.logging.Slf4j
 import nl.thehyve.datashowcase.representation.InternalItemRepresentation
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 import spock.lang.Requires
 import spock.lang.Specification
 
@@ -14,6 +15,7 @@ import static spock.util.matcher.HamcrestSupport.that
 
 @Slf4j
 @Integration
+@Transactional
 class InternalItemServiceSpec extends Specification {
 
     @Autowired

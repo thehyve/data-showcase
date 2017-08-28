@@ -1,56 +1,67 @@
 package nl.thehyve.datashowcase
 
 import grails.gorm.transactions.Transactional
-import nl.thehyve.datashowcase.exception.ConfigurationException
+import grails.plugin.cache.Cacheable
 import nl.thehyve.datashowcase.exception.ResourceNotFoundException
-import nl.thehyve.datashowcase.representation.InternalItemRepresentation
+import nl.thehyve.datashowcase.mapping.ItemMapper
 import nl.thehyve.datashowcase.representation.ItemRepresentation
-import nl.thehyve.datashowcase.representation.PublicItemRepresentation
-import org.modelmapper.ModelMapper
+import nl.thehyve.datashowcase.representation.TreeNodeRepresentation
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 
 @Transactional
 class ItemService {
 
     @Autowired
-    ModelMapper modelMapper
+    DataShowcaseEnvironment dataShowcaseEnvironment
 
-    @Value('${dataShowcase.environment}')
-    String environment
+    @Autowired
+    ItemMapper itemMapper
 
-    final boolean isInternalInstance() {
-        if (![Constants.ENVIRONMENT_INTERNAL, Constants.ENVIRONMENT_PUBLIC].contains(environment)) {
-            throw new ConfigurationException('Environment not configured.')
-        }
-        environment == Constants.ENVIRONMENT_INTERNAL
-    }
-
-    private ItemRepresentation convertToRepresentation(Item item) {
-        if (internalInstance) {
-            modelMapper.map(item, InternalItemRepresentation.class)
+    @Transactional(readOnly = true)
+    List<ItemRepresentation> getItems() {
+        if (dataShowcaseEnvironment.internalInstance) {
+            Item.findAll().collect({
+                itemMapper.map(it)
+            })
         } else {
-            modelMapper.map(item, PublicItemRepresentation.class)
+            Item.findAllByPublicItem(true).collect({
+                itemMapper.map(it)
+            })
         }
     }
 
     @Transactional(readOnly = true)
-    List<ItemRepresentation> getItems() {
-        if (internalInstance) {
-            Item.findAll().collect({
-                convertToRepresentation(it)
-            })
+    @Cacheable('itemcounts')
+    Long countItemsForDomain(String path) {
+        if (dataShowcaseEnvironment.internalInstance) {
+            Item.executeQuery(
+                """ select count(distinct i) from Item i
+                    join i.domain d
+                    where d.path = :path 
+                """,
+                [path: path]
+            )[0]
         } else {
-            Item.findAllByPublicItem(true).collect({
-                convertToRepresentation(it)
-            })
+            Item.executeQuery(
+                """ select count(distinct i) from Item i
+                    join i.domain d
+                    where d.path = :path
+                    and i.publicItem = true 
+                """,
+                [path: path]
+            )[0]
         }
+    }
+
+    @Transactional(readOnly = true)
+    Long countItemsForDomain(TreeNodeRepresentation domain) {
+        countItemsForDomain(domain.path)
     }
 
     @Transactional(readOnly = true)
     ItemRepresentation getItem(long id) {
         def item
-        if (internalInstance) {
+        if (dataShowcaseEnvironment.internalInstance) {
             item = Item.findById(id)
         } else {
             item = Item.findByPublicItemAndId(true, id)
@@ -58,7 +69,7 @@ class ItemService {
         if (item == null) {
             throw new ResourceNotFoundException('Item not found')
         }
-        convertToRepresentation(item)
+        itemMapper.map(item)
     }
 
     def saveItems(List<ItemRepresentation> items) {

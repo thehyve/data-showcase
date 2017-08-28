@@ -1,0 +1,31 @@
+package nl.thehyve.datashowcase.mapping
+
+import groovy.transform.CompileStatic
+import nl.thehyve.datashowcase.DataShowcaseEnvironment
+import nl.thehyve.datashowcase.Item
+import nl.thehyve.datashowcase.representation.InternalItemRepresentation
+import nl.thehyve.datashowcase.representation.ItemRepresentation
+import nl.thehyve.datashowcase.representation.PublicItemRepresentation
+import org.modelmapper.ModelMapper
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+
+@Component
+@CompileStatic
+class ItemMapper {
+
+    @Autowired
+    ModelMapper modelMapper
+
+    @Autowired
+    DataShowcaseEnvironment dataShowcaseEnvironment
+
+    ItemRepresentation map(Item item) {
+        if (dataShowcaseEnvironment.internalInstance) {
+            modelMapper.map(item, InternalItemRepresentation.class)
+        } else {
+            modelMapper.map(item, PublicItemRepresentation.class)
+        }
+    }
+
+}

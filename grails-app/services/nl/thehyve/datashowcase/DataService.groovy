@@ -2,22 +2,22 @@ package nl.thehyve.datashowcase
 
 import grails.gorm.transactions.Transactional
 import nl.thehyve.datashowcase.representation.ItemRepresentation
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.annotation.Autowired
 
 @Transactional
 class DataService {
 
-    @Value('${dataShowcase.environment}')
-    String environment
+    @Autowired
+    DataShowcaseEnvironment dataShowcaseEnvironment
 
     def clearDatabase() {
-        Project.executeUpdate('delete from Project')
-        LineOfResearch.executeUpdate('delete from LineOfResearch')
-        nl.thehyve.datashowcase.Value.executeUpdate('delete from Value')
+        Value.executeUpdate('delete from Value')
         Item.executeUpdate('delete from Item')
         Summary.executeUpdate('delete from Summary')
         TreeNode.executeUpdate('delete from TreeNode')
         Keyword.executeUpdate('delete from Keyword')
+        Project.executeUpdate('delete from Project')
+        LineOfResearch.executeUpdate('delete from LineOfResearch')
     }
 
     /**
@@ -26,7 +26,7 @@ class DataService {
      * @param nodes The nodes to save.
      */
     def uploadData(List<TreeNode> domainStructure, List<ItemRepresentation> items) {
-        if (environment == Constants.ENVIRONMENT_PUBLIC) {
+        if (!dataShowcaseEnvironment.internalInstance) {
             // TODO
         }
         // FIXME
