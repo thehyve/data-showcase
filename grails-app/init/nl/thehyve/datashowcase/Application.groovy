@@ -9,9 +9,4 @@ class Application extends GrailsAutoConfiguration {
     static void main(String[] args) {
         GrailsApp.run(Application, args)
     }
-
-    void onStartup(Map<String, Object> event) {
-        def metadata = grailsApplication.metadata
-        log.info "Starting ${metadata.getApplicationName()} ${metadata.getApplicationVersion()} ..."
-    }
 }

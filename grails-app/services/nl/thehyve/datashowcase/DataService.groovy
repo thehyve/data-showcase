@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 class DataService {
 
     @Autowired
-    DataShowcaseEnvironment dataShowcaseEnvironment
+    Environment dataShowcaseEnvironment
 
     def clearDatabase() {
         Value.executeUpdate('delete from Value')

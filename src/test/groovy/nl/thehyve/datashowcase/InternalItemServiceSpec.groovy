@@ -1,7 +1,6 @@
 package nl.thehyve.datashowcase
 
 import grails.testing.mixin.integration.Integration
-import grails.util.Environment
 import groovy.util.logging.Slf4j
 import nl.thehyve.datashowcase.representation.InternalItemRepresentation
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,7 +33,7 @@ class InternalItemServiceSpec extends Specification {
         testService.createInternalTestData()
     }
 
-    @Requires({ -> Environment.current.name == Constants.INTERNAL_TEST_ENVIRONMENT})
+    @Requires({ -> Environment.grailsEnvironmentIn(Constants.INTERNAL_ENVIRONMENTS)})
     void "test fetching all items"() {
         given:
             setupData()

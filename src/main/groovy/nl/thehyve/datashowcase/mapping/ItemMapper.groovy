@@ -1,7 +1,7 @@
 package nl.thehyve.datashowcase.mapping
 
 import groovy.transform.CompileStatic
-import nl.thehyve.datashowcase.DataShowcaseEnvironment
+import nl.thehyve.datashowcase.Environment
 import nl.thehyve.datashowcase.Item
 import nl.thehyve.datashowcase.representation.InternalItemRepresentation
 import nl.thehyve.datashowcase.representation.ItemRepresentation
@@ -18,7 +18,7 @@ class ItemMapper {
     ModelMapper modelMapper
 
     @Autowired
-    DataShowcaseEnvironment dataShowcaseEnvironment
+    Environment dataShowcaseEnvironment
 
     ItemRepresentation map(Item item) {
         if (dataShowcaseEnvironment.internalInstance) {

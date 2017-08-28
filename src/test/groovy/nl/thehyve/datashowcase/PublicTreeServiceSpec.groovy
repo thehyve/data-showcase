@@ -1,7 +1,6 @@
 package nl.thehyve.datashowcase
 
 import grails.testing.mixin.integration.Integration
-import grails.util.Environment
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Transactional
@@ -29,7 +28,7 @@ class PublicTreeServiceSpec extends Specification {
         testService.createPublicTestData()
     }
 
-    @Requires({ -> Environment.current.name == Constants.PUBLIC_TEST_ENVIRONMENT})
+    @Requires({ -> Environment.grailsEnvironmentIn(Constants.PUBLIC_ENVIRONMENTS)})
     void "test fetching all tree nodes"() {
         given:
             setupData()

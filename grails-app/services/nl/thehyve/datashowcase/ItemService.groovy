@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 class ItemService {
 
     @Autowired
-    DataShowcaseEnvironment dataShowcaseEnvironment
+    Environment dataShowcaseEnvironment
 
     @Autowired
     ItemMapper itemMapper

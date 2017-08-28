@@ -3,7 +3,7 @@ package nl.thehyve.datashowcase
 import grails.gorm.transactions.Transactional
 import nl.thehyve.datashowcase.enumeration.ItemType
 
-import static nl.thehyve.datashowcase.DataShowcaseEnvironment.checkGrailsEnvironment
+import static nl.thehyve.datashowcase.Environment.checkGrailsEnvironment
 
 @Transactional
 class TestService {

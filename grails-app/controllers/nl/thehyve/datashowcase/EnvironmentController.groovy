@@ -1,20 +1,19 @@
 package nl.thehyve.datashowcase
 
-import grails.util.Environment
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.annotation.Autowired
 
 class EnvironmentController {
 
     static responseFormats = ['json']
 
-    @Value('${dataShowcase.environment}')
-    String environment
+    @Autowired
+    Environment dataShowcaseEnvironment
 
     def index() {
-        respond environment: environment,
-            grailsEnvironment: Environment.current.name,
-            application: grailsApplication.metadata.getApplicationName(),
-            version: grailsApplication.metadata.getApplicationVersion()
+        respond environment: dataShowcaseEnvironment.currentEnvironment,
+            grailsEnvironment: dataShowcaseEnvironment.grailsEnvironment,
+            application: dataShowcaseEnvironment.applicationName,
+            version: dataShowcaseEnvironment.applicationVersion
     }
 
 }
