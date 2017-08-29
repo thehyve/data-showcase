@@ -1,7 +1,5 @@
 package nl.thehyve.datashowcase
 
-
-import grails.converters.*
 import org.springframework.beans.factory.annotation.Autowired
 
 class TreeController {
@@ -11,6 +9,6 @@ class TreeController {
     TreeService treeService
 	
     def index() {
-        treeService.getNodes() as JSON
+        respond tree_nodes: treeService.nodes
     }
 }

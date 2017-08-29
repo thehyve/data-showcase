@@ -2,9 +2,9 @@ package tests.rest
 
 import base.RESTSpec
 
-class ItemsSpec extends RESTSpec {
+class TreeNodesSpec extends RESTSpec {
 
-    def "get items"() {
+    def "get tree nodes"() {
         given:
         def env = get([path: '/api/environment'])
         assert env['grailsEnvironment'] == 'test'
@@ -14,7 +14,7 @@ class ItemsSpec extends RESTSpec {
         get([path: '/api/test/createPublicData'])
 
         when:
-        def response = get([path: '/api/items'])
+        def response = get([path: '/api/tree_nodes'])
 
         then:
         println(response)

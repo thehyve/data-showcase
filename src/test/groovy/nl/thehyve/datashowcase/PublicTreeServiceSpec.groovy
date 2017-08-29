@@ -7,16 +7,13 @@ import org.springframework.transaction.annotation.Transactional
 import spock.lang.Requires
 import spock.lang.Specification
 
-import static org.hamcrest.CoreMatchers.hasItem
-import static spock.util.matcher.HamcrestSupport.that
-
 @Slf4j
 @Integration
 @Transactional
-class PublicItemServiceSpec extends Specification {
+class PublicTreeServiceSpec extends Specification {
 
     @Autowired
-    ItemService itemService
+    TreeService treeService
 
     @Autowired
     DataService dataService
@@ -32,18 +29,16 @@ class PublicItemServiceSpec extends Specification {
     }
 
     @Requires({ -> Environment.grailsEnvironmentIn(Constants.PUBLIC_ENVIRONMENTS)})
-    void "test fetching all items"() {
+    void "test fetching all tree nodes"() {
         given:
             setupData()
         when:
             log.info "Running test ..."
-            def items = itemService.getItems()
-        then: "2 items being returned"
-            items.size() == 2
-            items*.name == ['ageA', 'heightB']
-            items*.label == ['age', 'height']
-            items*.project == ['Project A', 'Project B']
-            that(items*.domain, hasItem('/PI/Basic'))
+            def nodes = treeService.nodes
+        then: "1 node being returned with 1 child node"
+            nodes.size() == 1
+            nodes[0].children.size() == 1
+            nodes[0].accumulativeItemCount == nodes[0].itemCount + nodes[0].children.sum { it.accumulativeItemCount }
     }
 
 }
