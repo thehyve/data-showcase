@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {DataService} from "../services/data.service";
 
 @Component({
   selector: 'app-text-filter',
@@ -7,9 +8,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TextFilterComponent implements OnInit {
 
-  constructor() { }
+  globalFilter: string;
+
+  constructor(public dataService: DataService) {
+  }
 
   ngOnInit() {
   }
 
+  onFiltering(event) {
+    this.dataService.setGlobalFilter(this.globalFilter);
+    console.log('global filter: ', this.globalFilter);
+  }
 }

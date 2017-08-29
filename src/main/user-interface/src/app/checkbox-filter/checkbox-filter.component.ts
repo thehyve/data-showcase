@@ -9,12 +9,14 @@ import {DataService} from "../services/data.service";
 export class CheckboxFilterComponent implements OnInit {
 
   items: Object[];
-  keywords: Object[] = [];
-  projects: Object[] = [];
-  researchLines: Object[] = [];
-  selectedKeywords: Object[];
+  keywords: string[] = [];
+  projects: string[] = [];
+  researchLines: string[] = [];
+  selectedKeywords: string[] = [];
+  selectedProjects: string[] = [];
+  selectedResearchLines: string[] = [];
 
-  constructor(private dataService: DataService) {
+  constructor(public dataService: DataService) {
     this.items = dataService.getItems();
     this.getUniqueElements();
     this.keywords.sort();
@@ -23,6 +25,14 @@ export class CheckboxFilterComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  updateFilters() {
+    this.dataService.updateFilterValues(
+      this.selectedKeywords,
+      this.selectedProjects,
+      this.selectedResearchLines
+    );
   }
 
   private getUniqueElements() {
@@ -36,9 +46,11 @@ export class CheckboxFilterComponent implements OnInit {
   }
 
   private static collectUnique(element, list) {
-    let values = list.map(function(a) {return a.value;});
-    if (element && !values.includes(element)){
-      list.push({label:element, value:element});
+    let values = list.map(function (a) {
+      return a.value;
+    });
+    if (element && !values.includes(element)) {
+      list.push({label: element, value: element});
     }
   }
 }

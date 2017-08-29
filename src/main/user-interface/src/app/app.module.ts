@@ -7,22 +7,22 @@ import {FormsModule} from "@angular/forms";
 import {DataService} from "./services/data.service";
 import {ResourceService} from "./services/resource.service";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import { TextFilterComponent } from './text-filter/text-filter.component';
 import {ItemTableModule} from "./item-table/item-table.module";
 import {CheckboxFilterModule} from "./checkbox-filter/checkbox-filter.module";
+import {TextFilterModule} from "./text-filter/text-filter.module";
 
 @NgModule({
   declarations: [
-    AppComponent,
-    TextFilterComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     TreeNodesModule,
-    ItemTableModule,
     CheckboxFilterModule,
-    FormsModule
+    FormsModule,
+    TextFilterModule,
+    ItemTableModule
   ],
   providers: [
     ResourceService,
