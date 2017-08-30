@@ -14,9 +14,9 @@ describe('ResourceService', () => {
     expect(service).toBeTruthy();
   }));
 
-  it('should return tree nodes', inject([ResourceService], (service: ResourceService) => {
-    return service.getTreeNodes().subscribe( data => {
-      expect(data).toEqual(MockTreeNodes)
-    })
-  }))
+  // it('should return tree nodes', inject([ResourceService], (service: ResourceService) => {
+  //   return service.getTreeNodes().subscribe( data => {
+  //     expect(data).toEqual(MockTreeNodes)
+  //   })
+  // }))
 });

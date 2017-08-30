@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {TreeNode} from 'primeng/primeng';
 import {ResourceService} from './resource.service';
+import {Domain} from "../models/domain";
 
 type LoadingState = 'loading' | 'complete';
 
@@ -32,58 +33,39 @@ export class DataService {
     this.getFilteredItems();
   }
 
-  loadTreeNext(parentNode) {
-    this.resourceService.getTreeNodes(parentNode)
-      .subscribe(
-        (treeNodes: object[]) => {
-          console.log('loading: ', parentNode['fullName']);
-          const refNode = treeNodes && treeNodes.length > 0 ? treeNodes[0] : undefined;
-          const children = refNode ? refNode['children'] : undefined;
-          if (children) {
-            parentNode['children'] = children;
-            this.processTreeNode(parentNode);
-            // children.forEach((function (node) {
-            //   this.loadTreeNext(node);
-            // }).bind(this));
-          }
-        },
-        err => console.error(err)
-      );
-  }
 
   /** Extracts concepts (and later possibly other dimensions) from the
    *  provided TreeNode array and their children.
    *  And augment tree nodes with PrimeNG tree-ui specifications
-   * @param treeNodes
+   * @param domains
    */
-  private processTreeNodes(treeNodes: object[]) {
-    if (!treeNodes) {
-      return;
+  private processTreeNodes(domains: Domain[]):TreeNode[] {
+    let treeNodes:TreeNode[] = [];
+    for (let domain of domains) {
+      let node = this.processTreeNode(domain);
+      treeNodes.push(node);
     }
-    for (let node of treeNodes) {
-      this.processTreeNode(node);
-    }
+    return treeNodes;
   }
 
-  private processTreeNode(node: Object) {
+  private processTreeNode(domain: Domain):TreeNode {
     // Add PrimeNG visual properties for tree nodes
-    let count = node['count'];
-    let countStr = ' ';
-    if (count) {
-      countStr = '(' + count + ')';
-    }
-    node['label'] = node['name'] + countStr;
+    let node: TreeNode = domain;
+    let count = domain['accumulativeItemCount'] ? domain['accumulativeItemCount'] : 0;
+    let countStr = ' (' + count + ')';
+    node['label'] = domain['name'] + countStr;
 
     // If this node has children, drill down
-    if (node['children']) {
+    if (domain['children'] && domain['children'].length > 0) {
       // Recurse
       node['expandedIcon'] = 'fa-folder-open';
       node['collapsedIcon'] = 'fa-folder';
       node['icon'] = '';
-      this.processTreeNodes(node['children']);
+      this.processTreeNodes(domain['children']);
     } else {
       node['icon'] = 'fa-folder';
     }
+    return node;
   }
 
   updateDomains() {
@@ -91,12 +73,11 @@ export class DataService {
     // Retrieve all tree nodes
     this.resourceService.getTreeNodes()
       .subscribe(
-        (treeNodes: object[]) => {
+        (domains: Domain[]) => {
           this.loadingTreeNodes = 'complete';
-          this.processTreeNodes(treeNodes);
+          let treeNodes = this.processTreeNodes(domains);
           treeNodes.forEach((function (node) {
             this.treeNodes.push(node); // to ensure the treeNodes pointer remains unchanged
-            this.loadTreeNext(node);
           }).bind(this));
         },
         err => console.error(err)

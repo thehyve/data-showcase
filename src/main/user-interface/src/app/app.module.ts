@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {NgModule, APP_INITIALIZER} from '@angular/core';
 
 import {AppComponent} from './app.component';
 import {TreeNodesModule} from "./tree-nodes/tree-nodes.module";
@@ -10,6 +10,12 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {ItemTableModule} from "./item-table/item-table.module";
 import {CheckboxFilterModule} from "./checkbox-filter/checkbox-filter.module";
 import {TextFilterModule} from "./text-filter/text-filter.module";
+import {HttpModule} from "@angular/http";
+import {AppConfig} from "./config/app.config";
+
+export function initConfig(config: AppConfig) {
+  return () => config.load()
+}
 
 @NgModule({
   declarations: [
@@ -17,16 +23,24 @@ import {TextFilterModule} from "./text-filter/text-filter.module";
   ],
   imports: [
     BrowserModule,
+    HttpModule,
     BrowserAnimationsModule,
     TreeNodesModule,
     CheckboxFilterModule,
     FormsModule,
     TextFilterModule,
-    ItemTableModule
+    ItemTableModule,
   ],
   providers: [
     ResourceService,
-    DataService
+    DataService,
+    AppConfig,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initConfig,
+      deps: [AppConfig],
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })
