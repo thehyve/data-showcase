@@ -83,6 +83,15 @@ grails:
 grails:
     cors:
         enabled: false
+environments:
+    development:
+        grails:
+            cors:
+                enabled: true
+    developmentInternal:
+        grails:
+            cors:
+                enabled: true
 ---
 hibernate:
     show_sql: true
