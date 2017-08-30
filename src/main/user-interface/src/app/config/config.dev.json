@@ -1,0 +1,5 @@
+{
+  "api-url": "http://localhost:8080",
+  "api-version": "1",
+  "app-url": "http://localhost:4200"
+}
