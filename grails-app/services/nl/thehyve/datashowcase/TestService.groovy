@@ -15,8 +15,12 @@ class TestService {
         checkGrailsEnvironment(Constants.DEV_ENVIRONMENTS, Constants.TEST_ENVIRONMENTS)
 
         def domain1 = new TreeNode(null, 'PI', 'Personal information')
-        def subdomain1 = new TreeNode(domain1, 'Basic', 'Basic information')
-        def domains = [domain1, subdomain1]
+        def subdomain11 = new TreeNode(domain1, 'Basic', 'Basic information')
+        def subdomain12 = new TreeNode(domain1, 'Extended', 'Extended information')
+        def subdomain121 = new TreeNode(subdomain12, 'Details', 'Some details')
+        def domain2 = new TreeNode(null, 'OI', 'Other information')
+        def subdomain2 = new TreeNode(domain2, 'Some', 'Some information')
+        def domains = [domain1, subdomain11, subdomain12, subdomain121, domain2, subdomain2]
         domains*.save()
         domains
     }
