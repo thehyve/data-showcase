@@ -1,3 +1,5 @@
+import {ItemSummary} from "./itemSummary";
+
 export class Item {
   name: string;
   label: string;
@@ -6,4 +8,7 @@ export class Item {
   domain: string;
   project: string;
   keywords: string[];
+  researchLine: string;
+  constraint: string;
+  summary: ItemSummary;
 }

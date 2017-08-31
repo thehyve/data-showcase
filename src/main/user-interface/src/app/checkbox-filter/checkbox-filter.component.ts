@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {DataService} from "../services/data.service";
+import {Item} from "../models/item";
 
 @Component({
   selector: 'app-checkbox-filter',
@@ -8,7 +9,7 @@ import {DataService} from "../services/data.service";
 })
 export class CheckboxFilterComponent implements OnInit {
 
-  items: Object[];
+  items: Item[];
   keywords: string[] = [];
   projects: string[] = [];
   researchLines: string[] = [];
@@ -17,11 +18,10 @@ export class CheckboxFilterComponent implements OnInit {
   selectedResearchLines: string[] = [];
 
   constructor(public dataService: DataService) {
-    this.items = dataService.getItems();
-    this.getUniqueElements();
-    this.keywords.sort();
-    this.projects.sort();
-    this.researchLines.sort();
+    this.items = this.dataService.getItems();
+    this.keywords = this.dataService.getKeywords();
+    this.projects = this.dataService.getProjects();
+    this.researchLines = this.dataService.getReasearchLines();
   }
 
   ngOnInit() {
@@ -35,22 +35,4 @@ export class CheckboxFilterComponent implements OnInit {
     );
   }
 
-  private getUniqueElements() {
-    for (let item of this.items) {
-      for (let keyword of item['keywords']) {
-        CheckboxFilterComponent.collectUnique(keyword, this.keywords);
-      }
-      CheckboxFilterComponent.collectUnique(item['project'], this.projects);
-      CheckboxFilterComponent.collectUnique(item['researchLine'], this.researchLines);
-    }
-  }
-
-  private static collectUnique(element, list) {
-    let values = list.map(function (a) {
-      return a.value;
-    });
-    if (element && !values.includes(element)) {
-      list.push({label: element, value: element});
-    }
-  }
 }

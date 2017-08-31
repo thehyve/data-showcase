@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 import {TreeNode} from 'primeng/primeng';
 import {ResourceService} from './resource.service';
 import {Domain} from "../models/domain";
+import {Item} from "../models/item";
+import {Project} from "../models/project";
 
 type LoadingState = 'loading' | 'complete';
 
@@ -14,9 +16,9 @@ export class DataService {
   public loadingTreeNodes: LoadingState = 'complete';
 
   // list of all the items
-  private items = [];
+  private items: Item[] = [];
   // filtered list of items based on selected domain and selected checkbox filters
-  private filteredItems: Object[] = [];
+  public filteredItems: Item[] = [];
   // global text filter
   private globalFilter: string = '';
 
@@ -27,18 +29,20 @@ export class DataService {
   // selected checkboxes for research lines filter
   private selectedResearchLines: string[] = [];
 
+  keywords: string[] = [];
+  projects: string[] = [];
+  researchLines: string[] = [];
+
+  availableItems: Item[] = [];
+  availableProjects: Project[] = [];
+
   constructor(private resourceService: ResourceService) {
+    this.updateAvailableProjects();
     this.updateDomains();
-    this.updateItemTable('');
-    this.getFilteredItems();
+    this.updateItems();
+    this.setFilteredItems();
   }
 
-
-  /** Extracts concepts (and later possibly other dimensions) from the
-   *  provided TreeNode array and their children.
-   *  And augment tree nodes with PrimeNG tree-ui specifications
-   * @param domains
-   */
   private processTreeNodes(domains: Domain[]):TreeNode[] {
     let treeNodes:TreeNode[] = [];
     for (let domain of domains) {
@@ -68,6 +72,16 @@ export class DataService {
     return node;
   }
 
+  updateAvailableProjects() {
+    this.resourceService.getProjects()
+      .subscribe(
+        (projects: Project[]) => {
+          this.availableProjects = projects;
+        },
+        err => console.error(err)
+      );
+  }
+
   updateDomains() {
     this.loadingTreeNodes = 'loading';
     // Retrieve all tree nodes
@@ -84,41 +98,68 @@ export class DataService {
       );
   }
 
-  updateItemTable(node: Object) {
-    console.log(node['label']);
-    this.resourceService.getItems(node['name'])
+  updateItems() {
+    this.availableItems.length = 0;
+    this.items.length = 0;
+    this.resourceService.getItems()
       .subscribe(
-        (items: object[]) => {
-          this.items = items;
+        (items: Item[]) => {
+          console.log('item loading');
+          for (let item of items) {
+            if(this.availableProjects){
+              item['researchLine'] = this.availableProjects.find(p => p.name == item['project']).lineOfResearch;
+            }
 
+            this.availableItems.push(item);
+            this.items.push(item);
+          }
+          this.setFilteredItems();
+          this.getUniqueFilterValues();
         },
         err => console.error(err)
-      )
+      );
+  }
+
+  updateItemTable(domain: Domain) {
+    this.items.length = 0;
+    let domainItems = this.availableItems.filter(item => item.domain.startsWith(domain.path));
+    for (let item of domainItems){
+      this.items.push(item);
+    }
+    this.setFilteredItems();
+    this.getUniqueFilterValues();
   }
 
   updateFilterValues(selectedKeywords: string[], selectedProjects: string[], selectedResearchLines: string[]){
     this.selectedKeywords = selectedKeywords;
     this.selectedProjects = selectedProjects;
     this.selectedResearchLines = selectedResearchLines;
-    this.getFilteredItems();
+    this.setFilteredItems();
   }
 
   getItems() {
     return this.items;
   }
+  getKeywords() {
+    return this.keywords;
+  }
+  getProjects() {
+    return this.projects;
+  }
+  getReasearchLines() {
+    return this.researchLines;
+  }
 
-  getFilteredItems() {
+  setFilteredItems() {
     this.filteredItems.length = 0;
     for (let item of this.items) {
       if ( (this.selectedKeywords.length == 0 || item['keywords'].some(k => this.selectedKeywords.includes(k)))
         && (this.selectedProjects.length == 0 || this.selectedProjects.includes(item['project']))
-        && (this.selectedResearchLines.length == 0 || this.selectedResearchLines.includes(item['researchLine']))) {
-
+        && (this.selectedResearchLines.length == 0 || this.selectedResearchLines.includes(item['researchLine']))
+      ) {
         this.filteredItems.push(item);
-
       }
     }
-    return this.filteredItems;
   }
 
   setGlobalFilter(globalFilter: string) {
@@ -127,5 +168,28 @@ export class DataService {
 
   getGlobalFilter() {
     return this.globalFilter;
+  }
+
+  private getUniqueFilterValues() {
+    this.keywords.length = 0;
+    this.projects.length = 0;
+    this.researchLines.length = 0;
+
+    for (let item of this.items) {
+      for (let keyword of item['keywords']) {
+        this.collectUnique(keyword, this.keywords);
+      }
+      this.collectUnique(item['project'], this.projects);
+      this.collectUnique(item['researchLine'], this.researchLines);
+    }
+  }
+
+  private collectUnique(element, list) {
+    let values = list.map(function (a) {
+      return a.value;
+    });
+    if (element && !values.includes(element)) {
+      list.push({label: element, value: element});
+    }
   }
 }

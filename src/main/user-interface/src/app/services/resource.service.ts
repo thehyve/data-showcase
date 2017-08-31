@@ -2,12 +2,13 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import { MockItemTable } from "./resource.service.data.mock";
 import {Domain} from "../models/domain";
 import {Http, Response, Headers} from '@angular/http';
 import {Endpoint} from "../models/endpoint";
 import {AppConfig} from "../config/app.config";
-import {PATH_TREE_NODES} from "../constants/endpoints.constants";
+import {PATH_ITEMS, PATH_PROJECTS, PATH_TREE_NODES} from "../constants/endpoints.constants";
+import {Item} from "../models/item";
+import {Project} from "../models/project";
 
 
 @Injectable()
@@ -36,8 +37,8 @@ export class ResourceService {
 
   getTreeNodes(): Observable<Domain[]> {
     let headers = new Headers();
-
     let url = this.endpoint.apiUrl + PATH_TREE_NODES;
+
     return this.http.get(url, {
       headers: headers
     })
@@ -45,8 +46,26 @@ export class ResourceService {
       .catch(this.handleError.bind(this));
   }
 
-  getItems(domain: string): Observable<object> {
-    return ResourceService.getMockData(MockItemTable);
+  getItems(): Observable<Item[]> {
+    let headers = new Headers();
+    let url = this.endpoint.apiUrl + PATH_ITEMS;
+
+    return this.http.get(url, {
+      headers: headers
+    })
+      .map((response: Response) => response.json().items as Item[])
+      .catch(this.handleError.bind(this));
+  }
+
+  getProjects(): Observable<Project[]> {
+    let headers = new Headers();
+    let url = this.endpoint.apiUrl + PATH_PROJECTS;
+
+    return this.http.get(url, {
+      headers: headers
+    })
+      .map((response: Response) => response.json().projects as Project[])
+      .catch(this.handleError.bind(this));
   }
 
   static getMockData(data: Object): Observable<object> {
