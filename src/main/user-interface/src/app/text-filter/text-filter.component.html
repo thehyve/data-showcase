@@ -1,4 +1,8 @@
 <div class="text-filter-container">
   <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-  <input #globalFilter type="text" pInputText size="50" placeholder="Filter the table" class="text-filter">
+  <p-autoComplete [(ngModel)]="globalFilter"
+                  placeholder="Filter the table"
+                  class="text-filter"
+                  (onClear)="onFiltering($event)"
+                  (completeMethod)="onFiltering($event)"></p-autoComplete>
 </div>

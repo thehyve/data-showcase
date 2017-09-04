@@ -1,16 +1,18 @@
-{{items}}
 <div class="item-table-container">
 
     <p-panel [toggleable]="true">
-
+        <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+        <input #gf type="text" pInputText [ngModel]="getFilter()" (click)="updateFilter($event)">
         <p-dataTable #dt
-                     [value]="getItems()"
+                     [immutable]=false
+                     [value]="items"
+                     [globalFilter]="gf"
                      [rows]="10" [paginator]="true">
             <p-column field="name" header="Name"
                       [sortable]="true">
             </p-column>
 
-            <p-column field="description" header="Description"
+            <p-column field="label" header="Description"
                       [sortable]="true">
             </p-column>
 

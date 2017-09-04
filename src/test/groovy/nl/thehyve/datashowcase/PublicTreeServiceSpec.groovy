@@ -35,10 +35,13 @@ class PublicTreeServiceSpec extends Specification {
         when:
             log.info "Running test ..."
             def nodes = treeService.nodes
-        then: "1 node being returned with 1 child node"
-            nodes.size() == 1
-            nodes[0].children.size() == 1
-            nodes[0].accumulativeItemCount == nodes[0].itemCount + nodes[0].children.sum { it.accumulativeItemCount }
+        then: "2 nodes being returned with child nodes"
+            nodes.size() == 2
+            nodes.find { it.name == 'PI' }.children.size() == 2
+            nodes.find { it.name == 'OI' }.children.size() == 1
+            nodes.each { node ->
+                node.accumulativeItemCount == node.itemCount + node.children.sum { it.accumulativeItemCount }
+            }
     }
 
 }

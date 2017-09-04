@@ -1,5 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {DataService} from "../services/data.service";
+import {InputText} from "primeng/primeng";
+import {Item} from "../models/item";
 
 @Component({
   selector: 'app-item-table',
@@ -8,14 +10,24 @@ import {DataService} from "../services/data.service";
 })
 export class ItemTableComponent implements OnInit {
 
-  constructor(private dataService: DataService) {
+  @ViewChild('gf') inputtext: InputText;
+  globalFilter: string;
+  items: Item[];
+
+  constructor(public dataService: DataService) {
+    this.globalFilter = this.dataService.getGlobalFilter();
+    this.items = this.dataService.filteredItems;
   }
 
   ngOnInit() {
   }
 
-  getItems() {
-    return this.dataService.getItems()
+  getFilter(){
+    this.globalFilter = this.dataService.getGlobalFilter();
+    return this.globalFilter;
   }
 
+  updateFilter() {
+    this.inputtext['nativeElement'].dispatchEvent(new KeyboardEvent('keyup'));
+  }
 }
