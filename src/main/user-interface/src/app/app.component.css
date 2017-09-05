@@ -53,3 +53,8 @@
     padding: 10px;
     margin-bottom: 20px;
 }
+
+.shopping-cart-container {
+    float:right;
+    padding-right: 0;
+}

@@ -1,0 +1,45 @@
+<p-dialog header="Shopping Cart" [(visible)]="display" [modal]="true" [width]="900" [responsive]="true"
+          [closable]="true" [draggable]="false" [resizable]="false" >
+    <div *ngIf="dataService.getShoppingCartItemsCount()==0; else item_table_content">
+        Shopping Cart is empty.
+    </div>
+    <ng-template #item_table_content>
+        <p-dataTable #itemTable
+                     [immutable]=false
+                     [value]="dataService.getShoppingCartItems()"
+                     [style]="table_content"
+                     [rows]="10" [paginator]="true">
+            <p-column [style]="{ width: '50px'}" header="Del">
+                <ng-template let-item="rowData" pTemplate="body">
+                    <button pButton type="button" (click)="deleteItem(item)" icon="fa-close" class="ui-button-danger"></button>
+                </ng-template>
+            </p-column>
+            <p-column field="name" header="Name"
+                      [sortable]="true">
+            </p-column>
+
+            <p-column field="label" header="Description"
+                      [sortable]="true">
+            </p-column>
+
+            <p-column field="project" header="Project"
+                      [sortable]="true">
+            </p-column>
+
+            <p-column field="researchLine" header="Research Line"
+                      [sortable]="true">
+            </p-column>
+
+        </p-dataTable>
+    </ng-template>
+
+    <p-footer>
+        <button type="button" pButton icon="fa-external-link-square" (click)="display=false" label="Export"
+        [disabled]="items.length==0" ></button>
+    </p-footer>
+</p-dialog>
+
+<button class="btn btn-default btn-lg btn-link shopping-cart-button" (click)="showDialog()">
+    <span class="fa fa-shopping-cart fa-4x"></span>
+</button>
+<span class="badge badge-notify">{{dataService.getShoppingCartItemsCount()}}</span>
