@@ -22,6 +22,8 @@ export class DataService {
   // global text filter
   private globalFilter: string = '';
 
+  public shoppingCartItems: Item[] = [];
+
   // selected checkboxes for keywords filter
   private selectedKeywords: string[] = [];
   // selected checkboxes for projects filter
@@ -164,6 +166,29 @@ export class DataService {
 
   setGlobalFilter(globalFilter: string) {
     this.globalFilter = globalFilter;
+  }
+
+  setShoppingCartItems(items: Item[]){
+    this.shoppingCartItems.length = 0;
+    for (let item of items) {
+        this.shoppingCartItems.push(item);
+    }
+  }
+
+  addShoppingCartItems(items: Item[]) {
+    for (let item of items) {
+      if (!this.shoppingCartItems.includes(item)){
+        this.shoppingCartItems.push(item);
+      }
+    }
+  }
+
+  getShoppingCartItems() {
+    return this.shoppingCartItems;
+  }
+
+  getShoppingCartItemsCount() {
+    return this.shoppingCartItems.length;
   }
 
   getGlobalFilter() {
