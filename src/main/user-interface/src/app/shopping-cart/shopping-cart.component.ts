@@ -13,7 +13,10 @@ export class ShoppingCartComponent implements OnInit {
   items: Item[] = [];
 
   constructor(private dataService: DataService) {
-    this.items = dataService.shoppingCartItems;
+    dataService.shoppingCartItems$.subscribe(
+      items => {
+        this.items = items;
+      });
   }
 
   ngOnInit() {

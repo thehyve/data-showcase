@@ -4,6 +4,7 @@ import {ResourceService} from './resource.service';
 import {Domain} from "../models/domain";
 import {Item} from "../models/item";
 import {Project} from "../models/project";
+import {Subject} from "rxjs/Subject";
 
 type LoadingState = 'loading' | 'complete';
 
@@ -15,14 +16,18 @@ export class DataService {
   // the status indicating the when the tree is being loaded or finished loading
   public loadingTreeNodes: LoadingState = 'complete';
 
-  // list of all the items
+  // list of all items
   private items: Item[] = [];
   // filtered list of items based on selected domain and selected checkbox filters
   public filteredItems: Item[] = [];
-  // global text filter
-  private globalFilter: string = '';
 
-  public shoppingCartItems: Item[] = [];
+  // global text filter
+  private globalFilterSource = new Subject<string>();
+  public globalFilter$ = this.globalFilterSource.asObservable();
+
+  // items added to the shopping cart
+  private shoppingCartItemsSource = new Subject<Item[]>();
+  public shoppingCartItems$ = this.shoppingCartItemsSource.asObservable();
 
   // selected checkboxes for keywords filter
   private selectedKeywords: string[] = [];
@@ -35,7 +40,9 @@ export class DataService {
   projects: string[] = [];
   researchLines: string[] = [];
 
+  // items available for currently selected domain
   availableItems: Item[] = [];
+  // projects available for currently selected domain
   availableProjects: Project[] = [];
 
   constructor(private resourceService: ResourceService) {
@@ -165,34 +172,11 @@ export class DataService {
   }
 
   setGlobalFilter(globalFilter: string) {
-    this.globalFilter = globalFilter;
+    this.globalFilterSource.next(globalFilter);
   }
 
   setShoppingCartItems(items: Item[]){
-    this.shoppingCartItems.length = 0;
-    for (let item of items) {
-        this.shoppingCartItems.push(item);
-    }
-  }
-
-  addShoppingCartItems(items: Item[]) {
-    for (let item of items) {
-      if (!this.shoppingCartItems.includes(item)){
-        this.shoppingCartItems.push(item);
-      }
-    }
-  }
-
-  getShoppingCartItems() {
-    return this.shoppingCartItems;
-  }
-
-  getShoppingCartItemsCount() {
-    return this.shoppingCartItems.length;
-  }
-
-  getGlobalFilter() {
-    return this.globalFilter;
+    this.shoppingCartItemsSource.next(items);
   }
 
   private getUniqueFilterValues() {

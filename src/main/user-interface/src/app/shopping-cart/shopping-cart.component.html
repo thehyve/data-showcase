@@ -1,12 +1,12 @@
 <p-dialog header="Shopping Cart" [(visible)]="display" [modal]="true" [width]="900" [responsive]="true"
           [closable]="true" [draggable]="false" [resizable]="false" >
-    <div *ngIf="dataService.getShoppingCartItemsCount()==0; else item_table_content">
+    <div *ngIf="items.length==0; else item_table_content">
         Shopping Cart is empty.
     </div>
     <ng-template #item_table_content>
         <p-dataTable #itemTable
                      [immutable]=false
-                     [value]="dataService.getShoppingCartItems()"
+                     [value]="items"
                      [style]="table_content"
                      [rows]="10" [paginator]="true">
             <p-column [style]="{ width: '50px'}" header="Del">
@@ -42,4 +42,4 @@
 <button class="btn btn-default btn-lg btn-link shopping-cart-button" (click)="showDialog()">
     <span class="fa fa-shopping-cart fa-4x"></span>
 </button>
-<span class="badge badge-notify">{{dataService.getShoppingCartItemsCount()}}</span>
+<span class="badge badge-notify">{{items.length}}</span>

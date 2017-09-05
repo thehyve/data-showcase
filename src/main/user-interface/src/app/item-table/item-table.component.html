@@ -1,10 +1,7 @@
 <div class="item-table-container">
 
     <p-panel [toggleable]="true">
-        <div class="global-filter">
-            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-            <input #gf type="text" pInputText [ngModel]="getFilter()" (click)="updateFilter($event)">
-        </div>
+        <input #gf [ngModel]="globalFilter" style="display: none;">
         <p-dataTable #dt
                      [immutable]=false
                      [value]="items"

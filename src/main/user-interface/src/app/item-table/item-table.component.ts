@@ -16,24 +16,29 @@ export class ItemTableComponent implements OnInit {
   itemsSelection: Item[];
 
   constructor(public dataService: DataService) {
-    this.globalFilter = this.dataService.getGlobalFilter();
+    dataService.shoppingCartItems$.subscribe(
+      items => {
+        this.itemsSelection = items;
+      }
+    );
+    this.dataService.globalFilter$.subscribe(
+      filter => {
+        this.globalFilter = filter;
+        this.forceKeyboardEvent();
+      }
+    );
     this.items = this.dataService.filteredItems;
-    this.itemsSelection = this.dataService.getShoppingCartItems();
   }
 
   ngOnInit() {
   }
 
-  getFilter(){
-    this.globalFilter = this.dataService.getGlobalFilter();
-    return this.globalFilter;
-  }
-
-  updateFilter() {
+  // a primeNG issue workaround - keyboard event is required to call the global filtering event
+  forceKeyboardEvent() {
     this.inputtext['nativeElement'].dispatchEvent(new KeyboardEvent('keyup'));
   }
 
   addToCart(){
-    this.dataService.addShoppingCartItems(this.itemsSelection);
+    this.dataService.setShoppingCartItems(this.itemsSelection);
   }
 }
