@@ -3,7 +3,10 @@ import { TestBed, async } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import {TreeNodesComponent} from "./tree-nodes/tree-nodes.component";
 import {TextFilterComponent} from "./text-filter/text-filter.component";
-import {AutoCompleteModule, DataTableModule, FieldsetModule, PanelModule, TreeModule} from "primeng/primeng";
+import {
+  AutoCompleteModule, DataTableModule, DialogModule, FieldsetModule, PanelModule,
+  TreeModule
+} from "primeng/primeng";
 import {FormsModule} from "@angular/forms";
 import {CheckboxFilterComponent} from "./checkbox-filter/checkbox-filter.component";
 import {ListboxModule} from "primeng/components/listbox/listbox";
@@ -12,6 +15,12 @@ import {DataService} from "./services/data.service";
 import {ResourceService} from "./services/resource.service";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BrowserModule} from "@angular/platform-browser";
+import {HttpModule} from "@angular/http";
+import {AppConfig} from "./config/app.config";
+import {APP_INITIALIZER} from "@angular/core";
+import {initConfig} from "./app.module";
+import {ShoppingCartComponent} from "./shopping-cart/shopping-cart.component";
+import {AppConfigMock} from "./config/app.config.mock";
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -21,6 +30,7 @@ describe('AppComponent', () => {
         TextFilterComponent,
         CheckboxFilterComponent,
         ItemTableComponent,
+        ShoppingCartComponent,
         AppComponent
       ],
       imports: [
@@ -32,10 +42,16 @@ describe('AppComponent', () => {
         FieldsetModule,
         DataTableModule,
         BrowserModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        DialogModule,
+        HttpModule
       ],
       providers: [
         DataService,
+        {
+          provide: AppConfig,
+          useClass: AppConfigMock
+        },
         ResourceService
       ]
     }).compileComponents();

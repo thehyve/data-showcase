@@ -5,6 +5,9 @@ import {AutoCompleteModule} from "primeng/primeng";
 import {FormsModule} from "@angular/forms";
 import {ResourceService} from "../services/resource.service";
 import {DataService} from "../services/data.service";
+import {HttpModule} from "@angular/http";
+import {AppConfig} from "../config/app.config";
+import {AppConfigMock} from "../config/app.config.mock";
 
 describe('TextFilterComponent', () => {
   let component: TextFilterComponent;
@@ -15,11 +18,16 @@ describe('TextFilterComponent', () => {
       declarations: [ TextFilterComponent ],
       imports: [
         FormsModule,
-        AutoCompleteModule
+        AutoCompleteModule,
+        HttpModule
       ],
       providers: [
         DataService,
-        ResourceService
+        ResourceService,
+        {
+          provide: AppConfig,
+          useClass: AppConfigMock
+        }
       ]
     })
     .compileComponents();

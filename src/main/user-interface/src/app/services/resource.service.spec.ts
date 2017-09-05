@@ -1,12 +1,21 @@
-import { TestBed, inject } from '@angular/core/testing';
+import {TestBed, inject} from '@angular/core/testing';
 
-import { ResourceService } from './resource.service';
-import {MockTreeNodes} from "./resource.service.data.mock";
+import {ResourceService} from './resource.service';
+import {HttpModule} from "@angular/http";
+import {AppConfig} from "../config/app.config";
+import {AppConfigMock} from "../config/app.config.mock";
 
 describe('ResourceService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ResourceService]
+      imports: [HttpModule],
+      providers: [
+        ResourceService,
+        {
+          provide: AppConfig,
+          useClass: AppConfigMock
+        }
+      ]
     });
   });
 
