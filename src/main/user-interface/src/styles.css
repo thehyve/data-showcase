@@ -87,10 +87,14 @@ legend {
 /*
  * Change the primeng selected listbox item
  */
-body .ui-listbox-item.ui-corner-all.ui-state-highlight{
+body .ui-listbox-item.ui-corner-all.ui-state-highlight,
+body .ui-datatable .ui-datatable-data tr.ui-datatable-even.ui-state-highlight,
+body .ui-state-highlight
+{
     background-color: white;
     color: #55595c;
 }
+
 body .ui-listbox.ui-inputtext.ui-widget.ui-widget-content.ui-corner-all {
     border: none;
     width: 100%;
@@ -159,3 +163,31 @@ body .input:focus {
 .form-control::-moz-placeholder { color: lightgray; }
 .form-control:-ms-input-placeholder { color: lightgray; }
 /*#6BC4B7*/
+
+/* CSS used here will be applied after bootstrap.css */
+.badge-notify{
+    background:red;
+    position:relative;
+    top: 30px;
+    left: -75px;
+    font-size: 16px;
+}
+
+/* Shopping cart delete button */
+.ui-button-icon-only {
+    border-radius: 5px;
+    max-width: 19px;
+    min-width: 19px;
+    max-height: 20px;
+    min-height: 20px;
+    margin-left: 3px;
+    margin-top: 4px;
+    margin-bottom: 0;
+
+}
+.ui-button-icon-only .fa {
+    font-size: 12px;
+    margin-top: -.55em;
+    margin-left: -.65em;
+}
+

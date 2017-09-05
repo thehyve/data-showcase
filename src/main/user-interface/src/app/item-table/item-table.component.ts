@@ -13,10 +13,12 @@ export class ItemTableComponent implements OnInit {
   @ViewChild('gf') inputtext: InputText;
   globalFilter: string;
   items: Item[];
+  itemsSelection: Item[];
 
   constructor(public dataService: DataService) {
     this.globalFilter = this.dataService.getGlobalFilter();
     this.items = this.dataService.filteredItems;
+    this.itemsSelection = this.dataService.getShoppingCartItems();
   }
 
   ngOnInit() {
@@ -29,5 +31,9 @@ export class ItemTableComponent implements OnInit {
 
   updateFilter() {
     this.inputtext['nativeElement'].dispatchEvent(new KeyboardEvent('keyup'));
+  }
+
+  addToCart(){
+    this.dataService.addShoppingCartItems(this.itemsSelection);
   }
 }

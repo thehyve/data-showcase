@@ -1,13 +1,18 @@
 <div class="item-table-container">
 
     <p-panel [toggleable]="true">
-        <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-        <input #gf type="text" pInputText [ngModel]="getFilter()" (click)="updateFilter($event)">
+        <div class="global-filter">
+            <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+            <input #gf type="text" pInputText [ngModel]="getFilter()" (click)="updateFilter($event)">
+        </div>
         <p-dataTable #dt
                      [immutable]=false
                      [value]="items"
                      [globalFilter]="gf"
-                     [rows]="10" [paginator]="true">
+                     [rows]="10" [paginator]="true"
+                     [(selection)]="itemsSelection">
+            <p-column selectionMode="multiple" [style]="{ width: '45px'}">
+            </p-column>
             <p-column field="name" header="Name"
                       [sortable]="true">
             </p-column>
@@ -25,6 +30,8 @@
             </p-column>
 
         </p-dataTable>
+
+        <button pButton type="button" label="Add to cart" class="export-button" (click)="addToCart()"></button>
 
     </p-panel>
 

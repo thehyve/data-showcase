@@ -10,3 +10,11 @@
 .fa-plus{
     color: white;
 }
+
+.export-button {
+    margin-top: 5px;
+}
+
+.global-filter {
+    margin: 5px;
+}
