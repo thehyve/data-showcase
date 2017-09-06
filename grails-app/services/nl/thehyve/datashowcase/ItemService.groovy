@@ -2,6 +2,7 @@ package nl.thehyve.datashowcase
 
 import grails.gorm.transactions.Transactional
 import grails.plugin.cache.Cacheable
+import nl.thehyve.datashowcase.enumeration.NodeType
 import nl.thehyve.datashowcase.exception.ResourceNotFoundException
 import nl.thehyve.datashowcase.mapping.ItemMapper
 import nl.thehyve.datashowcase.representation.ItemRepresentation
@@ -32,20 +33,22 @@ class ItemService {
 
     @Transactional(readOnly = true)
     @Cacheable('itemcounts')
-    Long countItemsForDomain(String path) {
+    Long countItemsForNode(String path) {
         if (dataShowcaseEnvironment.internalInstance) {
             Item.executeQuery(
-                """ select count(distinct i) from Item i
-                    join i.domain d
-                    where d.path = :path 
+                """ select count(distinct i) from Item i, TreeNode n
+                    join i.concept c
+                    where n.concept = c
+                    and n.path = :path
                 """,
                 [path: path]
             )[0]
         } else {
             Item.executeQuery(
-                """ select count(distinct i) from Item i
-                    join i.domain d
-                    where d.path = :path
+                """ select count(distinct i) from Item i, TreeNode n
+                    join i.concept c
+                    where n.concept = c
+                    and n.path = :path
                     and i.publicItem = true 
                 """,
                 [path: path]
@@ -54,8 +57,12 @@ class ItemService {
     }
 
     @Transactional(readOnly = true)
-    Long countItemsForDomain(TreeNodeRepresentation domain) {
-        countItemsForDomain(domain.path)
+    Long countItemsForNode(TreeNodeRepresentation treeNode) {
+        if (treeNode.nodeType == NodeType.Domain) {
+            0
+        } else {
+            countItemsForNode(treeNode.path)
+        }
     }
 
     @Transactional(readOnly = true)

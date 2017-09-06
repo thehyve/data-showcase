@@ -23,7 +23,7 @@ class TreeService {
      */
     @CompileStatic
     private void enrichWithItemCounts(TreeNodeRepresentation node) {
-        long itemCount = itemService.countItemsForDomain(node)
+        long itemCount = itemService.countItemsForNode(node)
         node.itemCount = itemCount
         node.accumulativeItemCount = itemCount + (long)(node.children?.sum {
             TreeNodeRepresentation child ->

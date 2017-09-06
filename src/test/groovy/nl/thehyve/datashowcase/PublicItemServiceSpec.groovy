@@ -41,9 +41,9 @@ class PublicItemServiceSpec extends Specification {
         then: "2 items being returned"
             items.size() == 2
             items*.name == ['ageA', 'heightB']
-            items*.label == ['age', 'height']
+            items*.label == ['Age', 'Height']
             items*.project == ['Project A', 'Project B']
-            that(items*.domain, hasItem('/PI/Basic'))
+            that(items*.concept, hasItem('age'))
     }
 
 }

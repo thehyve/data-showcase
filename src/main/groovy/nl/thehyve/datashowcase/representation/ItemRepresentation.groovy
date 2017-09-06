@@ -1,7 +1,7 @@
 package nl.thehyve.datashowcase.representation
 
 import groovy.transform.CompileStatic
-import nl.thehyve.datashowcase.enumeration.ItemType
+import nl.thehyve.datashowcase.enumeration.VariableType
 
 @CompileStatic
 abstract class ItemRepresentation {
@@ -24,7 +24,7 @@ abstract class ItemRepresentation {
     /**
      * The type of the variable in Transmart (textual, numerical, categorical).
      */
-    ItemType type
+    VariableType type
 
     /**
      * A JSON value encoding the constraint that is used in Transmart to select
@@ -44,9 +44,9 @@ abstract class ItemRepresentation {
     abstract SummaryRepresentation getSummary()
 
     /**
-     * The path of the associated domain.
+     * The concept code of the associated concept.
      */
-    String domain
+    String concept
 
     /**
      * The project (survey) the item belongs to.

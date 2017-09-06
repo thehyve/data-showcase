@@ -1,7 +1,7 @@
 package nl.thehyve.datashowcase
 
 import grails.gorm.transactions.Transactional
-import nl.thehyve.datashowcase.enumeration.ItemType
+import nl.thehyve.datashowcase.enumeration.VariableType
 
 import static nl.thehyve.datashowcase.Environment.checkGrailsEnvironment
 
@@ -11,18 +11,33 @@ class TestService {
     /**
      * Creates and stores test domains.
      */
-    def createDomainTestData() {
+    def createConceptTestData() {
         checkGrailsEnvironment(Constants.DEV_ENVIRONMENTS, Constants.TEST_ENVIRONMENTS)
 
-        def domain1 = new TreeNode(null, 'PI', 'Personal information')
-        def subdomain11 = new TreeNode(domain1, 'Basic', 'Basic information')
-        def subdomain12 = new TreeNode(domain1, 'Extended', 'Extended information')
-        def subdomain121 = new TreeNode(subdomain12, 'Details', 'Some details')
-        def domain2 = new TreeNode(null, 'OI', 'Other information')
-        def subdomain2 = new TreeNode(domain2, 'Some', 'Some information')
-        def domains = [domain1, subdomain11, subdomain12, subdomain121, domain2, subdomain2]
-        domains*.save()
-        domains
+        def conceptAge = new Concept(
+                conceptCode: 'age',
+                label: 'Age', labelLong: 'Age at time of survey',
+                variableType: VariableType.Numerical)
+        def conceptHeight = new Concept(
+                conceptCode: 'height',
+                label: 'Height', labelLong: 'Height at time of survey',
+                variableType: VariableType.Numerical)
+        def concepts = [conceptAge, conceptHeight]
+        def domain1 = new TreeNode(null, 'Personal information')
+        def subdomain11 = new TreeNode(domain1, 'Basic information')
+        def conceptNodeAge = new TreeNode(subdomain11, conceptAge)
+        def subdomain12 = new TreeNode(domain1, 'Extended information')
+        def conceptNodeHeight = new TreeNode(subdomain12, conceptHeight)
+        def subdomain121 = new TreeNode(subdomain12, 'Some details')
+        def domain2 = new TreeNode(null, 'Other information')
+        def subdomain2 = new TreeNode(domain2, 'Some information')
+        def nodes = [domain1, subdomain11, conceptNodeAge, subdomain12, conceptNodeHeight, subdomain121, domain2, subdomain2]
+        concepts*.save()
+        nodes*.save()
+        nodes.each { node ->
+            log.info "Created node ${node.label}, parent: ${node.parent?.path}, path: ${node.path}"
+        }
+        concepts
     }
 
     /**
@@ -32,7 +47,7 @@ class TestService {
     def createInternalTestData() {
         checkGrailsEnvironment(Constants.INTERNAL_ENVIRONMENTS)
 
-        def domains = createDomainTestData()
+        def concepts = createConceptTestData()
 
         def researchLine1 = new LineOfResearch(name: 'Research line 1')
         def researchLine2 = new LineOfResearch(name: 'Research line 2')
@@ -52,11 +67,11 @@ class TestService {
                 name: 'ageA',
                 label: 'age',
                 labelLong: 'Age of the subject',
-                itemType: ItemType.Numerical,
+                itemType: VariableType.Numerical,
                 publicItem: true,
                 constraintJson: '{"type": "concept", "concept_cd": "age"}',
                 keywords: [keyword1, keyword3],
-                domain: domains[1],
+                concept: concepts[0],
                 project: projectA,
                 summary: new Summary(
                         patientCount: 100,
@@ -75,8 +90,8 @@ class TestService {
                 name: 'heightB',
                 label: 'height',
                 labelLong: 'Height of the subject',
-                itemType: ItemType.Numerical,
-                publicItem: true,
+                itemType: VariableType.Numerical,
+                publicItem: false,
                 constraintJson: '{"type": "concept", "concept_cd": "height"}',
                 summary: new Summary(
                         patientCount: 200,
@@ -84,7 +99,7 @@ class TestService {
                         dataStability: 15.78
                 ),
                 keywords: [keyword3],
-                domain: null,
+                concept: concepts[1],
                 project: projectB
         )
 
@@ -98,7 +113,7 @@ class TestService {
     def createPublicTestData() {
         checkGrailsEnvironment(Constants.PUBLIC_ENVIRONMENTS)
 
-        def domains = createDomainTestData()
+        def concepts = createConceptTestData()
 
         def researchLine1 = new LineOfResearch(name: 'Research line 1')
         def researchLine2 = new LineOfResearch(name: 'Research line 2')
@@ -118,11 +133,11 @@ class TestService {
                 name: 'ageA',
                 label: 'age',
                 labelLong: 'Age of the subject',
-                itemType: ItemType.Numerical,
+                itemType: VariableType.Numerical,
                 publicItem: true,
                 constraintJson: '{"type": "concept", "concept_cd": "age"}',
                 keywords: [keyword1, keyword3],
-                domain: domains[1],
+                concept: concepts[0],
                 project: projectA,
                 summary: new Summary(
                         patientCount: 100,
@@ -136,7 +151,7 @@ class TestService {
                 name: 'heightB',
                 label: 'height',
                 labelLong: 'Height of the subject',
-                itemType: ItemType.Numerical,
+                itemType: VariableType.Numerical,
                 publicItem: true,
                 constraintJson: '{"type": "concept", "concept_cd": "height"}',
                 summary: new Summary(
@@ -145,7 +160,7 @@ class TestService {
                         dataStability: 15.78
                 ),
                 keywords: [keyword3],
-                domain: domains[2],
+                concept: concepts[1],
                 project: projectB
         )
 

@@ -1,19 +1,25 @@
 package nl.thehyve.datashowcase.representation
 
 import groovy.transform.CompileStatic
+import nl.thehyve.datashowcase.enumeration.NodeType
 
 @CompileStatic
 class TreeNodeRepresentation {
 
     /**
-     * A descriptive label of the node.
+     * The type of the node: either a domain or a concept (leaf).
+     */
+    NodeType nodeType
+
+    /**
+     * The label of the node at the current level.
      */
     String label
 
     /**
-     * The name of the node at the current level.
+     * The concept code of the concept the node refers to, if it is of type Concept.
      */
-    String name
+    String concept
 
     /**
      * The complete path of the node, including the name.

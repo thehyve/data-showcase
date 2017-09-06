@@ -1,9 +1,9 @@
 package nl.thehyve.datashowcase.enumeration
 
 /**
- * The variable type of an item in Transmart.
+ * The variable type of a concept in Transmart.
  */
-enum ItemType {
+enum VariableType {
     Numerical,
     Categorical,
     Text,

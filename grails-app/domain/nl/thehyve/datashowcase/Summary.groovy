@@ -17,9 +17,9 @@ class Summary {
     Long patientCount
 
     /**
-     * A measure for data stability.
+     * A description of the stability of the data.
      */
-    Double dataStability
+    String dataStability
 
     /**
      * The minimal value for the variable in the dataset.

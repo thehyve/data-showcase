@@ -1,11 +1,7 @@
 package nl.thehyve.datashowcase
-
-import nl.thehyve.datashowcase.enumeration.ItemType
-
 /**
  * An item represents a variable in a study or survey.
- * Besides a descriptive label and links to associated data in Transmart
- * (type, constraint, concept path),
+ * Besides links to the concept and project it belongs to,
  * there can be associated values, aggregated (summary) data and
  * associated keywords.
  */
@@ -15,21 +11,6 @@ class Item {
      * A unique code for the variable.
      */
     String name
-
-    /**
-     * The short name of the variable.
-     */
-    String label
-
-    /**
-     * A textual description of the variable.
-     */
-    String labelLong
-
-    /**
-     * The type of the variable in Transmart (textual, numerical, categorical).
-     */
-    ItemType itemType
 
     /**
      * A JSON value encoding the constraint that is used in Transmart to select
@@ -44,10 +25,9 @@ class Item {
     boolean publicItem
 
     /**
-     * The subject domain to which the item belongs. The domains are organised
-     * in a tree structure.
+     * The concept that the item represents in a project.
      */
-    TreeNode domain
+    Concept concept
 
     /**
      * Associated key words.
@@ -64,10 +44,16 @@ class Item {
      */
     Summary summary
 
+    String getLabel() {
+        concept.label
+    }
+
+    String getLabelLong() {
+        concept.labelLong
+    }
+
     static constraints = {
         name unique: true
-        labelLong nullable: true
-        domain nullable: true
     }
 
 }

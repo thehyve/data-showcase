@@ -16,9 +16,9 @@ abstract class SummaryRepresentation {
     Long patientCount
 
     /**
-     * A measure for data stability.
+     * A description of the stability of the data.
      */
-    Double dataStability
+    String dataStability
 
     abstract List getValues()
 
