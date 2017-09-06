@@ -85,6 +85,16 @@ legend {
 }
 
 /*
+ * Change the primeng data table header
+ */
+body .ui-datatable .ui-datatable-thead > tr > th,
+body .ui-datatable .ui-datatable-thead th.ui-state-active,
+body .ui-datatable thead th.ui-sortable-column:not(.ui-state-active):hover {
+    background-color: #e7f3f1;
+    color: black;
+}
+
+/*
  * Change the primeng selected listbox item
  */
 body .ui-listbox-item.ui-corner-all.ui-state-highlight,
@@ -199,11 +209,9 @@ body .input:focus {
     margin-left: -.75em;
 }
 
-
-/* General: icon-only buttons */
-.ui-button-icon-only .fa {
-    font-size: 12px;
-    margin-top: -.55em;
-    margin-left: -.65em;
+/* Popup datable header */
+body .ui-dialog .ui-dialog-titlebar,
+body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon {
+    background-color: #339C90;
+    color: white;
 }
-

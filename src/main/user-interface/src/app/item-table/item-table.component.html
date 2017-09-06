@@ -1,7 +1,6 @@
 <div class="item-table-container">
-
-    <p-panel [toggleable]="true">
         <input #gf [ngModel]="globalFilter" style="display: none;">
+
         <p-dataTable #dt
                      [immutable]=false
                      [value]="items"
@@ -35,7 +34,4 @@
         </p-dataTable>
 
         <button pButton type="button" label="Add to cart" class="export-button" (click)="addToCart()"></button>
-
-    </p-panel>
-
 </div>

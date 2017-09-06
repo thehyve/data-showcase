@@ -1,6 +1,63 @@
 <p-dialog header="Item summary" [(visible)]="display" [modal]="true" [width]="600" [responsive]="true"
-          [closable]="true" [draggable]="false" [resizable]="false" >
-  Item summary for {{item?.name}}
-  <p-footer>
-  </p-footer>
+          [closable]="true" [draggable]="false" [resizable]="false">
+    <table>
+        <tr>
+            <th>Name:</th>
+            <th>{{item?.name}}</th>
+        </tr>
+        <tr>
+            <th>Domain:</th>
+            <th>{{item?.domain}}</th>
+        </tr>
+        <tr>
+            <th>Variable labels:</th>
+            <th>{{item?.labelLong}}</th>
+        </tr>
+        <tr>
+            <th>Value labels:</th>
+            <th>?</th>
+        </tr>
+        <tr>
+            <th>Type of variable:</th>
+            <th>{{item?.type}}</th>
+        </tr>
+    </table>
+    <br/>
+    <b>Summary statistics:</b>
+    <table>
+        <tr>
+            <th>Patient counts:</th>
+            <th>{{item?.summary.patientCount}}</th>
+        </tr>
+        <tr>
+            <th>Observation counts:</th>
+            <th>{{item?.summary.observationCount}}</th>
+        </tr>
+        <tr>
+            <th>Data stability:</th>
+            <th>{{item?.summary.dataStability}}</th>
+        </tr>
+        <tr>
+            <th>Average:</th>
+            <th>{{item?.summary.avgValue}}</th>
+        </tr>
+        <tr>
+            <th>Min:</th>
+            <th>{{item?.summary.minValue}}</th>
+        </tr>
+        <tr>
+            <th>Max:</th>
+            <th>{{item?.summary.maxValue}}</th>
+        </tr>
+        <tr>
+            <th>Standard deviation:</th>
+            <th>{{item?.summary.stdDevValue}}</th>
+        </tr>
+        <tr>
+            <th>Value frequencies:</th>
+            <th>{{item?.summary.frequency}}</th>
+        </tr>
+    </table>
+    <p-footer>
+    </p-footer>
 </p-dialog>
