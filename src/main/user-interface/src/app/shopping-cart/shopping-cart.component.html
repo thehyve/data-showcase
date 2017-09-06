@@ -9,11 +9,13 @@
                      [value]="items"
                      [style]="table_content"
                      [rows]="10" [paginator]="true">
+
             <p-column [style]="{ width: '50px'}" header="Del">
                 <ng-template let-item="rowData" pTemplate="body">
                     <button pButton type="button" (click)="deleteItem(item)" icon="fa-close" class="ui-button-danger"></button>
                 </ng-template>
             </p-column>
+
             <p-column field="name" header="Name"
                       [sortable]="true">
             </p-column>
@@ -29,9 +31,11 @@
             <p-column field="researchLine" header="Research Line"
                       [sortable]="true">
             </p-column>
+
             <p-column field="domain" header="Domain"
                       [sortable]="true">
             </p-column>
+
         </p-dataTable>
     </ng-template>
 

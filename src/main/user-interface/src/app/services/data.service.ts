@@ -45,6 +45,10 @@ export class DataService {
   // projects available for currently selected domain
   availableProjects: Project[] = [];
 
+  // item summary popup visibility
+  private itemSummaryVisibleSource = new Subject<Item>();
+  public itemSummaryVisible$ = this.itemSummaryVisibleSource.asObservable();
+
   constructor(private resourceService: ResourceService) {
     this.updateAvailableProjects();
     this.updateDomains();
@@ -200,5 +204,9 @@ export class DataService {
     if (element && !values.includes(element)) {
       list.push({label: element, value: element});
     }
+  }
+
+  displayPopup(item: Item) {
+    this.itemSummaryVisibleSource.next(item);
   }
 }
