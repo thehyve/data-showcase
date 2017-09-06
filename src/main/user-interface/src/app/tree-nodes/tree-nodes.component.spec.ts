@@ -7,6 +7,9 @@ import {DataService} from "../services/data.service";
 import {ResourceService} from "../services/resource.service";
 import {TreeModule} from "primeng/primeng";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {HttpModule} from "@angular/http";
+import {AppConfig} from "../config/app.config";
+import {AppConfigMock} from "../config/app.config.mock";
 
 describe('TreeNodesComponent', () => {
   let component: TreeNodesComponent;
@@ -21,11 +24,16 @@ describe('TreeNodesComponent', () => {
         FormsModule,
         AutoCompleteModule,
         TreeModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        HttpModule
       ],
       providers: [
         DataService,
-        ResourceService
+        ResourceService,
+        {
+          provide: AppConfig,
+          useClass: AppConfigMock
+        }
       ]
     })
     .compileComponents();

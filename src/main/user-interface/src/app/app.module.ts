@@ -12,6 +12,7 @@ import {CheckboxFilterModule} from "./checkbox-filter/checkbox-filter.module";
 import {TextFilterModule} from "./text-filter/text-filter.module";
 import {HttpModule} from "@angular/http";
 import {AppConfig} from "./config/app.config";
+import {ShoppingCartModule} from "./shopping-cart/shopping-cart.module";
 
 export function initConfig(config: AppConfig) {
   return () => config.load()
@@ -30,6 +31,7 @@ export function initConfig(config: AppConfig) {
     FormsModule,
     TextFilterModule,
     ItemTableModule,
+    ShoppingCartModule
   ],
   providers: [
     ResourceService,

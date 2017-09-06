@@ -5,6 +5,7 @@ import {TreeNodesComponent} from './tree-nodes.component';
 import {TreeModule} from 'primeng/components/tree/tree';
 import {AutoCompleteModule} from "primeng/primeng";
 import {OverlayPanelModule} from "primeng/components/overlaypanel/overlaypanel";
+import {HttpModule} from "@angular/http";
 
 @NgModule({
   imports: [
@@ -12,7 +13,8 @@ import {OverlayPanelModule} from "primeng/components/overlaypanel/overlaypanel";
     TreeModule,
     FormsModule,
     AutoCompleteModule,
-    OverlayPanelModule
+    OverlayPanelModule,
+    HttpModule
   ],
   declarations: [TreeNodesComponent],
   exports: [TreeNodesComponent]

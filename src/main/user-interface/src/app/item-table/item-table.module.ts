@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {DataTableModule, PanelModule} from "primeng/primeng";
+import {ButtonModule, DataTableModule, ListboxModule, PanelModule} from "primeng/primeng";
 import {FormsModule} from "@angular/forms";
 import {ItemTableComponent} from "./item-table.component";
 
@@ -9,7 +9,9 @@ import {ItemTableComponent} from "./item-table.component";
     CommonModule,
     FormsModule,
     PanelModule,
-    DataTableModule
+    DataTableModule,
+    ListboxModule,
+    ButtonModule
   ],
   declarations: [ItemTableComponent],
   exports: [ItemTableComponent]

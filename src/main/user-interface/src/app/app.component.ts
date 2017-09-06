@@ -1,6 +1,4 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {DataService} from "./services/data.service";
-import {ResourceService} from "./services/resource.service";
 
 @Component({
   selector: 'app-root',

@@ -6,6 +6,9 @@ import {DataListModule} from "primeng/components/datalist/datalist";
 import {DataService} from "../services/data.service";
 import {ResourceService} from "../services/resource.service";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {HttpModule} from "@angular/http";
+import {AppConfig} from "../config/app.config";
+import {AppConfigMock} from "../config/app.config.mock";
 
 describe('CheckboxFilterComponent', () => {
   let component: CheckboxFilterComponent;
@@ -21,11 +24,16 @@ describe('CheckboxFilterComponent', () => {
         AutoCompleteModule,
         DataListModule,
         ListboxModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        HttpModule
       ],
       providers: [
         DataService,
-        ResourceService
+        ResourceService,
+        {
+          provide: AppConfig,
+          useClass: AppConfigMock
+        }
       ]
     })
     .compileComponents();

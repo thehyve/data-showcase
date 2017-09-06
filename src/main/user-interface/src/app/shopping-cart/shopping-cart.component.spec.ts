@@ -1,35 +1,31 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ItemTableComponent } from './item-table.component';
+import { ShoppingCartComponent } from './shopping-cart.component';
 import {FormsModule} from "@angular/forms";
-import {
-  AutoCompleteModule, DataListModule, DataTableModule, FieldsetModule, ListboxModule,
-  PanelModule
-} from "primeng/primeng";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {DataTableModule, DialogModule, PanelModule} from "primeng/primeng";
 import {DataService} from "../services/data.service";
 import {ResourceService} from "../services/resource.service";
-import {HttpModule} from "@angular/http";
 import {AppConfig} from "../config/app.config";
+import {APP_INITIALIZER} from "@angular/core";
+import {initConfig} from "../app.module";
+import {HttpModule} from "@angular/http";
 import {AppConfigMock} from "../config/app.config.mock";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
-describe('ItemTableComponent', () => {
-  let component: ItemTableComponent;
-  let fixture: ComponentFixture<ItemTableComponent>;
+describe('ShoppingCartComponent', () => {
+  let component: ShoppingCartComponent;
+  let fixture: ComponentFixture<ShoppingCartComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ItemTableComponent ],
+      declarations: [ ShoppingCartComponent ],
       imports: [
         FormsModule,
         PanelModule,
-        FieldsetModule,
-        AutoCompleteModule,
-        DataListModule,
-        ListboxModule,
-        BrowserAnimationsModule,
+        DialogModule,
         DataTableModule,
-        HttpModule
+        HttpModule,
+        BrowserAnimationsModule
       ],
       providers: [
         DataService,
@@ -44,7 +40,7 @@ describe('ItemTableComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ItemTableComponent);
+    fixture = TestBed.createComponent(ShoppingCartComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
