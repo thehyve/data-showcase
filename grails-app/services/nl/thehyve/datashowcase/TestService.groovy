@@ -76,7 +76,7 @@ class TestService {
                 label: 'height',
                 labelLong: 'Height of the subject',
                 itemType: ItemType.Numerical,
-                publicItem: domains[2],
+                publicItem: true,
                 constraintJson: '{"type": "concept", "concept_cd": "height"}',
                 summary: new Summary(
                         patientCount: 200,
