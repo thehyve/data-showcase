@@ -40,7 +40,7 @@
     </ng-template>
 
     <p-footer>
-        <button type="button" pButton icon="fa-external-link-square" (click)="display=false" label="Export"
+        <button type="button" pButton icon="fa-external-link-square" (click)="exportItems(); display=false;" label="Export"
         [disabled]="items.length==0" ></button>
     </p-footer>
 </p-dialog>

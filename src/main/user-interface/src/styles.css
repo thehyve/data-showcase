@@ -212,6 +212,6 @@ body .input:focus {
 /* Popup datable header */
 body .ui-dialog .ui-dialog-titlebar,
 body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon {
-    background-color: #339C90;
+    background-color: #00889C;
     color: white;
 }
