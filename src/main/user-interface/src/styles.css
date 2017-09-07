@@ -215,3 +215,15 @@ body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon {
     background-color: #00889C;
     color: white;
 }
+
+.ui-dialog-footer {
+    height: 65px;
+}
+
+.ui-inputgroup .ui-inputgroup-addon {
+    background-color: #e7f3f1;
+    border-color: darkgray;
+}
+body .ui-inputgroup .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
+    height: 36px;
+}

@@ -7,3 +7,6 @@
 .table_content {
     text-align: left !important;
 }
+.ui-dialog-footer {
+    height: 65px;
+}
