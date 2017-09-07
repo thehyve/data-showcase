@@ -25,6 +25,10 @@
                       [sortable]="true">
             </p-column>
 
+            <p-column field="concept" header="Concept"
+                      [sortable]="true">
+            </p-column>
+
             <p-column [style]="{ width: '50px'}">
                 <ng-template let-item="rowData" pTemplate="body">
                     <button pButton type="button" class="btn btn-default btn-circle btn-lg" (click)="showSummary(item)" icon="fa fa-question-circle"></button>

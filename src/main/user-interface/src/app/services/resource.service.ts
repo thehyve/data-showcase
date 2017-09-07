@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
-import {Domain} from "../models/domain";
+import {TreeNode} from "../models/tree-node";
 import {Http, Response, Headers} from '@angular/http';
 import {Endpoint} from "../models/endpoint";
 import {AppConfig} from "../config/app.config";
@@ -35,14 +35,14 @@ export class ResourceService {
     return Observable.throw(errMsg || 'Server error');
   }
 
-  getTreeNodes(): Observable<Domain[]> {
+  getTreeNodes(): Observable<TreeNode[]> {
     let headers = new Headers();
     let url = this.endpoint.apiUrl + PATH_TREE_NODES;
 
     return this.http.get(url, {
       headers: headers
     })
-      .map((response: Response) => response.json().tree_nodes as Domain[])
+      .map((response: Response) => response.json().tree_nodes as TreeNode[])
       .catch(this.handleError.bind(this));
   }
 

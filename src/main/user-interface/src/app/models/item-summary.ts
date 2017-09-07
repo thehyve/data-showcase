@@ -1,12 +1,14 @@
+import {ItemValue} from "./item-value";
+
 export class ItemSummary {
   minValue: number;
   maxValue: number;
   avgValue: number;
   stdDevValue: number;
-  values: number[];
+  values: ItemValue[];
   frequency: number;
 
   observationCount: number;
   patientCount: number;
-  dataStability: number;
+  dataStability: string;
 }
