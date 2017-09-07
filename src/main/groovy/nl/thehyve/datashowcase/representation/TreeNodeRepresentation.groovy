@@ -19,7 +19,7 @@ class TreeNodeRepresentation {
     /**
      * The concept code of the concept the node refers to, if it is of type Concept.
      */
-    String concept
+    ConceptRepresentation concept
 
     /**
      * The complete path of the node, including the name.

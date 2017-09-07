@@ -4,7 +4,7 @@ import groovy.transform.CompileStatic
 import nl.thehyve.datashowcase.enumeration.VariableType
 
 @CompileStatic
-abstract class ConceptRepresentation {
+class ConceptRepresentation {
 
     /**
      * The short name of the variable.
