@@ -21,6 +21,7 @@ import {APP_INITIALIZER} from "@angular/core";
 import {initConfig} from "./app.module";
 import {ShoppingCartComponent} from "./shopping-cart/shopping-cart.component";
 import {AppConfigMock} from "./config/app.config.mock";
+import {ItemSummaryComponent} from "./item-summary/item-summary.component";
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -31,6 +32,7 @@ describe('AppComponent', () => {
         CheckboxFilterComponent,
         ItemTableComponent,
         ShoppingCartComponent,
+        ItemSummaryComponent,
         AppComponent
       ],
       imports: [
