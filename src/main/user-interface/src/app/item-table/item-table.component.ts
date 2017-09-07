@@ -41,4 +41,8 @@ export class ItemTableComponent implements OnInit {
   addToCart(){
     this.dataService.setShoppingCartItems(this.itemsSelection);
   }
+
+  showSummary(item: Item){
+    this.dataService.displayPopup(item);
+  }
 }

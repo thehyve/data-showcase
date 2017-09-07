@@ -85,6 +85,16 @@ legend {
 }
 
 /*
+ * Change the primeng data table header
+ */
+body .ui-datatable .ui-datatable-thead > tr > th,
+body .ui-datatable .ui-datatable-thead th.ui-state-active,
+body .ui-datatable thead th.ui-sortable-column:not(.ui-state-active):hover {
+    background-color: #e7f3f1;
+    color: black;
+}
+
+/*
  * Change the primeng selected listbox item
  */
 body .ui-listbox-item.ui-corner-all.ui-state-highlight,
@@ -174,7 +184,7 @@ body .input:focus {
 }
 
 /* Shopping cart delete button */
-.ui-button-icon-only {
+.ui-button-danger.ui-button-icon-only {
     border-radius: 5px;
     max-width: 19px;
     min-width: 19px;
@@ -183,11 +193,25 @@ body .input:focus {
     margin-left: 3px;
     margin-top: 4px;
     margin-bottom: 0;
-
-}
-.ui-button-icon-only .fa {
-    font-size: 12px;
-    margin-top: -.55em;
-    margin-left: -.65em;
 }
 
+/* Show item summary button */
+.btn-default.ui-button-icon-only,
+.btn-default.ui-button-icon-only:hover,
+.btn-default.ui-button-icon-only:focus,
+.btn-default.ui-button-icon-only:enabled:active {
+    background-color: transparent !important;
+    box-shadow: none;
+}
+.btn-default.ui-button-icon-only .fa {
+    font-size: 28px;
+    color: #00889C;
+    margin-left: -.75em;
+}
+
+/* Popup datable header */
+body .ui-dialog .ui-dialog-titlebar,
+body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon {
+    background-color: #339C90;
+    color: white;
+}

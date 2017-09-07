@@ -1,7 +1,6 @@
 <div class="item-table-container">
-
-    <p-panel [toggleable]="true">
         <input #gf [ngModel]="globalFilter" style="display: none;">
+
         <p-dataTable #dt
                      [immutable]=false
                      [value]="items"
@@ -26,10 +25,13 @@
                       [sortable]="true">
             </p-column>
 
+            <p-column [style]="{ width: '50px'}">
+                <ng-template let-item="rowData" pTemplate="body">
+                    <button pButton type="button" class="btn btn-default btn-circle btn-lg" (click)="showSummary(item)" icon="fa fa-question-circle"></button>
+                </ng-template>
+            </p-column>
+
         </p-dataTable>
 
         <button pButton type="button" label="Add to cart" class="export-button" (click)="addToCart()"></button>
-
-    </p-panel>
-
 </div>
