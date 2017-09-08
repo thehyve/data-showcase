@@ -18,3 +18,14 @@
 .global-filter {
     margin: 5px;
 }
+
+.inline {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.item-count-container {
+    float:right;
+    padding-right: 0;
+}
