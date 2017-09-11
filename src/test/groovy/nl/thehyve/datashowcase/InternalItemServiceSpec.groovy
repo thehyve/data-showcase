@@ -45,6 +45,7 @@ class InternalItemServiceSpec extends Specification {
             items.size() == 2
             items*.label == ['Age', 'Height']
             items*.publicItem == [true, false]
+            items*.itemPath == ['/Personal information/Basic information/Age', '/Personal information/Extended information/Height']
             that(maxValues, hasItem(
                     closeTo(99, 0.1)
             ))

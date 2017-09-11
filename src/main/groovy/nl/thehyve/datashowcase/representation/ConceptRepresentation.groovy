@@ -21,9 +21,4 @@ class ConceptRepresentation {
      */
     VariableType variableType
 
-    /**
-     * The path of the associated tree node.
-     */
-    String node
-
 }

@@ -8,6 +8,9 @@ import static nl.thehyve.datashowcase.Environment.checkGrailsEnvironment
 @Transactional
 class TestService {
 
+    Concept[] concepts
+    TreeNode[] nodes
+
     /**
      * Creates and stores test domains.
      */
@@ -22,7 +25,7 @@ class TestService {
                 conceptCode: 'height',
                 label: 'Height', labelLong: 'Height at time of survey',
                 variableType: VariableType.Numerical)
-        def concepts = [conceptAge, conceptHeight]
+        concepts = [conceptAge, conceptHeight]
         def domain1 = new TreeNode(null, 'Personal information')
         def subdomain11 = new TreeNode(domain1, 'Basic information')
         def conceptNodeAge = new TreeNode(subdomain11, conceptAge)
@@ -31,13 +34,12 @@ class TestService {
         def subdomain121 = new TreeNode(subdomain12, 'Some details')
         def domain2 = new TreeNode(null, 'Other information')
         def subdomain2 = new TreeNode(domain2, 'Some information')
-        def nodes = [domain1, subdomain11, conceptNodeAge, subdomain12, conceptNodeHeight, subdomain121, domain2, subdomain2]
+        nodes = [domain1, subdomain11, conceptNodeAge, subdomain12, conceptNodeHeight, subdomain121, domain2, subdomain2]
         concepts*.save()
         nodes*.save()
         nodes.each { node ->
             log.info "Created node ${node.label}, parent: ${node.parent?.path}, path: ${node.path}"
         }
-        concepts
     }
 
     /**
@@ -47,7 +49,7 @@ class TestService {
     def createInternalTestData() {
         checkGrailsEnvironment(Constants.INTERNAL_ENVIRONMENTS)
 
-        def concepts = createConceptTestData()
+        createConceptTestData()
 
         def researchLine1 = new LineOfResearch(name: 'Research line 1')
         def researchLine2 = new LineOfResearch(name: 'Research line 2')
@@ -72,6 +74,7 @@ class TestService {
                 constraintJson: '{"type": "concept", "concept_cd": "age"}',
                 keywords: [keyword1, keyword3],
                 concept: concepts[0],
+                itemPath: nodes[2].path,
                 project: projectA,
                 summary: new Summary(
                         patientCount: 100,
@@ -100,6 +103,7 @@ class TestService {
                 ),
                 keywords: [keyword3],
                 concept: concepts[1],
+                itemPath: nodes[4].path,
                 project: projectB
         )
 
@@ -113,7 +117,7 @@ class TestService {
     def createPublicTestData() {
         checkGrailsEnvironment(Constants.PUBLIC_ENVIRONMENTS)
 
-        def concepts = createConceptTestData()
+        createConceptTestData()
 
         def researchLine1 = new LineOfResearch(name: 'Research line 1')
         def researchLine2 = new LineOfResearch(name: 'Research line 2')
@@ -138,6 +142,7 @@ class TestService {
                 constraintJson: '{"type": "concept", "concept_cd": "age"}',
                 keywords: [keyword1, keyword3],
                 concept: concepts[0],
+                itemPath: nodes[2].path,
                 project: projectA,
                 summary: new Summary(
                         patientCount: 100,
@@ -161,6 +166,7 @@ class TestService {
                 ),
                 keywords: [keyword3],
                 concept: concepts[1],
+                itemPath: nodes[4].path,
                 project: projectB
         )
 

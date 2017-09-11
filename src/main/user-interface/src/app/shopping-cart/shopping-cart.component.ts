@@ -22,7 +22,7 @@ export class ShoppingCartComponent implements OnInit {
         this.items = items;
         this.disabled = items.length== 0;
         this.pathSelection = items.map(function(item) {
-          return item['domain'];
+          return item['itemPath'];
         });
       });
   }
@@ -42,7 +42,7 @@ export class ShoppingCartComponent implements OnInit {
   exportItems(){
     let exportObject = {paths: this.pathSelection};
     let file = new Blob([JSON.stringify(exportObject)], { type: 'text/json;charset=utf-8' });
-    let filename = this.fileName.trim() != "" ? this.fileName.trim() + '.json' :'dsc_selection.json'
+    let filename = this.fileName && this.fileName.trim() != "" ? this.fileName.trim() + '.json' :'dsc_selection.json';
     saveAs(file, filename);
   }
 }

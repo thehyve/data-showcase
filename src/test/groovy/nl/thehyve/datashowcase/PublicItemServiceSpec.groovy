@@ -43,6 +43,7 @@ class PublicItemServiceSpec extends Specification {
             items*.name == ['ageA', 'heightB']
             items*.label == ['Age', 'Height']
             items*.project == ['Project A', 'Project B']
+            items*.itemPath == ['/Personal information/Basic information/Age', '/Personal information/Extended information/Height']
             that(items*.concept, hasItem('age'))
     }
 

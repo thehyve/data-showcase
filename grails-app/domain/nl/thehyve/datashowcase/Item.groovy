@@ -13,10 +13,9 @@ class Item {
     String name
 
     /**
-     * A JSON value encoding the constraint that is used in Transmart to select
-     * the data associated with the variable.
+     * The full path of the item that can be used in tranSMART
      */
-    String constraintJson
+    String itemPath
 
     /**
      * Marks if the item is public or not. If it is public, the item may appear in public

@@ -36,8 +36,6 @@ export class DataService {
   // selected checkboxes for research lines filter
   private selectedResearchLines: string[] = [];
 
-  private selectedConcepts: string[] = [];
-
   keywords: string[] = [];
   projects: string[] = [];
   researchLines: string[] = [];
@@ -154,25 +152,12 @@ export class DataService {
   updateItemTable(treeNode: TreeNode) {
     this.items.length = 0;
 
-    this.selectedConcepts.length = 0;
-    this.collectConcepts(treeNode);
-
-    let nodeItems = this.availableItems.filter(item => this.selectedConcepts.includes(item.concept));
+    let nodeItems = this.availableItems.filter(item => item.itemPath.startsWith(treeNode.path));
     for (let node of nodeItems){
       this.items.push(node);
     }
     this.setFilteredItems();
     this.getUniqueFilterValues();
-  }
-
-  private collectConcepts(treeNode: TreeNode) {
-    if (treeNode.concept != null){
-      this.selectedConcepts.push(treeNode.concept.node);
-    } else {
-      treeNode.children.forEach( children => {
-          this.collectConcepts(children);
-        });
-    }
   }
 
   updateFilterValues(selectedKeywords: string[], selectedProjects: string[], selectedResearchLines: string[]){

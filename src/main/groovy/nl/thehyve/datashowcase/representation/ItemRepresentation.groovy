@@ -22,15 +22,14 @@ abstract class ItemRepresentation {
     String labelLong
 
     /**
-     * The type of the variable in Transmart (textual, numerical, categorical).
+     * The full path of the item that can be used in tranSMART
      */
-    VariableType type
+    String itemPath
 
     /**
-     * A JSON value encoding the constraint that is used in Transmart to select
-     * the data associated with the variable.
+     * The type of the variable in tranSMART (textual, numerical, categorical).
      */
-    String constraint
+    VariableType type
 
     /**
      * Marks if the item is public or not. If it is public, the item may appear in public
