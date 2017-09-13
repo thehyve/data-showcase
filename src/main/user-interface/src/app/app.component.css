@@ -24,7 +24,7 @@
 .ds-left-panel {
     position: relative;
     display: inline;
-    width: 20%;
+    width: 16%;
     background-color: white;
     margin-left: 10px;
 }
@@ -34,7 +34,7 @@
     padding-left: 10px;
     padding-right: 20px;
     position: relative;
-    width: calc(80% - 10px - 6px);
+    width: calc(84% - 10px - 6px);
     background-color: white;
 }
 
@@ -51,7 +51,6 @@
 .form-inline {
     width: 100%;
     padding: 10px;
-    margin-bottom: 20px;
 }
 
 .shopping-cart-container {

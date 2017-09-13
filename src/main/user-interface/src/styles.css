@@ -44,7 +44,6 @@ body .ds-tree-container {
     height: 2.3em;
     min-width: 200px;
     margin-top: 10px;
-    margin-left: 10px;
 }
 
 /*
@@ -98,11 +97,15 @@ body .ui-datatable thead th.ui-sortable-column:not(.ui-state-active):hover {
  * Change the primeng selected listbox item
  */
 body .ui-listbox-item.ui-corner-all.ui-state-highlight,
-body .ui-datatable .ui-datatable-data tr.ui-datatable-even.ui-state-highlight,
 body .ui-state-highlight
 {
     background-color: white;
-    color: #55595c;
+    color: #292b2c;
+}
+body .ui-datatable .ui-datatable-data tr.ui-datatable-even.ui-state-highlight
+{
+    background-color: #f7f7f7;
+    color: #292b2c;
 }
 
 body .ui-listbox.ui-inputtext.ui-widget.ui-widget-content.ui-corner-all {
@@ -193,6 +196,11 @@ body .input:focus {
     margin-left: 3px;
     margin-top: 4px;
     margin-bottom: 0;
+}
+/* Shopping cart delete button */
+.ui-button-danger.ui-button-icon-only .fa {
+    margin-top: -.55em;
+    margin-left: -.63em
 }
 
 /* Show item summary button */

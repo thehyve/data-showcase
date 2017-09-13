@@ -39,6 +39,11 @@ export class ShoppingCartComponent implements OnInit {
     this.dataService.setShoppingCartItems(this.items);
   }
 
+  deleteAll() {
+    this.items.length = 0;
+    this.dataService.setShoppingCartItems(this.items);
+  }
+
   exportItems(){
     let exportObject = {paths: this.pathSelection};
     let file = new Blob([JSON.stringify(exportObject)], { type: 'text/json;charset=utf-8' });

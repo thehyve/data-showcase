@@ -51,6 +51,10 @@ class Item {
         concept.labelLong
     }
 
+    String getType() {
+        concept.variableType
+    }
+
     static constraints = {
         name unique: true
     }

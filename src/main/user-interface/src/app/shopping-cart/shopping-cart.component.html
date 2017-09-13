@@ -41,13 +41,14 @@
     </ng-template>
 
     <p-footer>
+        <button type="button" pButton icon="fa-close" (click)="deleteAll();"
+                label="Delete all" [disabled]="disabled" class="ui-button-danger" style="float: left"></button>
         <div class="ui-inputgroup pull-right">
             <input type="text" size="30" pInputText  placeholder="File name (optional)" [(ngModel)]="fileName"
                    [disabled]="disabled">
             <span class="ui-inputgroup-addon">.json</span>&nbsp;
             <button type="button" pButton icon="fa-external-link-square" (click)="exportItems(); display=false;"
-                label="Export"
-                [disabled]="disabled"></button>
+                label="Export" [disabled]="disabled"></button>
         </div>
     </p-footer>
 </p-dialog>

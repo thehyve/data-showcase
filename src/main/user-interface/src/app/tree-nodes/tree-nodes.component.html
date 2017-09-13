@@ -1,12 +1,14 @@
 <div [@notifyState]="dataService.loadingTreeNodes">
 
     <!-- the search/filter input -->
+    <div class="ds-tree-filter-input">
+    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
     <p-autoComplete [(ngModel)]="searchTerm"
                     styleClass="ds-tree-filter-input"
                     placeholder="Filter tree nodes"
                     (onClear)="onFiltering($event)"
                     (completeMethod)="onFiltering($event)"></p-autoComplete>
-
+    </div>
     <!-- the tree itself -->
     <p-tree [value]="treeNodes"
             selectionMode="single"
