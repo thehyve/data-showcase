@@ -2,6 +2,20 @@
 
 A data showcase for displaying a summary of data in TranSMART.
 
+## Development
+
+# Configure PostgreSQL database
+```bash
+sudo -u postgres psql
+```
+
+```bash
+create user "dscUser" with password 'dscUser';
+create database "data_showcase";
+grant all privileges on database "data_showcase" to dscUser;
+```
+
+
 ## Run
 
 ```bash

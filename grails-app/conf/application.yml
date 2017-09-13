@@ -103,9 +103,10 @@ hibernate:
 dataSource:
     pooled: true
     jmxExport: true
-    driverClassName: org.h2.Driver
-    username: sa
-    password: ''
+    driverClassName: org.postgresql.Driver
+    dialect: org.hibernate.dialect.PostgreSQLDialect
+    username: dscUser
+    password: dscUser
 
 environments:
     developmentInternal:
@@ -118,12 +119,12 @@ environments:
 environments:
     development:
         dataSource:
-            dbCreate: create
-            url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+            dbCreate: update
+            url: jdbc:postgresql://localhost:5432/data_showcase
     developmentInternal:
         dataSource:
-            dbCreate: create
-            url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+            dbCreate: update
+            url: jdbc:postgresql://localhost:5432/data_showcase
     test:
         dataSource:
             dbCreate: create
@@ -134,8 +135,8 @@ environments:
             url: jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
     production:
         dataSource:
-            dbCreate: none
-            url: jdbc:h2:./prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+            dbCreate: update
+            url: jdbc:postgresql://localhost:5432/data_showcase
             properties:
                 jmxEnabled: true
                 initialSize: 5
