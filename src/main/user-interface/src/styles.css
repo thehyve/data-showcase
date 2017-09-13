@@ -211,10 +211,15 @@ body .input:focus {
     background-color: transparent !important;
     box-shadow: none;
 }
+
+/* icon-only buttons */
 .btn-default.ui-button-icon-only .fa {
     font-size: 28px;
     color: #00889C;
     margin-left: -.75em;
+}
+.ds-tree-filter-input .btn-default.ui-button-icon-only .fa {
+    color: #747a7f;
 }
 
 /* Popup datable header */

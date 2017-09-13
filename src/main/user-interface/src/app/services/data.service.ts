@@ -151,8 +151,8 @@ export class DataService {
 
   updateItemTable(treeNode: TreeNode) {
     this.items.length = 0;
-
-    let nodeItems = this.availableItems.filter(item => item.itemPath.startsWith(treeNode.path));
+    let nodeItems = treeNode ? this.availableItems.filter(item => item.itemPath.startsWith(treeNode.path))
+                      : this.availableItems;
     for (let node of nodeItems){
       this.items.push(node);
     }
