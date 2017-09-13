@@ -3,11 +3,10 @@
     <!-- the search/filter input -->
     <div class="ds-tree-filter-input">
         <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
-    <p-autoComplete #autocomplete [(ngModel)]="searchTerm"
-                    styleClass="ds-tree-filter-input"
-                    placeholder="Filter tree nodes"
-                    (onClear)="onFiltering($event)"
-                    (completeMethod)="onFiltering($event)"></p-autoComplete>
+        <p-autoComplete #autocomplete [(ngModel)]="searchTerm"
+                        placeholder="Filter tree nodes"
+                        (onClear)="onFiltering($event)"
+                        (completeMethod)="onFiltering($event)"></p-autoComplete>
         <button pButton type="button" class="btn btn-default btn-circle btn-lg" (click)="clear($event)"
                 icon="fa fa-times"></button>
     </div>

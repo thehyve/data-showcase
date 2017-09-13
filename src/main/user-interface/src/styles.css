@@ -39,6 +39,12 @@ body .ds-tree-container {
 /*
  * Style for the search box in the tree-node accordion on the left side
  */
+.ds-tree-filter-input {
+    border-bottom: 1px solid darkgray;
+    padding-top: 10px;
+    height: 50px;
+    font-size: small !important;
+}
 .ds-tree-filter-input > input{
     font-size: small !important;
     height: 2.3em;
@@ -112,6 +118,7 @@ body .ui-listbox.ui-inputtext.ui-widget.ui-widget-content.ui-corner-all {
     border: none;
     width: 100%;
 }
+
 body .ui-inputtext.ui-widget.ui-state-default.ui-corner-all{
     height: 30px;
     padding-left: 2px;
