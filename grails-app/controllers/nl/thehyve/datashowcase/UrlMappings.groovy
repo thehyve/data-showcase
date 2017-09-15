@@ -9,7 +9,7 @@ class UrlMappings {
         "/"(uri: '/index.html')
 
         "/api/environment"(controller: 'environment', includes: ['index'])
-        "/api/items"(controller: 'item', includes: ['index', 'show'])
+        "/api/items"(controller: 'item', resources: 'item', includes: ['index', 'show'])
         "/api/keywords"(controller: 'keyword', includes: ['index'])
         "/api/projects"(controller: 'project', includes: ['index'])
         "/api/lines_of_research"(controller: 'researchLine', includes: ['index'])

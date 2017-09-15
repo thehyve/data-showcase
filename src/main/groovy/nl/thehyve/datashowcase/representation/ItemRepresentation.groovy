@@ -7,6 +7,11 @@ import nl.thehyve.datashowcase.enumeration.VariableType
 abstract class ItemRepresentation {
 
     /**
+     * An id of the variable
+     */
+    Long id
+
+    /**
      * A unique code for the variable.
      */
     String name
