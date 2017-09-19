@@ -150,14 +150,33 @@ body .ui-panel .ui-panel-titlebar .ui-panel-titlebar-icon {
     color: white;
 }
 
+/*
+ * Checkbox filters
+ */
 body .ui-panel .ui-panel-titlebar {
     background-color: #00889C;
+}
+body .ui-panel,
+body .ui-fieldset,
+body .ui-fieldset .ui-fieldset-legend {
+    border-color: lightgrey;
+}
+
+/*
+ * Shadow for filter panel and item table
+ */
+body .ui-panel,
+body .ui-datatable {
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14),0 3px 1px -2px rgba(0,0,0,0.12),0 1px 5px 0 rgba(0,0,0,0.2);
 }
 
 body .input:focus {
     border-color: #00889C !important;
 }
 
+/*
+ * Inline alignment of header elements
+ */
 .form-inline{
     display: inline-block;
 }
@@ -247,3 +266,10 @@ body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon {
 body .ui-inputgroup .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
     height: 36px;
 }
+
+.text-filter-container .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
+    width: 500px;
+}
+/*.text-filter-container .ui-inputtext.ui-widget.ui-state-default.ui-corner-all:focus {*/
+    /*width: 500px;*/
+/*}*/

@@ -9,15 +9,21 @@
 
     <!-- Right panel -->
     <div #rightPanel class="ds-right-panel">
-        <div class="form-inline">
-            <app-text-filter class="center-horizontal" style="padding-top: 10px"></app-text-filter>
-            <div class="shopping-cart-container">
-                <app-shopping-cart></app-shopping-cart>
+        <div class="ds-header">
+            <div class="form-inline">
+                <div class="ds-logos">
+                    <img src="assets/ntrLogo.jpg" alt="Nederlands Tweelingen Register;" style="height: 100px;">
+                    <img src="assets/VUlogo.png" alt="Vrije Universiteit Amsterdam;" style="height: 100px;">
+                </div>
+                <app-shopping-cart class="shopping-cart-container"></app-shopping-cart>
+                <app-text-filter class="text-filter-container"></app-text-filter>
             </div>
         </div>
-        <app-item-summary></app-item-summary>
-        <app-checkbox-filter></app-checkbox-filter>
-        <app-item-table></app-item-table>
+        <div class="ds-body">
+            <app-item-summary></app-item-summary>
+            <app-checkbox-filter></app-checkbox-filter>
+            <app-item-table></app-item-table>
+        </div>
     </div>
 </div>
 
