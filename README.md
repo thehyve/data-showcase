@@ -4,17 +4,16 @@ A data showcase for displaying a summary of data in TranSMART.
 
 ## Development
 
-# Configure PostgreSQL database
+### Configure PostgreSQL database
 ```bash
 sudo -u postgres psql
 ```
 
 ```bash
-create user "dscUser" with password 'dscUser';
-create database "data_showcase";
-grant all privileges on database "data_showcase" to dscUser;
+create user datashowcase with password 'datashowcase';
+create database data_showcase;
+grant all privileges on database data_showcase to datashowcase;
 ```
-
 
 ## Run
 
@@ -40,6 +39,13 @@ java -jar build/lib/data-showcase-0.0.1-SNAPHOT.war
 ```
 
 ## Publish
+Do not forget to change the contents of [env.json](src/main/user-interface/src/app/config/env.json) to:
+```json
+{
+  "env": "prod"
+}
+```
+Publish to Nexus:
 ```bash
 # Deploy to the Nexus repository https://repo.thehyve.nl
 ./gradlew publish
@@ -62,32 +68,21 @@ dataShowcase:
     environment: Internal
 dataSource:
     url: jdbc:postgresql://localhost:5432/data_showcase
-    username: dsc_user
+    username: datashowcase
     password: <configure a secure password>
-```
-
-Create the database:
-```bash
-sudo -u postgres psql
-```
-
-```sql
-create user dsc_user with password '<choose a secure password>';
-create database data_showcase;
-grant all privileges on database data_showcase to dsc_user;
 ```
 
 ## Test
 
 ```bash
 # Run unit tests
-./gradlew test
+./gradlew -Dgrails.env=test test
 
 # Run unit tests for the internal environment
 ./gradlew -Dgrails.env=testInternal test
 
 # Run unit tests and user interface tests
-./gradlew check
+./gradlew -Dgrails.env=test check
 ```
 
 For end to end API tests, see [data-showcase-api-e2e](data-showcase-api-e2e).
