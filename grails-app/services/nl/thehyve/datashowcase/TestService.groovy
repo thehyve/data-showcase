@@ -35,8 +35,8 @@ class TestService {
         def domain2 = new TreeNode(null, 'Other information')
         def subdomain2 = new TreeNode(domain2, 'Some information')
         nodes = [domain1, subdomain11, conceptNodeAge, subdomain12, conceptNodeHeight, subdomain121, domain2, subdomain2]
-        concepts*.save()
-        nodes*.save()
+        concepts*.save(flush: true)
+        nodes*.save(flush: true)
         nodes.each { node ->
             log.info "Created node ${node.label}, parent: ${node.parent?.path}, path: ${node.path}"
         }
@@ -57,13 +57,13 @@ class TestService {
         def projectA = new Project(name: 'Project A', description: 'First test project', lineOfResearch: researchLine1)
         def projectB = new Project(name: 'Project B', description: 'Second test project', lineOfResearch: researchLine2)
 
-        [researchLine1, researchLine2, projectA, projectB]*.save()
+        [researchLine1, researchLine2, projectA, projectB]*.save(flush: true)
 
         def keyword1 = new Keyword(keyword: 'Personal information')
         def keyword2 = new Keyword(keyword: 'Family related')
         def keyword3 = new Keyword(keyword: 'Body characteristics')
 
-        [keyword1, keyword2, keyword3]*.save()
+        [keyword1, keyword2, keyword3]*.save(flush: true)
 
         def item1 = new Item(
                 name: 'ageA',
@@ -107,7 +107,7 @@ class TestService {
                 project: projectB
         )
 
-        [item1, item2]*.save()
+        [item1, item2]*.save(flush: true)
     }
 
     /**
@@ -131,7 +131,7 @@ class TestService {
         def keyword2 = new Keyword(keyword: 'Family related')
         def keyword3 = new Keyword(keyword: 'Body characteristics')
 
-        [keyword1, keyword2, keyword3]*.save()
+        [keyword1, keyword2, keyword3]*.save(flush: true)
 
         def item1 = new Item(
                 name: 'ageA',
@@ -170,7 +170,7 @@ class TestService {
                 project: projectB
         )
 
-        [item1, item2]*.save()
+        [item1, item2]*.save(flush: true)
     }
 
 }
