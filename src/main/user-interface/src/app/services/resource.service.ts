@@ -3,10 +3,10 @@ import {Observable} from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import {TreeNode} from "../models/tree-node";
-import {Http, Response, Headers} from '@angular/http';
+import {Http, Response, Headers, ResponseContentType} from '@angular/http';
 import {Endpoint} from "../models/endpoint";
 import {AppConfig} from "../config/app.config";
-import {PATH_ITEMS, PATH_PROJECTS, PATH_TREE_NODES} from "../constants/endpoints.constants";
+import {PATH_ITEMS, PATH_LOGOS, PATH_PROJECTS, PATH_TREE_NODES} from "../constants/endpoints.constants";
 import {Item} from "../models/item";
 import {Project} from "../models/project";
 
@@ -15,6 +15,7 @@ import {Project} from "../models/project";
 export class ResourceService {
 
   private endpoint: Endpoint;
+
   constructor(private http: Http, private appConfig: AppConfig) {
     let apiUrl = appConfig.getConfig('api-url');
     let apiVersion = appConfig.getConfig('api-version');
@@ -65,6 +66,18 @@ export class ResourceService {
       headers: headers
     })
       .map((response: Response) => response.json().projects as Project[])
+      .catch(this.handleError.bind(this));
+  }
+
+  getLogo(type: string): Observable<Blob> {
+    let headers = new Headers();
+    let url = this.endpoint.apiUrl + PATH_LOGOS +"/" + type;
+
+    return this.http.get(url, {
+      headers: headers,
+      responseType: ResponseContentType.Blob
+    })
+      .map((response: Response) => response.blob())
       .catch(this.handleError.bind(this));
   }
 

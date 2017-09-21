@@ -17,11 +17,10 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {BrowserModule} from "@angular/platform-browser";
 import {HttpModule} from "@angular/http";
 import {AppConfig} from "./config/app.config";
-import {APP_INITIALIZER} from "@angular/core";
-import {initConfig} from "./app.module";
 import {ShoppingCartComponent} from "./shopping-cart/shopping-cart.component";
 import {AppConfigMock} from "./config/app.config.mock";
 import {ItemSummaryComponent} from "./item-summary/item-summary.component";
+import {LogosComponent} from "./logos/logos.component";
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -33,6 +32,7 @@ describe('AppComponent', () => {
         ItemTableComponent,
         ShoppingCartComponent,
         ItemSummaryComponent,
+        LogosComponent,
         AppComponent
       ],
       imports: [

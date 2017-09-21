@@ -105,8 +105,8 @@ dataSource:
     jmxExport: true
     driverClassName: org.postgresql.Driver
     dialect: org.hibernate.dialect.PostgreSQLDialect
-    username: dscUser
-    password: dscUser
+    username: datashowcase
+    password: datashowcase
 
 environments:
     developmentInternal:
@@ -161,3 +161,8 @@ environments:
                 testOnReturn: false
                 jdbcInterceptors: ConnectionState
                 defaultTransactionIsolation: 2 # TRANSACTION_READ_COMMITTED
+
+---
+# Paths to the logos for Data showcase application to be overwritten by external config
+ntrLogo: 'default'
+vuLogo: 'default'

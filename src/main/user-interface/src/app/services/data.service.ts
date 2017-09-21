@@ -49,11 +49,32 @@ export class DataService {
   private itemSummaryVisibleSource = new Subject<Item>();
   public itemSummaryVisible$ = this.itemSummaryVisibleSource.asObservable();
 
+  private ntrLogoUrlSummary= new Subject<string>();
+  public ntrLogoUrl$ = this.ntrLogoUrlSummary.asObservable();
+
+  private vuLogoUrlSummary = new Subject<string>();
+  public vuLogoUrl$ = this.vuLogoUrlSummary.asObservable();
+
   constructor(private resourceService: ResourceService) {
     this.updateAvailableProjects();
     this.updateNodes();
     this.updateItems();
     this.setFilteredItems();
+  }
+
+  loadLogo(type: string) {
+    this.resourceService.getLogo(type)
+      .subscribe(
+        (blobContent) => {
+          let urlCreator = window.URL;
+          if (type == "NTR"){
+            this.ntrLogoUrlSummary.next(urlCreator.createObjectURL(blobContent));
+          } else {
+            this.vuLogoUrlSummary.next(urlCreator.createObjectURL(blobContent));
+          }
+        },
+        err => console.error(err)
+      );
   }
 
   private processTreeNodes(nodes: TreeNode[]):TreeNodeLib[] {
