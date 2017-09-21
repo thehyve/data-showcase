@@ -269,6 +269,7 @@ body .ui-inputgroup .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
 
 .text-filter-container .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
     width: 500px;
+    height: 36px;
 }
 /*.text-filter-container .ui-inputtext.ui-widget.ui-state-default.ui-corner-all:focus {*/
     /*width: 500px;*/
