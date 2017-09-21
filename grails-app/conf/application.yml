@@ -2,6 +2,9 @@
 dataShowcase:
     # The environment can be public or internal (restricted).
     environment: Public
+    # Paths to the logos for Data showcase application to be overwritten by external config
+    ntrLogo: 'default'
+    vuLogo: 'default'
 
 ---
 grails:
@@ -162,7 +165,3 @@ environments:
                 jdbcInterceptors: ConnectionState
                 defaultTransactionIsolation: 2 # TRANSACTION_READ_COMMITTED
 
----
-# Paths to the logos for Data showcase application to be overwritten by external config
-ntrLogo: 'default'
-vuLogo: 'default'

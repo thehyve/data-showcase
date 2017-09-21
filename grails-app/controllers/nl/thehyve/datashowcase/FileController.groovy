@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Value
 class FileController {
     static responseFormats = ['json', 'jpg', 'png']
 
-    @Value('${vuLogo}')
+    @Value('${dataShowcase.vuLogo}')
     def vuLogoPath
-    @Value('${ntrLogo}')
+    @Value('${dataShowcase.ntrLogo}')
     def ntrLogoPath
 
     /**

@@ -66,6 +66,8 @@ Example configuration file `data-showcase-internal.yml`:
 ```yaml
 dataShowcase:
     environment: Internal
+    ntrLogo: '/<path to the logo>/<file name>'
+    vuLogo: '/<path to the logo>/<file name>'
 dataSource:
     url: jdbc:postgresql://localhost:5432/data_showcase
     username: datashowcase
