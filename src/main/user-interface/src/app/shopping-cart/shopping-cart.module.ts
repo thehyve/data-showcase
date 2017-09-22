@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {ShoppingCartComponent} from "./shopping-cart.component";
 import {FormsModule} from "@angular/forms";
-import {ButtonModule, DataTableModule, DialogModule} from "primeng/primeng";
+import {ButtonModule, DataTableModule, DialogModule, InputTextModule} from "primeng/primeng";
 
 @NgModule({
   imports: [
@@ -10,7 +10,8 @@ import {ButtonModule, DataTableModule, DialogModule} from "primeng/primeng";
     FormsModule,
     DialogModule,
     ButtonModule,
-    DataTableModule
+    DataTableModule,
+    InputTextModule
   ],
   declarations: [ShoppingCartComponent],
   exports: [ShoppingCartComponent]

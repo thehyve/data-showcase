@@ -1,4 +1,4 @@
-<p-dialog header="Item summary" [(visible)]="display" [modal]="true" [width]="600" [responsive]="true"
+<p-dialog header="Item summary" [(visible)]="display" [modal]="true" [width]="700" [responsive]="true"
           [closable]="true" [draggable]="false" [resizable]="false">
     <table>
         <tr>
@@ -6,12 +6,24 @@
             <th>{{item?.name}}</th>
         </tr>
         <tr>
-            <th>Domain:</th>
-            <th>{{item?.domain}}</th>
+            <th>Concept:</th>
+            <th>{{item?.concept}}</th>
         </tr>
         <tr>
-            <th>Variable labels:</th>
+            <th>Variable label (En):</th>
+            <th>{{item?.label}}</th>
+        </tr>
+        <tr>
+            <th>Long variable label (En):</th>
             <th>{{item?.labelLong}}</th>
+        </tr>
+        <tr>
+            <th>Variable label (Nl):</th>
+            <th>{{item?.labelNl}}</th>
+        </tr>
+        <tr>
+            <th>Long variable label (Nl):</th>
+            <th>{{item?.labelNlLong}}</th>
         </tr>
         <tr>
             <th>Value labels:</th>
@@ -58,6 +70,5 @@
             <th>{{item?.summary.frequency}}</th>
         </tr>
     </table>
-    <p-footer>
-    </p-footer>
+    <br/>
 </p-dialog>

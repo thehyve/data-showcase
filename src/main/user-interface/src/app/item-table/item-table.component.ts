@@ -1,7 +1,23 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, Pipe, PipeTransform} from '@angular/core';
 import {DataService} from "../services/data.service";
-import {InputText} from "primeng/primeng";
 import {Item} from "../models/item";
+
+@Pipe({
+  name: 'itemFilter'
+})
+export class ItemFilter implements PipeTransform {
+  transform(value: Item[], filter: string): Item[] {
+    filter = filter ? filter.toLocaleLowerCase(): null;
+    return filter && value ?
+      value.filter(item =>
+        (item.name.toLocaleLowerCase().indexOf(filter) !== -1) ||
+        (item.label.toLocaleLowerCase().indexOf(filter) !== -1) ||
+        (item.labelLong.toLocaleLowerCase().indexOf(filter) !== -1) ||
+        (item.labelNl && item.labelNl.toLocaleLowerCase().indexOf(filter) !== -1) ||
+        (item.labelNlLong && item.labelNlLong.toLocaleLowerCase().indexOf(filter) !== -1)
+      ) : value;
+  }
+}
 
 @Component({
   selector: 'app-item-table',
@@ -10,8 +26,7 @@ import {Item} from "../models/item";
 })
 export class ItemTableComponent implements OnInit {
 
-  @ViewChild('gf') inputtext: InputText;
-  globalFilter: string;
+  filterValue: string;
   items: Item[];
   itemsSelection: Item[];
 
@@ -21,21 +36,15 @@ export class ItemTableComponent implements OnInit {
         this.itemsSelection = items;
       }
     );
+    this.items = this.dataService.filteredItems;
     this.dataService.globalFilter$.subscribe(
       filter => {
-        this.globalFilter = filter;
-        this.forceKeyboardEvent();
+        this.filterValue = filter;
       }
     );
-    this.items = this.dataService.filteredItems;
   }
 
   ngOnInit() {
-  }
-
-  // a primeNG issue workaround - keyboard event is required to call the global filtering event
-  forceKeyboardEvent() {
-    this.inputtext['nativeElement'].dispatchEvent(new KeyboardEvent('keyup'));
   }
 
   addToCart(){

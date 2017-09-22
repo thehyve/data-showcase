@@ -1,37 +1,44 @@
 <div class="item-table-container">
-        <input #gf [ngModel]="globalFilter" style="display: none;">
+    <p-dataTable #dt
+                 [immutable]=false
+                 [value]="items | itemFilter: filterValue"
+                 [rows]="8" [paginator]="true"
+                 [headerCheckboxToggleAllPages]="true"
+                 [(selection)]="itemsSelection">
+        <p-column selectionMode="multiple" [style]="{ width: '45px'}">
+        </p-column>
+        <p-column field="name" header="Name"
+                  [sortable]="true">
+        </p-column>
 
-        <p-dataTable #dt
-                     [immutable]=false
-                     [value]="items"
-                     [globalFilter]="gf"
-                     [rows]="10" [paginator]="true"
-                     [(selection)]="itemsSelection">
-            <p-column selectionMode="multiple" [style]="{ width: '45px'}">
-            </p-column>
-            <p-column field="name" header="Name"
-                      [sortable]="true">
-            </p-column>
+        <p-column field="labelLong" header="Description"
+                  [sortable]="true">
+        </p-column>
 
-            <p-column field="label" header="Description"
-                      [sortable]="true">
-            </p-column>
+        <p-column field="project" header="Project"
+                  [sortable]="true">
+        </p-column>
 
-            <p-column field="project" header="Project"
-                      [sortable]="true">
-            </p-column>
+        <p-column field="researchLine" header="Research Line"
+                  [sortable]="true">
+        </p-column>
 
-            <p-column field="researchLine" header="Research Line"
-                      [sortable]="true">
-            </p-column>
+        <p-column field="concept" header="Concept"
+                  [sortable]="true">
+        </p-column>
 
-            <p-column [style]="{ width: '50px'}">
-                <ng-template let-item="rowData" pTemplate="body">
-                    <button pButton type="button" class="btn btn-default btn-circle btn-lg" (click)="showSummary(item)" icon="fa fa-question-circle"></button>
-                </ng-template>
-            </p-column>
-
-        </p-dataTable>
-
+        <p-column [style]="{ width: '50px'}">
+            <ng-template let-item="rowData" pTemplate="body">
+                <button pButton type="button" class="btn btn-default btn-circle btn-lg" (click)="showSummary(item)"
+                        icon="fa fa-question-circle"></button>
+            </ng-template>
+        </p-column>
+    </p-dataTable>
+    <div class="inline">
         <button pButton type="button" label="Add to cart" class="export-button" (click)="addToCart()"></button>
+        <div class="item-count-container">
+            Items selected: <b>{{itemsSelection? itemsSelection.length : 0}}</b>. Total: <b>{{items? items.length : 0}}</b>
+        </div>
+    </div>
 </div>
+

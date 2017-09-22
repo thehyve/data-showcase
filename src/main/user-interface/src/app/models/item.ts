@@ -1,14 +1,17 @@
-import {ItemSummary} from "./itemSummary";
+import {ItemSummary} from "./item-summary";
+import {Concept} from "./concept";
 
 export class Item {
   name: string;
-  label: string;
-  labelLong: string;
+  itemPath: string;
   type: string;
-  domain: string;
   project: string;
   keywords: string[];
   researchLine: string;
-  constraint: string;
+  concept: string;
   summary: ItemSummary;
+  label: string;
+  labelLong: string;
+  labelNl: string;
+  labelNlLong: string;
 }

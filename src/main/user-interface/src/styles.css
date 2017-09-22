@@ -39,12 +39,17 @@ body .ds-tree-container {
 /*
  * Style for the search box in the tree-node accordion on the left side
  */
+.ds-tree-filter-input {
+    border-bottom: 1px solid darkgray;
+    padding-top: 10px;
+    height: 50px;
+    font-size: small !important;
+}
 .ds-tree-filter-input > input{
     font-size: small !important;
     height: 2.3em;
     min-width: 200px;
     margin-top: 10px;
-    margin-left: 10px;
 }
 
 /*
@@ -98,17 +103,22 @@ body .ui-datatable thead th.ui-sortable-column:not(.ui-state-active):hover {
  * Change the primeng selected listbox item
  */
 body .ui-listbox-item.ui-corner-all.ui-state-highlight,
-body .ui-datatable .ui-datatable-data tr.ui-datatable-even.ui-state-highlight,
 body .ui-state-highlight
 {
     background-color: white;
-    color: #55595c;
+    color: #292b2c;
+}
+body .ui-datatable .ui-datatable-data tr.ui-datatable-even.ui-state-highlight
+{
+    background-color: #f7f7f7;
+    color: #292b2c;
 }
 
 body .ui-listbox.ui-inputtext.ui-widget.ui-widget-content.ui-corner-all {
     border: none;
     width: 100%;
 }
+
 body .ui-inputtext.ui-widget.ui-state-default.ui-corner-all{
     height: 30px;
     padding-left: 2px;
@@ -140,14 +150,33 @@ body .ui-panel .ui-panel-titlebar .ui-panel-titlebar-icon {
     color: white;
 }
 
+/*
+ * Checkbox filters
+ */
 body .ui-panel .ui-panel-titlebar {
     background-color: #00889C;
+}
+body .ui-panel,
+body .ui-fieldset,
+body .ui-fieldset .ui-fieldset-legend {
+    border-color: lightgrey;
+}
+
+/*
+ * Shadow for filter panel and item table
+ */
+body .ui-panel,
+body .ui-datatable {
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14),0 3px 1px -2px rgba(0,0,0,0.12),0 1px 5px 0 rgba(0,0,0,0.2);
 }
 
 body .input:focus {
     border-color: #00889C !important;
 }
 
+/*
+ * Inline alignment of header elements
+ */
 .form-inline{
     display: inline-block;
 }
@@ -194,6 +223,11 @@ body .input:focus {
     margin-top: 4px;
     margin-bottom: 0;
 }
+/* Shopping cart delete button */
+.ui-button-danger.ui-button-icon-only .fa {
+    margin-top: -.55em;
+    margin-left: -.63em
+}
 
 /* Show item summary button */
 .btn-default.ui-button-icon-only,
@@ -203,15 +237,40 @@ body .input:focus {
     background-color: transparent !important;
     box-shadow: none;
 }
+
+/* icon-only buttons */
 .btn-default.ui-button-icon-only .fa {
     font-size: 28px;
     color: #00889C;
     margin-left: -.75em;
 }
+.ds-tree-filter-input .btn-default.ui-button-icon-only .fa {
+    color: #747a7f;
+}
 
 /* Popup datable header */
 body .ui-dialog .ui-dialog-titlebar,
 body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon {
-    background-color: #339C90;
+    background-color: #00889C;
     color: white;
 }
+
+.ui-dialog-footer {
+    height: 65px;
+}
+
+.ui-inputgroup .ui-inputgroup-addon {
+    background-color: #e7f3f1;
+    border-color: darkgray;
+}
+body .ui-inputgroup .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
+    height: 36px;
+}
+
+.text-filter-container .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
+    width: 500px;
+    height: 36px;
+}
+/*.text-filter-container .ui-inputtext.ui-widget.ui-state-default.ui-corner-all:focus {*/
+    /*width: 500px;*/
+/*}*/

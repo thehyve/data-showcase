@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {TreeNode} from 'primeng/primeng';
+import {TreeNode as TreeNodeLib} from 'primeng/primeng';
 import {ResourceService} from './resource.service';
-import {Domain} from "../models/domain";
+import {TreeNode} from "../models/tree-node";
 import {Item} from "../models/item";
 import {Project} from "../models/project";
 import {Subject} from "rxjs/Subject";
@@ -12,13 +12,13 @@ type LoadingState = 'loading' | 'complete';
 export class DataService {
 
   // the variable that holds the entire tree structure
-  public treeNodes: TreeNode[] = [];
+  public treeNodes: TreeNodeLib[] = [];
   // the status indicating the when the tree is being loaded or finished loading
   public loadingTreeNodes: LoadingState = 'complete';
 
   // list of all items
   private items: Item[] = [];
-  // filtered list of items based on selected domain and selected checkbox filters
+  // filtered list of items based on selected node and selected checkbox filters
   public filteredItems: Item[] = [];
 
   // global text filter
@@ -40,49 +40,86 @@ export class DataService {
   projects: string[] = [];
   researchLines: string[] = [];
 
-  // items available for currently selected domain
+  // items available for currently selected node
   availableItems: Item[] = [];
-  // projects available for currently selected domain
+  // projects available for currently selected node
   availableProjects: Project[] = [];
 
   // item summary popup visibility
   private itemSummaryVisibleSource = new Subject<Item>();
   public itemSummaryVisible$ = this.itemSummaryVisibleSource.asObservable();
 
+  private ntrLogoUrlSummary= new Subject<string>();
+  public ntrLogoUrl$ = this.ntrLogoUrlSummary.asObservable();
+
+  private vuLogoUrlSummary = new Subject<string>();
+  public vuLogoUrl$ = this.vuLogoUrlSummary.asObservable();
+
   constructor(private resourceService: ResourceService) {
     this.updateAvailableProjects();
-    this.updateDomains();
+    this.updateNodes();
     this.updateItems();
     this.setFilteredItems();
   }
 
-  private processTreeNodes(domains: Domain[]):TreeNode[] {
-    let treeNodes:TreeNode[] = [];
-    for (let domain of domains) {
-      let node = this.processTreeNode(domain);
-      treeNodes.push(node);
+  loadLogo(type: string) {
+    this.resourceService.getLogo(type)
+      .subscribe(
+        (blobContent) => {
+          let urlCreator = window.URL;
+          if (type == "NTR"){
+            this.ntrLogoUrlSummary.next(urlCreator.createObjectURL(blobContent));
+          } else {
+            this.vuLogoUrlSummary.next(urlCreator.createObjectURL(blobContent));
+          }
+        },
+        err => console.error(err)
+      );
+  }
+
+  private processTreeNodes(nodes: TreeNode[]):TreeNodeLib[] {
+    let treeNodes:TreeNodeLib[] = [];
+    for (let node of nodes) {
+      if (!(node.accumulativeItemCount == 0  && node.nodeType == "Domain" )) {
+        let newNode = this.processTreeNode(node);
+        treeNodes.push(newNode);
+      }
     }
     return treeNodes;
   }
 
-  private processTreeNode(domain: Domain):TreeNode {
+  private processTreeNode(node: TreeNode): TreeNodeLib {
     // Add PrimeNG visual properties for tree nodes
-    let node: TreeNode = domain;
-    let count = domain['accumulativeItemCount'] ? domain['accumulativeItemCount'] : 0;
-    let countStr = ' (' + count + ')';
-    node['label'] = domain['name'] + countStr;
+    let newNode: TreeNodeLib = node;
 
-    // If this node has children, drill down
-    if (domain['children'] && domain['children'].length > 0) {
+    // filter out empty domains
+    newNode.children = node.children.filter(value => !(value.accumulativeItemCount == 0  && value.nodeType == "Domain" ));
+    let count = node.accumulativeItemCount ? node.accumulativeItemCount : 0;
+    let countStr = ' (' + count + ')';
+    newNode.label = node.label + countStr;
+
+    // If this newNode has children, drill down
+    if (node.children && node.children.length > 0) {
       // Recurse
-      node['expandedIcon'] = 'fa-folder-open';
-      node['collapsedIcon'] = 'fa-folder';
-      node['icon'] = '';
-      this.processTreeNodes(domain['children']);
+      newNode.expandedIcon = 'fa-folder-open';
+      newNode.collapsedIcon = 'fa-folder';
+      newNode.icon = '';
+      this.processTreeNodes(node.children);
     } else {
-      node['icon'] = 'fa-folder';
+      switch (node.concept.variableType) {
+        case "Text":
+          newNode['icon'] = 'icon-abc';
+          break;
+        case "Numerical":
+          newNode['icon'] = 'icon-123';
+          break;
+        default: {
+          newNode['icon'] = 'fa-file-text';
+          break;
+        }
+      }
     }
-    return node;
+    return newNode;
   }
 
   updateAvailableProjects() {
@@ -95,14 +132,14 @@ export class DataService {
       );
   }
 
-  updateDomains() {
+  updateNodes() {
     this.loadingTreeNodes = 'loading';
     // Retrieve all tree nodes
     this.resourceService.getTreeNodes()
       .subscribe(
-        (domains: Domain[]) => {
+        (nodes: TreeNode[]) => {
           this.loadingTreeNodes = 'complete';
-          let treeNodes = this.processTreeNodes(domains);
+          let treeNodes = this.processTreeNodes(nodes);
           treeNodes.forEach((function (node) {
             this.treeNodes.push(node); // to ensure the treeNodes pointer remains unchanged
           }).bind(this));
@@ -133,11 +170,12 @@ export class DataService {
       );
   }
 
-  updateItemTable(domain: Domain) {
+  updateItemTable(treeNode: TreeNode) {
     this.items.length = 0;
-    let domainItems = this.availableItems.filter(item => item.domain.startsWith(domain.path));
-    for (let item of domainItems){
-      this.items.push(item);
+    let nodeItems = treeNode ? this.availableItems.filter(item => item.itemPath.startsWith(treeNode.path))
+                      : this.availableItems;
+    for (let node of nodeItems){
+      this.items.push(node);
     }
     this.setFilteredItems();
     this.getUniqueFilterValues();

@@ -43,8 +43,9 @@ class InternalItemServiceSpec extends Specification {
             def maxValues = items*.summary.maxValue as List<Double>
         then: "2 items being returned, age and height, both public and internal, including aggregate values"
             items.size() == 2
-            items*.label == ['age', 'height']
+            items*.label == ['Age', 'Height']
             items*.publicItem == [true, false]
+            items*.itemPath == ['/Personal information/Basic information/Age', '/Personal information/Extended information/Height']
             that(maxValues, hasItem(
                     closeTo(99, 0.1)
             ))

@@ -37,13 +37,14 @@ class PublicItemServiceSpec extends Specification {
             setupData()
         when:
             log.info "Running test ..."
-            def items = itemService.getItems()
+            def items = itemService.items
         then: "2 items being returned"
             items.size() == 2
             items*.name == ['ageA', 'heightB']
-            items*.label == ['age', 'height']
+            items*.label == ['Age', 'Height']
             items*.project == ['Project A', 'Project B']
-            that(items*.domain, hasItem('/PI/Basic'))
+            items*.itemPath == ['/Personal information/Basic information/Age', '/Personal information/Extended information/Height']
+            that(items*.concept, hasItem('age'))
     }
 
 }

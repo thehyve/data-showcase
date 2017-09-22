@@ -1,5 +1,5 @@
-<p-dialog header="Shopping Cart" [(visible)]="display" [modal]="true" [width]="900" [responsive]="true"
-          [closable]="true" [draggable]="false" [resizable]="false" >
+<p-dialog header="Shopping Cart" [(visible)]="display" [modal]="true" [width]="1100" [responsive]="true"
+          [closable]="true" [draggable]="false" [resizable]="false">
     <div *ngIf="items.length==0; else item_table_content">
         Shopping Cart is empty.
     </div>
@@ -12,7 +12,8 @@
 
             <p-column [style]="{ width: '50px'}" header="Del">
                 <ng-template let-item="rowData" pTemplate="body">
-                    <button pButton type="button" (click)="deleteItem(item)" icon="fa-close" class="ui-button-danger"></button>
+                    <button pButton type="button" (click)="deleteItem(item)" icon="fa-close"
+                            class="ui-button-danger"></button>
                 </ng-template>
             </p-column>
 
@@ -32,7 +33,7 @@
                       [sortable]="true">
             </p-column>
 
-            <p-column field="domain" header="Domain"
+            <p-column field="concept" header="Concept"
                       [sortable]="true">
             </p-column>
 
@@ -40,8 +41,15 @@
     </ng-template>
 
     <p-footer>
-        <button type="button" pButton icon="fa-external-link-square" (click)="display=false" label="Export"
-        [disabled]="items.length==0" ></button>
+        <button type="button" pButton icon="fa-close" (click)="deleteAll();"
+                label="Delete all" [disabled]="disabled" class="ui-button-danger" style="float: left"></button>
+        <div class="ui-inputgroup pull-right">
+            <input type="text" size="30" pInputText  placeholder="File name (optional)" [(ngModel)]="fileName"
+                   [disabled]="disabled">
+            <span class="ui-inputgroup-addon">.json</span>&nbsp;
+            <button type="button" pButton icon="fa-external-link-square" (click)="exportItems(); display=false;"
+                label="Export" [disabled]="disabled"></button>
+        </div>
     </p-footer>
 </p-dialog>
 

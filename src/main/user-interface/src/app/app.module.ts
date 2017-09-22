@@ -14,6 +14,7 @@ import {HttpModule} from "@angular/http";
 import {AppConfig} from "./config/app.config";
 import {ShoppingCartModule} from "./shopping-cart/shopping-cart.module";
 import {ItemSummaryModule} from "./item-summary/item-summary.module";
+import { LogosComponent } from './logos/logos.component';
 
 export function initConfig(config: AppConfig) {
   return () => config.load()
@@ -21,7 +22,8 @@ export function initConfig(config: AppConfig) {
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    LogosComponent
   ],
   imports: [
     BrowserModule,

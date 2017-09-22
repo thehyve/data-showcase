@@ -1,29 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ItemSummaryComponent } from './item-summary.component';
-import {FormsModule} from "@angular/forms";
-import {DataTableModule, DialogModule} from "primeng/primeng";
-import {HttpModule} from "@angular/http";
+import { LogosComponent } from './logos.component';
 import {DataService} from "../services/data.service";
 import {ResourceService} from "../services/resource.service";
 import {AppConfig} from "../config/app.config";
 import {AppConfigMock} from "../config/app.config.mock";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {HttpModule} from "@angular/http";
 
-describe('ItemSummaryComponent', () => {
-  let component: ItemSummaryComponent;
-  let fixture: ComponentFixture<ItemSummaryComponent>;
+describe('LogosComponent', () => {
+  let component: LogosComponent;
+  let fixture: ComponentFixture<LogosComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ItemSummaryComponent ],
-      imports: [
-        FormsModule,
-        DialogModule,
-        DataTableModule,
-        BrowserAnimationsModule,
-        HttpModule
-      ],
+      declarations: [LogosComponent],
+      imports: [HttpModule],
       providers: [
         DataService,
         ResourceService,
@@ -37,7 +28,7 @@ describe('ItemSummaryComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ItemSummaryComponent);
+    fixture = TestBed.createComponent(LogosComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

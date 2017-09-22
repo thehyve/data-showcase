@@ -15,23 +15,27 @@ class DataService {
         Item.executeUpdate('delete from Item')
         Summary.executeUpdate('delete from Summary')
         TreeNode.executeUpdate('delete from TreeNode')
+        Concept.executeUpdate('delete from Concept')
         Keyword.executeUpdate('delete from Keyword')
         Project.executeUpdate('delete from Project')
         LineOfResearch.executeUpdate('delete from LineOfResearch')
     }
 
     /**
-     * Upload tree nodes and items.
+     * Upload concepts, tree nodes and items.
      *
+     * @param concepts The concepts to save.
      * @param nodes The nodes to save.
+     * @param items The items to save.
      */
-    def uploadData(List<TreeNode> domainStructure, List<ItemRepresentation> items) {
+    def uploadData(List<Concept> concepts, List<TreeNode> nodes, List<ItemRepresentation> items) {
         if (!dataShowcaseEnvironment.internalInstance) {
             // TODO
         }
         // FIXME
         // - check if no public data is being uploaded.
         // - truncate tables
+        // - upload concepts
         // - upload items and associated data
         // - upload tree nodes
     }

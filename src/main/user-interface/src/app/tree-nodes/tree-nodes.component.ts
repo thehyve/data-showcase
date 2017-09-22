@@ -1,7 +1,8 @@
-import {Component, OnInit, ElementRef, AfterViewInit} from '@angular/core';
+import {Component, OnInit, ElementRef, AfterViewInit, ViewChild} from '@angular/core';
 import {TreeNode} from 'primeng/components/common/api';
 import {trigger, transition, animate, style} from '@angular/animations';
 import {DataService} from '../services/data.service';
+import {AutoComplete} from "primeng/primeng";
 
 @Component({
   selector: 'app-tree-nodes',
@@ -23,6 +24,7 @@ import {DataService} from '../services/data.service';
 
 export class TreeNodesComponent implements OnInit, AfterViewInit {
 
+  @ViewChild('autocomplete') autocompleteCharge: AutoComplete;
   // the tree nodes to be rendered in the tree, a subset of allTreeNodes
   treeNodes: TreeNode[];
   // the observer that monitors the DOM element change on the tree
@@ -71,6 +73,16 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
     if (event.node) {
       this.dataService.updateItemTable(event.node)
     }
+  }
+
+  clear(event){
+    this.selectedNode = null;
+    // primeng autocomplete issue workaround
+    // https://github.com/primefaces/primeng/issues/2882
+    this.autocompleteCharge.inputEL.nativeElement.value = '';
+    this.searchTerm = '';
+    this.dataService.updateItemTable(null);
+    this.onFiltering(event);
   }
 
   /**
