@@ -51,6 +51,14 @@ class Item {
         concept.labelLong
     }
 
+    String getLabelNl() {
+        concept.labelNl
+    }
+
+    String getLabelNlLong() {
+        concept.labelNlLong
+    }
+
     String getType() {
         concept.variableType
     }

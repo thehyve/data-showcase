@@ -14,14 +14,24 @@ class Concept {
     String conceptCode
 
     /**
-     * The short name of the variable.
+     * The short name of the variable in English.
      */
     String label
 
     /**
-     * A textual description of the variable.
+     * A textual description of the variable in English.
      */
     String labelLong
+
+    /**
+     * The short name of the variable in Dutch.
+     */
+    String labelNl
+
+    /**
+     * A textual description of the variable in Dutch.
+     */
+    String labelNlLong
 
     /**
      * The type of the variable in Transmart (textual, numerical, categorical).
@@ -35,6 +45,8 @@ class Concept {
 
     static constraints = {
         conceptCode unique: true
+        labelNl nullable: true
+        labelNlLong nullable: true
     }
 
 }

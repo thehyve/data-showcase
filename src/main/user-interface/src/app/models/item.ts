@@ -3,8 +3,6 @@ import {Concept} from "./concept";
 
 export class Item {
   name: string;
-  label: string;
-  labelLong: string;
   itemPath: string;
   type: string;
   project: string;
@@ -12,4 +10,8 @@ export class Item {
   researchLine: string;
   concept: string;
   summary: ItemSummary;
+  label: string;
+  labelLong: string;
+  labelNl: string;
+  labelNlLong: string;
 }

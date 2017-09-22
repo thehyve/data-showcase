@@ -17,6 +17,17 @@ class ConceptRepresentation {
     String labelLong
 
     /**
+     * The short name of the variable.
+     */
+    String labelNl
+
+    /**
+     * A textual description of the variable.
+     */
+    String labelNlLong
+
+
+    /**
      * The type of the variable in Transmart (textual, numerical, categorical).
      */
     VariableType variableType

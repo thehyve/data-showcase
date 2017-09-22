@@ -17,14 +17,24 @@ abstract class ItemRepresentation {
     String name
 
     /**
-     * The short name of the variable.
+     * The short name of the variable in English.
      */
     String label
 
     /**
-     * A textual description of the variable.
+     * A textual description of the variable in English.
      */
     String labelLong
+
+    /**
+     * The short name of the variable in Dutch.
+     */
+    String labelNl
+
+    /**
+     * A textual description of the variable in Dutch.
+     */
+    String labelNlLong
 
     /**
      * The full path of the item that can be used in tranSMART
