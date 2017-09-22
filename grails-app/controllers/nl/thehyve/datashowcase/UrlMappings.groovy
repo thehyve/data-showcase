@@ -9,12 +9,12 @@ class UrlMappings {
         "/"(uri: '/index.html')
 
         "/api/environment"(controller: 'environment', includes: ['index'])
-        "/api/items"(controller: 'item', resources: 'item', includes: ['index', 'show'])
+        "/api/items"(resources: 'item', includes: ['index', 'show'])
         "/api/keywords"(controller: 'keyword', includes: ['index'])
         "/api/projects"(controller: 'project', includes: ['index'])
         "/api/lines_of_research"(controller: 'researchLine', includes: ['index'])
         "/api/tree_nodes"(controller: 'tree', includes: ['index'])
-        "/api/file/getLogos/${type}"(controller: 'file', includes: ['getLogos'])
+        "/api/file/logos/${type}"(controller: 'file', includes: ['getLogos'])
 
         if (Environment.current.name in [Constants.PUBLIC_TEST_ENVIRONMENT, Constants.INTERNAL_TEST_ENVIRONMENT]) {
             "/api/test/clearDatabase"(controller: 'test', action: 'clearDatabase')
