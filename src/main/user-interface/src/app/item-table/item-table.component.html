@@ -1,10 +1,7 @@
 <div class="item-table-container">
-    <input #gf [ngModel]="globalFilter" style="display: none;">
-
     <p-dataTable #dt
                  [immutable]=false
-                 [value]="items"
-                 [globalFilter]="gf"
+                 [value]="items | itemFilter: filterValue"
                  [rows]="8" [paginator]="true"
                  [headerCheckboxToggleAllPages]="true"
                  [(selection)]="itemsSelection">
@@ -14,7 +11,7 @@
                   [sortable]="true">
         </p-column>
 
-        <p-column field="label" header="Description"
+        <p-column field="labelLong" header="Description"
                   [sortable]="true">
         </p-column>
 
