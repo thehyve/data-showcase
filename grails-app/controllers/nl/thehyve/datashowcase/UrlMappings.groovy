@@ -14,7 +14,7 @@ class UrlMappings {
         "/api/projects"(controller: 'project', includes: ['index'])
         "/api/lines_of_research"(controller: 'researchLine', includes: ['index'])
         "/api/tree_nodes"(controller: 'tree', includes: ['index'])
-        "/api/file/logos/${type}"(controller: 'file', includes: ['getLogos'])
+        "/api/file/logo/${type}"(controller: 'file', includes: ['getLogo'])
 
         if (Environment.current.name in [Constants.PUBLIC_TEST_ENVIRONMENT, Constants.INTERNAL_TEST_ENVIRONMENT]) {
             "/api/test/clearDatabase"(controller: 'test', action: 'clearDatabase')
