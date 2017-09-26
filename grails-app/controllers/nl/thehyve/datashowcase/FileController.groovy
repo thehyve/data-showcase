@@ -2,7 +2,10 @@ package nl.thehyve.datashowcase
 
 
 import nl.thehyve.datashowcase.enumeration.LogoType
+import org.springframework.core.io.FileSystemResource
+import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.UrlResource
 
 class FileController {
     static responseFormats = ['json', 'jpg', 'png']
@@ -12,7 +15,7 @@ class FileController {
     @Value('${dataShowcase.ntrLogo}')
     def ntrLogoPath
 
-    private final static defaultPath = "grails-app/assets/images/placeholder.jpg"
+    private final static defaultPath = 'images/placeholder.jpg'
 
     /**
      * Finds the path of a logo
@@ -21,36 +24,34 @@ class FileController {
      * @return Image outputStream
      */
     def getLogo(String type) {
-        def path = ''
         LogoType typeEnum
 
         try {
             typeEnum = LogoType.valueOf(type)
         } catch (IllegalArgumentException e) {
-            return response.status = 404
+            return response.status = 400
         }
 
-
+        def path
         if (typeEnum == LogoType.NTR) {
             path = ntrLogoPath == 'default' ? defaultPath : ntrLogoPath
         } else if (typeEnum == LogoType.VU) {
             path = vuLogoPath == 'default' ? defaultPath : vuLogoPath
         } else {
-            path = defaultPath
+            return response.status = 400
         }
 
-        File image = new File(path)
-        if (!image.exists()) {
-            return response.status = 500
+        Resource image
+        if (path == defaultPath) {
+            URL imageUrl = getClass().getClassLoader().getResource(defaultPath)
+            image = new UrlResource(imageUrl)
+        } else {
+            image = new FileSystemResource(path)
+            if (!image.exists()) {
+                return response.status = 500
+            }
         }
-
-        response.setContentType("application/jpg")
-        OutputStream out = response.getOutputStream()
-        out.write(image.bytes)
-        out.close()
+        render file: image.inputStream, contentType: 'image/jpg'
     }
 
-    private static File getDefaultLogo(){
-        return new File(defaultPath)
-    }
 }

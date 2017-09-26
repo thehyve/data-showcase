@@ -114,6 +114,15 @@ bootRun {
     addResources = true
 }
 
+war {
+    webInf {
+        with copySpec({
+            from 'src/main/resources/images'
+            into 'images'
+        })
+    }
+}
+
 task executableWar(type: Copy) {
     from "${libsDir}/${project.name}-${project.version}.war"
     into "${distsDir}"
