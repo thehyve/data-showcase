@@ -31,11 +31,11 @@ gradle wrapper
 cd src/main/user-interface
 npm start
 
-# Package, creates build/lib/data-showcase-0.0.1-SNAPHOT.war
+# Package, creates build/lib/data-showcase-0.0.1-SNAPSHOT.war
 ./gradlew assemble
 
 # Run the war
-java -jar build/lib/data-showcase-0.0.1-SNAPHOT.war
+java -jar build/libs/data-showcase-0.0.1-SNAPSHOT.war
 ```
 
 ## Publish

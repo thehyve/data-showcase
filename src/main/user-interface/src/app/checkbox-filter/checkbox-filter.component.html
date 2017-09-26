@@ -9,14 +9,14 @@
                 </p-fieldset>
             </div>
             <div class="ui-g-4">
-                <p-fieldset legend="Projects">
-                    <p-listbox [options]="projects" [(ngModel)]="selectedProjects" [filter]=true [multiple]=true
-                               [checkbox]=true [metaKeySelection]=false (onChange)="updateFilters()"></p-listbox>
+                <p-fieldset legend="Research lines">
+                    <p-listbox [options]="researchLines" [(ngModel)]="selectedResearchLines" [filter]=true [multiple]=true
+                               [checkbox]=true [metaKeySelection]=false (onChange)="updateFilters(); updateProjects();"></p-listbox>
                 </p-fieldset>
             </div>
             <div class="ui-g-4">
-                <p-fieldset legend="Research lines">
-                    <p-listbox [options]="researchLines" [(ngModel)]="selectedResearchLines" [filter]=true [multiple]=true
+                <p-fieldset legend="Projects">
+                    <p-listbox [options]="projects" [(ngModel)]="selectedProjects" [filter]=true [multiple]=true
                                [checkbox]=true [metaKeySelection]=false (onChange)="updateFilters()"></p-listbox>
                 </p-fieldset>
             </div>

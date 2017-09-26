@@ -35,4 +35,7 @@ export class CheckboxFilterComponent implements OnInit {
     );
   }
 
+  updateProjects() {
+    this.dataService.updateProjectsForResearchLines();
+  }
 }

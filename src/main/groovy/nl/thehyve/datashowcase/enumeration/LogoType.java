@@ -9,5 +9,10 @@ public enum LogoType {
     /**
      * Nederlands Tweelingen Register logo
      */
-    NTR
+    NTR,
+
+    /**
+     * Default logo
+     */
+    DEFAULT
 }

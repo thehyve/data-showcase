@@ -2,7 +2,10 @@ package nl.thehyve.datashowcase
 
 
 import nl.thehyve.datashowcase.enumeration.LogoType
+import org.springframework.core.io.FileSystemResource
+import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.UrlResource
 
 class FileController {
     static responseFormats = ['json', 'jpg', 'png']
@@ -12,37 +15,43 @@ class FileController {
     @Value('${dataShowcase.ntrLogo}')
     def ntrLogoPath
 
+    private final static defaultPath = 'images/placeholder.jpg'
+
     /**
      * Finds the path of a logo
      * and writes an image to an output stream
      * @params type - type of the logo: NTR or VU
      * @return Image outputStream
      */
-    def getLogos(String type) {
-        def path = ''
+    def getLogo(String type) {
         LogoType typeEnum
 
         try {
             typeEnum = LogoType.valueOf(type)
         } catch (IllegalArgumentException e) {
-            return response.status = 404
+            return response.status = 400
         }
 
+        def path
         if (typeEnum == LogoType.NTR) {
-            path = ntrLogoPath
+            path = ntrLogoPath == 'default' ? defaultPath : ntrLogoPath
         } else if (typeEnum == LogoType.VU) {
-            path = vuLogoPath
-        }
-
-        File image = new File(path)
-        if (!image.exists()) {
-            return response.status = 404
+            path = vuLogoPath == 'default' ? defaultPath : vuLogoPath
         } else {
-            response.setContentType("application/jpg")
-            OutputStream out = response.getOutputStream()
-            out.write(image.bytes)
-            out.close()
+            return response.status = 400
         }
 
+        Resource image
+        if (path == defaultPath) {
+            URL imageUrl = getClass().getClassLoader().getResource(defaultPath)
+            image = new UrlResource(imageUrl)
+        } else {
+            image = new FileSystemResource(path)
+            if (!image.exists()) {
+                return response.status = 500
+            }
+        }
+        render file: image.inputStream, contentType: 'image/jpg'
     }
+
 }
