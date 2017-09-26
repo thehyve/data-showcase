@@ -27,7 +27,7 @@ class FileController {
         try {
             typeEnum = LogoType.valueOf(type)
         } catch (IllegalArgumentException e) {
-            typeEnum = LogoType.DEFAULT
+            return response.status = 404
         }
 
 
@@ -41,7 +41,7 @@ class FileController {
 
         File image = new File(path)
         if (!image.exists()) {
-            image = getDefaultLogo()
+            return response.status = 500
         }
 
         response.setContentType("application/jpg")
