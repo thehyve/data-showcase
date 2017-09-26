@@ -20,14 +20,15 @@ export class DataService {
   private items: Item[] = [];
   // filtered list of items based on selected node and selected checkbox filters
   public filteredItems: Item[] = [];
+  // items available for currently selected node
+  private itemsPerNode: Item[] = [];
+  // items added to the shopping cart
+  private shoppingCartItemsSource = new Subject<Item[]>();
+  public shoppingCartItems$ = this.shoppingCartItemsSource.asObservable();
 
   // global text filter
   private globalFilterSource = new Subject<string>();
   public globalFilter$ = this.globalFilterSource.asObservable();
-
-  // items added to the shopping cart
-  private shoppingCartItemsSource = new Subject<Item[]>();
-  public shoppingCartItems$ = this.shoppingCartItemsSource.asObservable();
 
   // selected checkboxes for keywords filter
   private selectedKeywords: string[] = [];
@@ -36,22 +37,25 @@ export class DataService {
   // selected checkboxes for research lines filter
   private selectedResearchLines: string[] = [];
 
-  keywords: string[] = [];
-  projects: string[] = [];
-  researchLines: string[] = [];
+  // list of keywords available for current item list
+  private keywords: string[] = [];
+  // list of keywords available for current item list
+  private projects: string[] = [];
+  // list of keywords available for current item list
+  private researchLines: string[] = [];
 
-  // items available for currently selected node
-  availableItems: Item[] = [];
-  // projects available for currently selected node
-  availableProjects: Project[] = [];
+  // list of all projects
+  private availableProjects: Project[] = [];
 
   // item summary popup visibility
   private itemSummaryVisibleSource = new Subject<Item>();
   public itemSummaryVisible$ = this.itemSummaryVisibleSource.asObservable();
 
-  private ntrLogoUrlSummary= new Subject<string>();
+  // NTR logo
+  private ntrLogoUrlSummary = new Subject<string>();
   public ntrLogoUrl$ = this.ntrLogoUrlSummary.asObservable();
 
+  // VU logo
   private vuLogoUrlSummary = new Subject<string>();
   public vuLogoUrl$ = this.vuLogoUrlSummary.asObservable();
 
@@ -67,7 +71,7 @@ export class DataService {
       .subscribe(
         (blobContent) => {
           let urlCreator = window.URL;
-          if (type == "NTR"){
+          if (type == "NTR") {
             this.ntrLogoUrlSummary.next(urlCreator.createObjectURL(blobContent));
           } else {
             this.vuLogoUrlSummary.next(urlCreator.createObjectURL(blobContent));
@@ -77,10 +81,10 @@ export class DataService {
       );
   }
 
-  private processTreeNodes(nodes: TreeNode[]):TreeNodeLib[] {
-    let treeNodes:TreeNodeLib[] = [];
+  private processTreeNodes(nodes: TreeNode[]): TreeNodeLib[] {
+    let treeNodes: TreeNodeLib[] = [];
     for (let node of nodes) {
-      if (!(node.accumulativeItemCount == 0  && node.nodeType == "Domain" )) {
+      if (!(node.accumulativeItemCount == 0 && node.nodeType == "Domain" )) {
         let newNode = this.processTreeNode(node);
         treeNodes.push(newNode);
       }
@@ -93,7 +97,7 @@ export class DataService {
     let newNode: TreeNodeLib = node;
 
     // filter out empty domains
-    newNode.children = node.children.filter(value => !(value.accumulativeItemCount == 0  && value.nodeType == "Domain" ));
+    newNode.children = node.children.filter(value => !(value.accumulativeItemCount == 0 && value.nodeType == "Domain" ));
     let count = node.accumulativeItemCount ? node.accumulativeItemCount : 0;
     let countStr = ' (' + count + ')';
     newNode.label = node.label + countStr;
@@ -149,18 +153,18 @@ export class DataService {
   }
 
   updateItems() {
-    this.availableItems.length = 0;
+    this.itemsPerNode.length = 0;
     this.items.length = 0;
     this.resourceService.getItems()
       .subscribe(
         (items: Item[]) => {
           console.log('item loading');
           for (let item of items) {
-            if(this.availableProjects){
+            if (this.availableProjects) {
               item['researchLine'] = this.availableProjects.find(p => p.name == item['project']).lineOfResearch;
             }
 
-            this.availableItems.push(item);
+            this.itemsPerNode.push(item);
             this.items.push(item);
           }
           this.setFilteredItems();
@@ -172,16 +176,25 @@ export class DataService {
 
   updateItemTable(treeNode: TreeNode) {
     this.items.length = 0;
-    let nodeItems = treeNode ? this.availableItems.filter(item => item.itemPath.startsWith(treeNode.path))
-                      : this.availableItems;
-    for (let node of nodeItems){
+    let nodeItems = treeNode ? this.itemsPerNode.filter(item => item.itemPath.startsWith(treeNode.path))
+      : this.itemsPerNode;
+    for (let node of nodeItems) {
       this.items.push(node);
     }
     this.setFilteredItems();
     this.getUniqueFilterValues();
   }
 
-  updateFilterValues(selectedKeywords: string[], selectedProjects: string[], selectedResearchLines: string[]){
+  updateProjectsForResearchLines() {
+    this.selectedProjects.length = 0;
+    this.setFilteredItems();
+    this.projects.length = 0;
+    for (let item of this.filteredItems) {
+      this.collectUnique(item['project'], this.projects);
+    }
+  }
+
+  updateFilterValues(selectedKeywords: string[], selectedProjects: string[], selectedResearchLines: string[]) {
     this.selectedKeywords = selectedKeywords;
     this.selectedProjects = selectedProjects;
     this.selectedResearchLines = selectedResearchLines;
@@ -191,12 +204,15 @@ export class DataService {
   getItems() {
     return this.items;
   }
+
   getKeywords() {
     return this.keywords;
   }
+
   getProjects() {
     return this.projects;
   }
+
   getReasearchLines() {
     return this.researchLines;
   }
@@ -204,7 +220,7 @@ export class DataService {
   setFilteredItems() {
     this.filteredItems.length = 0;
     for (let item of this.items) {
-      if ( (this.selectedKeywords.length == 0 || item['keywords'].some(k => this.selectedKeywords.includes(k)))
+      if ((this.selectedKeywords.length == 0 || item['keywords'].some(k => this.selectedKeywords.includes(k)))
         && (this.selectedProjects.length == 0 || this.selectedProjects.includes(item['project']))
         && (this.selectedResearchLines.length == 0 || this.selectedResearchLines.includes(item['researchLine']))
       ) {
@@ -217,7 +233,7 @@ export class DataService {
     this.globalFilterSource.next(globalFilter);
   }
 
-  setShoppingCartItems(items: Item[]){
+  setShoppingCartItems(items: Item[]) {
     this.shoppingCartItemsSource.next(items);
   }
 
