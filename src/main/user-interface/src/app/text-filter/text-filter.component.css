@@ -2,4 +2,5 @@
     margin-left: 10px;
     height: 100px;
     line-height: 100px;
+    white-space: nowrap;
 }
