@@ -9,8 +9,8 @@ import static nl.thehyve.datashowcase.Environment.checkGrailsEnvironment
 @Transactional
 class TestService {
 
-    def concepts
-    def nodes
+    List<Concept> concepts
+    List<TreeNode> nodes
     Keyword testKeyword
     Project testProject
     LineOfResearch testLineOfResearch
