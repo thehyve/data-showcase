@@ -217,7 +217,7 @@ class TestService {
                 ),
                 keywords: [keyword3],
                 concept: concepts[1],
-                itemPath: nodes[4].path,
+                itemPath: nodes[5].path,
                 project: projectB
         )
 
