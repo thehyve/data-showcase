@@ -51,6 +51,10 @@ class Summary {
             values: Value
     ]
 
+    static mapping = {
+        version false
+    }
+
     static constraints = {
         observationCount    nullable: false
         patientCount        nullable: false

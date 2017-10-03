@@ -25,6 +25,10 @@ class Value {
      */
     static belongsTo = [summary: Summary]
 
+    static mapping = {
+        version false
+    }
+
     static constraints = {
         frequency nullable: true
     }

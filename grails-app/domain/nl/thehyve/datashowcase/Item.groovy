@@ -63,6 +63,10 @@ class Item {
         concept.variableType
     }
 
+    static mapping = {
+        version false
+    }
+
     static constraints = {
         name unique: true
     }

@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ItemTableComponent } from './item-table.component';
+import {ItemFilter, ItemTableComponent} from './item-table.component';
 import {FormsModule} from "@angular/forms";
 import {
   AutoCompleteModule, DataListModule, DataTableModule, FieldsetModule, ListboxModule,
@@ -19,7 +19,7 @@ describe('ItemTableComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ItemTableComponent ],
+      declarations: [ ItemTableComponent, ItemFilter ],
       imports: [
         FormsModule,
         PanelModule,

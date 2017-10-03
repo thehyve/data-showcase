@@ -10,7 +10,7 @@ import {
 import {FormsModule} from "@angular/forms";
 import {CheckboxFilterComponent} from "./checkbox-filter/checkbox-filter.component";
 import {ListboxModule} from "primeng/components/listbox/listbox";
-import {ItemTableComponent} from "./item-table/item-table.component";
+import {ItemFilter, ItemTableComponent} from "./item-table/item-table.component";
 import {DataService} from "./services/data.service";
 import {ResourceService} from "./services/resource.service";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
@@ -30,6 +30,7 @@ describe('AppComponent', () => {
         TextFilterComponent,
         CheckboxFilterComponent,
         ItemTableComponent,
+        ItemFilter,
         ShoppingCartComponent,
         ItemSummaryComponent,
         LogosComponent,

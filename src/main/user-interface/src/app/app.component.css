@@ -17,10 +17,21 @@
     height: 120px;
     padding-top: 10px;
     box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14),0 1px 10px 0 rgba(0,0,0,0.12),0 2px 4px -1px rgba(0,0,0,0.2);
+    min-width: 1150px;
 }
 
 .ds-body {
     padding: 20px;
+}
+
+.gutter {
+    position: relative; /* important (all position that's not `static`) */
+    width: 10px;
+    height: auto;
+    background-color: lightgray;
+    cursor: col-resize;
+    margin-left: 3px;
+    margin-right: 0;
 }
 
 .ds-left-panel,
@@ -37,50 +48,36 @@
     width: 16%;
     background-color: #f1f1f1;
     padding-left: 10px;
+    white-space: nowrap;
 }
-
 .ds-right-panel {
-    position: relative;
     width: calc(84% - 10px - 6px);
     background-color: white;
 }
 
-.gutter {
-    position: relative; /* important (all position that's not `static`) */
-    width: 10px;
-    height: auto;
-    background-color: lightgray;
-    cursor: col-resize;
-    margin-left: 3px;
-    margin-right: 0;
-}
-
-.form-inline {
-    width: 100%;
-}
-
 .ds-logos {
     padding-left: 30px;
-    float: left;
     color: #00889C;
 }
 
-.text-filter-container {
-    float: right;
+.ds-text-filter {
     padding-right: 10px;
     padding-left: 10px;
     border-left: 2px solid darkgrey;
+    float: right;
 }
 
-.shopping-cart-container {
-    float: right;
+.ds-shopping-cart {
     padding-right: 20px;
     padding-left: 20px;
     padding-top: 5px;
     border-left: 2px solid darkgrey;
+    float: right;
 }
 
 .ds-logos,
-.shopping-cart-container {
+.ds-shopping-cart,
+.ds-text-filter{
     height: 100px;
+    display:inline-block;
 }
