@@ -12,6 +12,10 @@ class Keyword {
         keyword
     }
 
+    static mapping = {
+        version false
+    }
+
     static constraints = {
         keyword unique: true
     }

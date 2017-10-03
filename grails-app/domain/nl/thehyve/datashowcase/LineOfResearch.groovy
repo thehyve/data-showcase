@@ -15,6 +15,10 @@ class LineOfResearch {
         name
     }
 
+    static mapping = {
+        version false
+    }
+
     static constraints = {
         name unique: true
     }

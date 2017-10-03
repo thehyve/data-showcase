@@ -43,6 +43,10 @@ class Concept {
         conceptCode
     }
 
+    static mapping = {
+        version false
+    }
+
     static constraints = {
         conceptCode unique: true
         labelNl nullable: true

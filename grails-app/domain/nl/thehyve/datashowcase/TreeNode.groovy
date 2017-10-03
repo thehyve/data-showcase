@@ -71,6 +71,10 @@ class TreeNode {
         path
     }
 
+    static mapping = {
+        version false
+    }
+
     static constraints = {
         path unique: true
         parent nullable: true

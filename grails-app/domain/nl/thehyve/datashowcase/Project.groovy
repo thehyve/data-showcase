@@ -30,6 +30,10 @@ class Project {
      */
     static hasMany = [items: Item]
 
+    static mapping = {
+        version false
+    }
+
     static constraints = {
         name unique: true
     }
