@@ -17,17 +17,24 @@ cache:
     - $HOME/.m2
 
 before_install:
+  - pushd data-showcase
   - gradle wrapper
   - GRADLE_SCRIPT="$(pwd)/gradlew"
   - ${GRADLE_SCRIPT} --version
+  - popd
 
 install:
+  - pushd data-showcase
   - ${GRADLE_SCRIPT} assemble
+  - popd
 
 script:
+  - pushd data-showcase
   - ${GRADLE_SCRIPT} test
+  - popd
 
 notifications:
   webhooks:
     on_success: change
     on_failure: always
+

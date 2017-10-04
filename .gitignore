@@ -1,12 +1,3 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
-
-# compiled output
-/build
-/src/main/webapp/*
-
-# Temporary database
-/*.mv.db
-
 # IDEs and editors
 /.idea
 *.iml
@@ -28,16 +19,4 @@
 # System Files
 .DS_Store
 Thumbs.db
-
-# Gradle
-gradle/wrapper
-/.gradle
-/gradlew
-/gradlew.bat
-out
-
-#yarn
-yarn.lock
-
-/node_modules/*
 

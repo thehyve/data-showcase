@@ -1,0 +1,20 @@
+# Gradle
+gradle/wrapper
+/.gradle
+/gradlew
+/gradlew.bat
+out
+
+# compiled output
+/build
+/src/main/webapp/*
+
+# Temporary database
+/*.mv.db
+
+# yarn
+yarn.lock
+
+# npm
+/node_modules/*
+
