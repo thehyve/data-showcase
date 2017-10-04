@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017  The Hyve B.V.
+ *  This file is distributed under the GNU Affero General Public License
+ *  (see accompanying file LICENSE).
+ */
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {AutoCompleteModule} from "primeng/primeng";

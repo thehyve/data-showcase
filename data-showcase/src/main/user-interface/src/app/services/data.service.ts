@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017  The Hyve B.V.
+ *  This file is distributed under the GNU Affero General Public License
+ *  (see accompanying file LICENSE).
+ */
+
 import {Injectable} from '@angular/core';
 import {TreeNode as TreeNodeLib} from 'primeng/primeng';
 import {ResourceService} from './resource.service';

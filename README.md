@@ -18,6 +18,9 @@ grant all privileges on database data_showcase to datashowcase;
 ## Run
 
 ```bash
+# Change to the application directory
+cd data-showcase
+
 # Fetch the Gradle wrapper
 gradle wrapper
 
@@ -39,7 +42,7 @@ java -jar build/libs/data-showcase-0.0.1-SNAPSHOT.war
 ```
 
 ## Publish
-Do not forget to change the contents of [env.json](src/main/user-interface/src/app/config/env.json) to:
+Do not forget to change the contents of [env.json](data-showcase/src/main/user-interface/src/app/config/env.json) to:
 ```json
 {
   "env": "prod"
@@ -75,22 +78,40 @@ dataSource:
     password: <configure a secure password>
 ```
 
-## Test
+## Testing
 
 ```bash
+cd data-showcase
+
 # Run unit tests
 ./gradlew -Dgrails.env=test test
 
 # Run unit tests for the internal environment
 ./gradlew -Dgrails.env=testInternal test
 
-# Run unit tests and user interface tests
+# Run unit tests and user interface unit tests
 ./gradlew -Dgrails.env=test check
 ```
 
-For end to end API tests, see [data-showcase-api-e2e](data-showcase-api-e2e).
+For end-to-end API tests, see [data-showcase-api-e2e](data-showcase-api-e2e).
+For user interface end-to-end tests, see [user-interface](data-showcase/src/main/user-interface).
 
 ### Continuous integration
 
 Bamboo plan: [DS-DEV](https://ci.ctmmtrait.nl/browse/DS-DEV).
 
+## License
+Copyright &copy; 2017  The Hyve B.V.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the [GNU Affero General Public License](LICENSE)
+along with this program. If not, see https://www.gnu.org/licenses/.

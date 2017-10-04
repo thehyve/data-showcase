@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017  The Hyve B.V.
+ *  This file is distributed under the GNU Affero General Public License
+ *  (see accompanying file LICENSE).
+ */
+
 /**
  * This file includes polyfills needed by Angular and is loaded before the app.
  * You can add your own extra polyfills to this file.

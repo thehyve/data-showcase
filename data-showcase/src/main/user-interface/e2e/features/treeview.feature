@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2017  The Hyve B.V.
+#  This file is distributed under the GNU Affero General Public License
+#  (see accompanying file LICENSE).
+#
+
 Feature: As a researcher I want to view the data showcase catalogue from a tree. NTRDEV-1
 
   Scenario: Data nodes are represented in the treeview

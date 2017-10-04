@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2017  The Hyve B.V.
+ *  This file is distributed under the GNU Affero General Public License
+ *  (see accompanying file LICENSE).
+ */
+
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TreeNodesComponent } from './tree-nodes.component';

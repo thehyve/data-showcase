@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2017  The Hyve B.V.
+#  This file is distributed under the GNU Affero General Public License
+#  (see accompanying file LICENSE).
+#
+
 Feature: Data Showcase provides search functionality. (NTRREQ-41)
 
   Scenario: Search returns a list of items and shows the total number of results
