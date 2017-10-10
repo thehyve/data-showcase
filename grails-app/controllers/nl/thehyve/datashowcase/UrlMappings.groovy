@@ -16,13 +16,13 @@ class UrlMappings {
         "/api/tree_nodes"(controller: 'tree', includes: ['index'])
         "/api/file/logo/${type}"(controller: 'file', includes: ['getLogo'])
 
-        if (Environment.current.name in [Constants.PUBLIC_TEST_ENVIRONMENT, Constants.INTERNAL_TEST_ENVIRONMENT]) {
+        if (Environment.current.name in (Constants.DEV_ENVIRONMENTS + Constants.TEST_ENVIRONMENTS)) {
             "/api/test/clearDatabase"(controller: 'test', action: 'clearDatabase')
         }
-        if (Environment.current.name == Constants.PUBLIC_TEST_ENVIRONMENT) {
+        if (Environment.current.name in Constants.PUBLIC_ENVIRONMENTS) {
             "/api/test/createPublicData"(controller: 'test', action: 'createPublicData')
         }
-        if (Environment.current.name == Constants.INTERNAL_TEST_ENVIRONMENT) {
+        if (Environment.current.name in Constants.INTERNAL_ENVIRONMENTS) {
             "/api/test/createInternalData"(controller: 'test', action: 'createInternalData')
         }
 
