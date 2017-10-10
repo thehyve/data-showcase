@@ -22,7 +22,7 @@ class Project {
      */
     @BindUsing({ obj, source ->
         LineOfResearch existingResearchLine = LineOfResearch.findByName(source['lineOfResearch'])
-        existingResearchLine ?: new LineOfResearch(name: source['lineOfResearch'])
+        existingResearchLine ?: new LineOfResearch(name: source['lineOfResearch']).save(flush: true)
     })
     LineOfResearch lineOfResearch
 
