@@ -125,25 +125,25 @@ class TestService {
 
         [keyword1, keyword2, keyword3, keyword4, keyword5, keyword6, keyword7]*.save(flush: true)
 
-        Value[] values = [
-                new Value(label: 'Young', value: '<= 60', frequency: 30),
-                new Value(label: 'Old', value: '> 60', frequency: 60)
-        ]
+//        Value[] values = [
+//                new Value(label: 'Young', value: '<= 60', frequency: 30),
+//                new Value(label: 'Old', value: '> 60', frequency: 60)
+//        ]
 
-        Summary[] ageSummaries = createSummary(8, 12, 99, values)
+        Summary[] ageSummaries = createSummary(8, 12, 99, null)
 
         Item[] ageItems = createItems(8, "age", projectA, nodes[2],
                 [keyword1, keyword4, keyword7, keyword6] as Keyword[],
                 ageSummaries,
                 true)
 
-        Summary[] heightSummaries = createSummary(20, 140, 220, values)
+        Summary[] heightSummaries = createSummary(20, 140, 220, null)
         Item[] heightItems = createItems(20, "height", projectB, nodes[5],
                 [keyword1, keyword2, keyword3, keyword7] as Keyword[],
                 heightSummaries,
                 true)
 
-        Summary[] weightSummaries = createSummary(9, 55, 230, values)
+        Summary[] weightSummaries = createSummary(9, 55, 230, null)
         Item[] weightItems = createItems(9, "weight", projectC, nodes[3],
                 [keyword1, keyword3, keyword7, keyword5] as Keyword[],
                 weightSummaries,
