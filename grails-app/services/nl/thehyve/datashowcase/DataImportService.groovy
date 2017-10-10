@@ -40,7 +40,7 @@ class DataImportService {
             validate(items)
             items*.save(flush: true, failOnError: true)
         } catch (ValidationException e) {
-            throw new InvalidDataException(e.toString())
+            throw new InvalidDataException(e.message)
         } catch (Exception e) {
             throw new InvalidDataException("An error occured when uploading the data: $e.message")
         }
