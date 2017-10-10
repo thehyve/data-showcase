@@ -119,6 +119,12 @@ environments:
         dataShowcase:
             environment: Internal
 ---
+grails:
+  controllers:
+      upload:
+            maxFileSize: 50000000
+            maxRequestSize: 50000000
+---
 environments:
     development:
         dataSource:
