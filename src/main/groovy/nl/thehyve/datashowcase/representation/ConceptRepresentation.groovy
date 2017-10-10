@@ -26,10 +26,14 @@ class ConceptRepresentation {
      */
     String labelNlLong
 
-
     /**
      * The type of the variable in Transmart (textual, numerical, categorical).
      */
     VariableType variableType
+
+    /**
+     * Associated key words.
+     */
+    List<String> keywords
 
 }

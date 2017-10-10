@@ -1,5 +1,6 @@
 import nl.thehyve.datashowcase.Environment
 import nl.thehyve.datashowcase.StartupMessage
+import nl.thehyve.datashowcase.deserialisation.JsonDataDeserializer
 import nl.thehyve.datashowcase.mapping.ItemMapper
 import org.modelmapper.ModelMapper
 
@@ -9,4 +10,5 @@ beans = {
     modelMapper(ModelMapper) {}
     itemMapper(ItemMapper) {}
     startupMessage(StartupMessage) {}
+    jsonDataDeserializer(JsonDataDeserializer) {}
 }

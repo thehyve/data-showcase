@@ -1,4 +1,7 @@
 package nl.thehyve.datashowcase
+
+import grails.databinding.BindUsing
+
 /**
  * An item represents a variable in a study or survey.
  * Besides links to the concept and project it belongs to,
@@ -29,11 +32,6 @@ class Item {
     Concept concept
 
     /**
-     * Associated key words.
-     */
-    List<Keyword> keywords
-
-    /**
      * The project (survey) the item belongs to.
      */
     static belongsTo = [project: Project]
@@ -41,6 +39,24 @@ class Item {
     /**
      * Summary data for the variable: aggregate values and value frequencies.
      */
+    @BindUsing({ obj, source ->
+        def s = source['summary']
+        Summary summary= new Summary(
+                observationCount: s.observationCount,
+                patientCount: s.patientCount,
+                dataStability: s.dataStability,
+                minValue: s.minValue,
+                maxValue: s.maxValue,
+                avgValue: s.avgValue,
+                stdDevValue: s.stdDevValue,
+        )
+        if (s.values) {
+            s.values.each{
+                summary.addToValues(it)
+            }
+        }
+        summary
+    })
     Summary summary
 
     String getLabel() {

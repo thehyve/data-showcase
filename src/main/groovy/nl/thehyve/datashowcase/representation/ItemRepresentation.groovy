@@ -67,9 +67,4 @@ abstract class ItemRepresentation {
      */
     String project
 
-    /**
-     * Associated key words.
-     */
-    List<String> keywords
-
 }

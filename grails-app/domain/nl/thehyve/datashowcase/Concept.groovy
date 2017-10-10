@@ -1,5 +1,6 @@
 package nl.thehyve.datashowcase
 
+import grails.databinding.BindUsing
 import nl.thehyve.datashowcase.enumeration.VariableType
 
 /**
@@ -37,6 +38,18 @@ class Concept {
      * The type of the variable in Transmart (textual, numerical, categorical).
      */
     VariableType variableType
+
+    /**
+     * Associated key words.
+     */
+    @BindUsing({ obj, source ->
+        def keywords = source['keywords'].collect {
+            Keyword existingKeyword = Keyword.findByKeyword(it)
+            existingKeyword ?: new Keyword(keyword: it).save(flush: true)
+        }
+        keywords
+    })
+    List<Keyword> keywords
 
     @Override
     String toString() {
