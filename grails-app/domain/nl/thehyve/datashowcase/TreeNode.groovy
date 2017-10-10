@@ -76,7 +76,7 @@ class TreeNode {
     }
 
     static constraints = {
-        path unique: true
+        path unique: true, maxSize: 700
         parent nullable: true
         concept nullable: true
     }

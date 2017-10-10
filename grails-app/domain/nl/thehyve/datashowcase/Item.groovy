@@ -85,6 +85,7 @@ class Item {
 
     static constraints = {
         name unique: true
+        itemPath maxSize: 700
     }
 
 }
