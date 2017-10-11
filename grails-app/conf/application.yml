@@ -125,6 +125,11 @@ grails:
             maxFileSize: 50000000
             maxRequestSize: 50000000
 ---
+grails:
+  plugin:
+    springsecurity:
+      active: false
+---
 environments:
     development:
         dataSource:
