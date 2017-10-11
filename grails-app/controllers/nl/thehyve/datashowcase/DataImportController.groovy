@@ -1,10 +1,7 @@
 package nl.thehyve.datashowcase
 
 import grails.converters.JSON
-import nl.thehyve.datashowcase.exception.AccessDeniedException
-import nl.thehyve.datashowcase.exception.ConfigurationException
-import nl.thehyve.datashowcase.exception.InvalidFileException
-import nl.thehyve.datashowcase.exception.InvalidRequestException
+
 import org.grails.web.json.JSONObject
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.multipart.MultipartFile
@@ -30,7 +27,8 @@ class DataImportController {
                 def fileName = names.next()
                 MultipartFile file = request.getFile(fileName)
                 if (file.empty) {
-                    throw new InvalidFileException("File cannot be empty.")
+                    response.status = 400
+                    render("File cannot be empty.")
                 } else {
                     def json = file.inputStream.withReader {
                         r -> JSON.parse(r)
@@ -38,24 +36,29 @@ class DataImportController {
                     if (json) {
                         dataImportService.upload((JSONObject) json)
                     } else {
-                        throw new InvalidFileException("$fileName is not a valid JSON.")
+                        response.status = 400
+                        render("$fileName is not a valid JSON.")
                     }
                 }
             }
         } else {
-            throw new InvalidRequestException()
+            response.status = 400
+            render("Data file is missing.")
         }
     }
 
     def private checkToken(String requestToken) {
-        if(!requestToken?.trim()) {
-            throw new AccessDeniedException("requestToken is required to upload the data")
+        if (!requestToken?.trim()) {
+            response.status = 401
+            render("requestToken is required to upload the data")
         }
         if (!ACCESS_TOKEN) {
-            throw new ConfigurationException("accessToken is not configured.")
+            response.status = 500
+            render("accessToken is not configured.")
         }
         if (!bcryptEncoder.matches(requestToken, ACCESS_TOKEN)) {
-            throw new AccessDeniedException("requestToken: $requestToken is invalid")
+            response.status = 401
+            render("requestToken: $requestToken is invalid")
         }
     }
 
