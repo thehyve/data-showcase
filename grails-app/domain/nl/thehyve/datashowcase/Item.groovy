@@ -41,17 +41,9 @@ class Item {
      */
     @BindUsing({ obj, source ->
         def s = source['summary']
-        Summary summary= new Summary(
-                observationCount: s.observationCount,
-                patientCount: s.patientCount,
-                dataStability: s.dataStability,
-                minValue: s.minValue,
-                maxValue: s.maxValue,
-                avgValue: s.avgValue,
-                stdDevValue: s.stdDevValue,
-        )
+        def summary = s instanceof Summary ? s : new Summary(s)
         if (s.values) {
-            s.values.each{
+            s.values.each {
                 summary.addToValues(it)
             }
         }

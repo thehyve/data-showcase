@@ -187,11 +187,12 @@ class TestService {
 
         def researchLine1 = new LineOfResearch(name: 'Research line 1')
         def researchLine2 = new LineOfResearch(name: 'Research line 2')
+        [researchLine1, researchLine2]*.save(flush: true)
 
         def projectA = new Project(name: 'Project A', description: 'First test project', lineOfResearch: researchLine1)
         def projectB = new Project(name: 'Project B', description: 'Second test project', lineOfResearch: researchLine2)
 
-        [researchLine1, researchLine2, projectA, projectB]*.save()
+        [projectA, projectB]*.save()
 
         def item1 = new Item(
                 name: 'ageA',
