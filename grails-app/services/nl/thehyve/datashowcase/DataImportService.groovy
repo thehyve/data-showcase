@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired
 class DataImportService {
 
     @Autowired
+    Environment dataShowcaseEnvironment
+    @Autowired
     JsonDataDeserializer jsonDataDeserializer
 
     def upload(JSONObject json) {
@@ -23,7 +25,7 @@ class DataImportService {
             concepts*.save(flush: true, failOnError: true)
 
             // save tree_nodes
-            jsonDataDeserializer.replace("conceptCode", "concept", (JSONArray)json.tree_nodes)
+            jsonDataDeserializer.replace("conceptCode", "concept", (JSONArray) json.tree_nodes)
             def tree_nodes = json.tree_nodes?.collect { new TreeNode(it) }
             validate(tree_nodes)
             tree_nodes*.save(flush: true, failOnError: true)
@@ -34,11 +36,16 @@ class DataImportService {
             projects*.save(flush: true, failOnError: true)
 
             // save items, related summaries and values
-            jsonDataDeserializer.replace("conceptCode", "concept", (JSONArray)json.items)
-            jsonDataDeserializer.replace("projectName", "project", (JSONArray)json.items)
+            if (!dataShowcaseEnvironment.internalInstance && !allItemsArePublic((JSONArray) json.items)) {
+                throw new InvalidDataException("Data validation exception. " +
+                        "Non public item cannot be loaded to a public environment")
+            }
+            jsonDataDeserializer.replace("conceptCode", "concept", (JSONArray) json.items)
+            jsonDataDeserializer.replace("projectName", "project", (JSONArray) json.items)
             def items = json.items?.collect { new Item(it) }
             validate(items)
             items*.save(flush: true, failOnError: true)
+
         } catch (ValidationException e) {
             throw new InvalidDataException(e.message)
         } catch (Exception e) {
@@ -52,5 +59,9 @@ class DataImportService {
                 throw new InvalidDataException("Validation errors: ${entity.errors.toString()} ")
             }
         }
+    }
+
+    private static boolean allItemsArePublic(JSONArray items) {
+        return items.every { it.publicItem == true }
     }
 }
