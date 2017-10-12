@@ -67,6 +67,10 @@ class Item {
         concept.labelNlLong
     }
 
+    List<Keyword> getKeywords() {
+        concept.keywords
+    }
+
     String getType() {
         concept.variableType
     }
