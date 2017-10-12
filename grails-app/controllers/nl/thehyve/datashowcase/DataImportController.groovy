@@ -30,10 +30,12 @@ class DataImportController {
                     response.status = 400
                     render("File cannot be empty.")
                 } else {
+                    log.info('Parsing the file...')
                     def json = file.inputStream.withReader {
                         r -> JSON.parse(r)
                     }
                     if (json) {
+                        log.info('Uploading the file...')
                         dataImportService.upload((JSONObject) json)
                     } else {
                         response.status = 400
@@ -45,6 +47,7 @@ class DataImportController {
             response.status = 400
             render("Data file is missing.")
         }
+        log.info('Data successfully uploaded!')
     }
 
     def private checkToken(String requestToken) {

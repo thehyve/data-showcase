@@ -22,17 +22,20 @@ class DataImportService {
             // save concepts and related keywords
             def concepts = json.concepts?.collect { new Concept(it) }
             validate(concepts)
+            log.info('Saving concepts...')
             concepts*.save(flush: true, failOnError: true)
 
             // save tree_nodes
             jsonDataDeserializer.replace("conceptCode", "concept", (JSONArray) json.tree_nodes)
             def tree_nodes = json.tree_nodes?.collect { new TreeNode(it) }
             validate(tree_nodes)
+            log.info('Saving tree nodes...')
             tree_nodes*.save(flush: true, failOnError: true)
 
             // save projects and related research_lines
             def projects = json.projects?.collect { new Project(it) }
             validate(projects)
+            log.info('Saving projects and research lines...')
             projects*.save(flush: true, failOnError: true)
 
             // save items, related summaries and values
@@ -44,6 +47,7 @@ class DataImportService {
             jsonDataDeserializer.replace("projectName", "project", (JSONArray) json.items)
             def items = json.items?.collect { new Item(it) }
             validate(items)
+            log.info('Saving items, summaries, values...')
             items*.save(flush: true, failOnError: true)
 
         } catch (ValidationException e) {
