@@ -3,6 +3,7 @@
 package base
 
 import config.Config
+import groovy.json.JsonBuilder
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -25,5 +26,9 @@ abstract class RESTSpec extends Specification {
 
     def get(def requestMap) {
         RestHelper.get(testContext, requestMap)
+    }
+
+    def toJSON(object){
+        return new JsonBuilder(object).toString()
     }
 }
