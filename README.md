@@ -66,6 +66,7 @@ Example configuration file `data-showcase-internal.yml`:
 ```yaml
 dataShowcase:
     environment: Internal
+    accessToken: '<configure a secure token>'
     ntrLogo: '/<path to the logo>/<file name>'
     vuLogo: '/<path to the logo>/<file name>'
 dataSource:
