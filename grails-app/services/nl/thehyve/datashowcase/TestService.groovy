@@ -85,7 +85,7 @@ class TestService {
         items
     }
 
-    def createSummary(int number, double minValue, double maxValue, Value[] values) {
+    def createSummary(int number, double minValue, double maxValue) {
         int patientCount = rand(100, 200)
         def summaries = []
         for (int i = 0; i < number; i++) {
@@ -97,14 +97,9 @@ class TestService {
                     avgValue: rand((int) minValue, (int) maxValue),
                     maxValue: maxValue,
                     stdDevValue: rand(1000, 2000) / 100
-            )
+            ).addToValues(new Value(label: 'TestLabel1', value: '<= 60', frequency: 30))
+             .addToValues(new Value(label: 'TestLabel2', value: '> 60', frequency: 60))
 
-            if (values) {
-                values.each { summary.addToValues(it) }
-            } else {
-                summary.addToValues(new Value(label: 'Test label 1', value: '<= 10', frequency: 67))
-                        .addToValues(new Value(label: 'Test label 2', value: '> 10', frequency: 52))
-            }
             summaries.add(summary)
         }
         summaries
@@ -121,40 +116,25 @@ class TestService {
 
         def researchLine1 = new LineOfResearch(name: 'Research line 1')
         def researchLine2 = new LineOfResearch(name: 'Research line 2')
+        [researchLine1, researchLine2]*.save(flush: true)
 
         def projectA = new Project(name: 'Project A', description: 'First test project', lineOfResearch: researchLine1)
         def projectB = new Project(name: 'Project B', description: 'Second test project', lineOfResearch: researchLine2)
         def projectC = new Project(name: 'Project C', description: 'Third test project', lineOfResearch: researchLine2)
+        [projectA, projectB, projectC]*.save(flush: true)
 
-        [researchLine1, researchLine2, projectA, projectB, projectC]*.save(flush: true)
-
-        def keyword1 = new Keyword(keyword: 'Personal information')
-        def keyword2 = new Keyword(keyword: 'Family related')
-        def keyword3 = new Keyword(keyword: 'Body characteristics')
-        def keyword4 = new Keyword(keyword: 'Demographics')
-        def keyword5 = new Keyword(keyword: 'Physical Health')
-        def keyword6 = new Keyword(keyword: 'Administration')
-        def keyword7 = new Keyword(keyword: 'Health Behaviors')
-
-        [keyword1, keyword2, keyword3, keyword4, keyword5, keyword6, keyword7]*.save(flush: true)
-
-//        Value[] values = [
-//                new Value(label: 'Young', value: '<= 60', frequency: 30),
-//                new Value(label: 'Old', value: '> 60', frequency: 60)
-//        ]
-
-        Summary[] ageSummaries = createSummary(8, 12, 99, null)
+        Summary[] ageSummaries = createSummary(8, 12, 99)
 
         Item[] ageItems = createItems(8, "age", projectA, nodes[2],
                 ageSummaries,
                 true)
 
-        Summary[] heightSummaries = createSummary(20, 140, 220, null)
+        Summary[] heightSummaries = createSummary(20, 140, 220)
         Item[] heightItems = createItems(20, "height", projectB, nodes[5],
                 heightSummaries,
                 true)
 
-        Summary[] weightSummaries = createSummary(9, 55, 230, null)
+        Summary[] weightSummaries = createSummary(9, 55, 230)
         Item[] weightItems = createItems(9, "weight", projectC, nodes[3],
                 weightSummaries,
                 true)
@@ -231,8 +211,9 @@ class TestService {
     def createRandomData() {
         testKeyword = new Keyword(keyword: 'Test keyword')
         testLineOfResearch = new LineOfResearch(name: 'Test research line')
+        testLineOfResearch.save(flush: true)
         testProject = new Project(name: 'Project', description: 'Test project', lineOfResearch: testLineOfResearch)
-        [testLineOfResearch, testProject, testKeyword]*.save()
+        [testProject, testKeyword]*.save()
 
         int[] domainPerLevel = [10, 2, 3, 2]
         TreeNode parent = null;
@@ -260,12 +241,12 @@ class TestService {
                 label: "ConceptFor$domain.label", labelLong: "ConceptFor$domain.label long description",
                 labelNl: "NederlandsConceptVoor$domain.label", labelNlLong: "NederlandsConceptVoor$domain.label lange beschrijving",
                 variableType: VariableType.Categorical,
-                keywords: [testKeyword])
+                keywords: ["keyword: 'Test keyword'"])
         concepts.add(concept)
         def conceptNode = new TreeNode(domain, concept)
         nodes.add(conceptNode)
 
-        Summary[] summaries = createSummary(8, 12, 99, null)
+        Summary[] summaries = createSummary(8, 12, 99)
         Item[] items = createItems(3, concept.label + "Item", testProject, conceptNode,
                 summaries, true)
         items*.save(flush: true)
