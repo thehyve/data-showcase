@@ -31,11 +31,6 @@ export class ItemTableComponent implements OnInit {
   itemsSelection: Item[];
 
   constructor(public dataService: DataService) {
-    dataService.shoppingCartItems$.subscribe(
-      items => {
-        this.itemsSelection = items;
-      }
-    );
     this.items = this.dataService.filteredItems;
     this.dataService.globalFilter$.subscribe(
       filter => {
@@ -48,7 +43,7 @@ export class ItemTableComponent implements OnInit {
   }
 
   addToCart(){
-    this.dataService.setShoppingCartItems(this.itemsSelection);
+    this.dataService.addToShoppingCart(this.itemsSelection);
   }
 
   showSummary(item: Item){
