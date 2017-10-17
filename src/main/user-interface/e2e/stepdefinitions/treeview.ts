@@ -1,25 +1,10 @@
-import { Persona } from '../personas/templates';
 import { Promise } from 'es6-promise';
-import { Director } from '../protractor-stories/director';
 import { $, $$, browser, by, element, ElementArrayFinder } from 'protractor';
 import { checkTextElement, countIs, promiseTrue } from './support/util';
 
 let { defineSupportCode } = require('cucumber');
 
 defineSupportCode(({ Given, When, Then }) => {
-
-  Given(/^(.*) goes to the '(.*)' page$/, function (personaName, pageName): Promise<any> {
-    let director = this.director as Director;
-    let persona: Persona = director.getPersona(personaName);
-
-    return director.goToPage(pageName)
-  });
-
-  When(/^(.*) filters on '(.*)'$/, function (personaName, filterString): Promise<any> {
-    let director = this.director as Director;
-
-    return director.enterText('filterInput', filterString);
-  });
 
   Then(/^the tree shows the node '(.*)'$/, function (nodeName): Promise<any> {
     // cssContainingText does partial matching!
@@ -76,8 +61,6 @@ defineSupportCode(({ Given, When, Then }) => {
   });
 
 });
-
-// .item-count-container > b
 
 export function toggleNode() {
   return $$(".fa-caret-right").click().then(() => {
