@@ -1,4 +1,4 @@
-Feature: Data Showcase provides search functionality. (NTRREQ-41)
+Feature: Data Showcase provides export functionality.
 
   Scenario: adding items to the cart
     Given I select all data in the data table
