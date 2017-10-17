@@ -6,7 +6,6 @@ import org.grails.web.json.JSONObject
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 class DataImportController {
     static responseFormats = ['json', 'xml']
@@ -14,9 +13,7 @@ class DataImportController {
     @Autowired
     DataImportService dataImportService
     @Autowired
-    BCryptPasswordEncoder bcryptEncoder
-
-    String ACCESS_TOKEN
+    TokenService tokenService
 
     def upload() {
         checkToken(params.requestToken)
@@ -55,11 +52,8 @@ class DataImportController {
             response.status = 401
             render("requestToken is required to upload the data")
         }
-        if (!ACCESS_TOKEN) {
-            response.status = 500
-            render("accessToken is not configured.")
-        }
-        if (!bcryptEncoder.matches(requestToken, ACCESS_TOKEN)) {
+
+        if (!tokenService.isValid(requestToken)) {
             response.status = 401
             render("requestToken: $requestToken is invalid")
         }

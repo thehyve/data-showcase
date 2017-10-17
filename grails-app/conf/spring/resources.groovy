@@ -14,13 +14,4 @@ beans = {
     startupMessage(StartupMessage) {}
     jsonDataDeserializer(JsonDataDeserializer) {}
     bcryptEncoder(BCryptPasswordEncoder) {}
-
-    String token = application.config.dataShowcase.accessToken
-    if(token){
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder()
-        String hashedToken = encoder.encode(token)
-        'nl.thehyve.datashowcase.DataImportController'(DataImportController) {
-            ACCESS_TOKEN = hashedToken
-        }
-    }
 }
