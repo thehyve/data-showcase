@@ -1,6 +1,5 @@
 import { Promise } from 'es6-promise';
-import { $, $$, browser, by, element, ElementArrayFinder } from 'protractor';
-import { checkTextElement, countIs, promiseTrue } from './support/util';
+import { $ } from 'protractor';
 
 let { defineSupportCode } = require('cucumber');
 
