@@ -1,6 +1,4 @@
-import { Persona } from '../personas/templates';
 import { Promise } from 'es6-promise';
-import { Director } from '../protractor-stories/director';
 import { $, $$, browser, by, element, ElementArrayFinder } from 'protractor';
 import { checkTextElement, countIs, promiseTrue } from './support/util';
 
