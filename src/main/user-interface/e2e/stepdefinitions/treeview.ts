@@ -1,5 +1,5 @@
 import { Promise } from 'es6-promise';
-import { $, $$, browser, by, element, ElementArrayFinder } from 'protractor';
+import { $, $$, by } from 'protractor';
 import { checkTextElement, countIs, promiseTrue } from './support/util';
 
 let { defineSupportCode } = require('cucumber');
@@ -40,8 +40,8 @@ defineSupportCode(({ Given, When, Then }) => {
   Then('the data table contains', function (string): Promise<any> {
     let tableRows: [string] = JSON.parse(string);
 
-    return countIs($$(".ui-datatable-data > tr"), tableRows.length).then(() =>{
-      return $$(".ui-datatable-data > tr").map((row, rowIndex) =>  { // get all data rows
+    return countIs($$(".ui-datatable-data > tr"), tableRows.length).then(() => {
+      return $$(".ui-datatable-data > tr").map((row, rowIndex) => { // get all data rows
         return row.$$('.ui-cell-data').map((cell, cellIndex) => {
           return checkTextElement(cell, tableRows[rowIndex][cellIndex])
         })
@@ -55,7 +55,7 @@ defineSupportCode(({ Given, When, Then }) => {
 
   Then('I see the counters Items selected \'{int}\' and total \'{int}\'', function (int, int2) {
     let counts = [int, int2];
-    return $$('.item-count-container > b').map((counter, index)=>{
+    return $$('.item-count-container > b').map((counter, index) => {
       return checkTextElement(counter, counts[index]);
     })
   });

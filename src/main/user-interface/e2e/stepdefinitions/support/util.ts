@@ -1,5 +1,5 @@
 import { Promise } from 'es6-promise';
-import { ElementArrayFinder, ElementFinder } from 'protractor';
+import { ElementArrayFinder } from 'protractor';
 
 export function doInOrder<T>(parameterArray: Array<T>, method: (T) => Promise<any>): Promise<any> {
   if (parameterArray.length > 0) {
