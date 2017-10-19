@@ -2,8 +2,8 @@ package nl.thehyve.datashowcase
 
 import grails.gorm.transactions.Transactional
 import grails.validation.ValidationException
-import nl.thehyve.datashowcase.deserialisation.JsonDataDeserializer
 import nl.thehyve.datashowcase.exception.InvalidDataException
+import nl.thehyve.datashowcase.exception.ResourceNotFoundException
 import org.grails.datastore.gorm.GormEntity
 import org.grails.web.json.JSONArray
 import org.grails.web.json.JSONObject
@@ -14,8 +14,6 @@ class DataImportService {
 
     @Autowired
     Environment dataShowcaseEnvironment
-    @Autowired
-    JsonDataDeserializer jsonDataDeserializer
 
     def upload(JSONObject json) {
         try {
@@ -26,7 +24,7 @@ class DataImportService {
             concepts*.save(flush: true, failOnError: true)
 
             // save tree_nodes
-            jsonDataDeserializer.replace("conceptCode", "concept", (JSONArray) json.tree_nodes)
+            replace("conceptCode", "concept", (JSONArray) json.tree_nodes)
             def tree_nodes = json.tree_nodes?.collect { new TreeNode(it) }
             validate(tree_nodes)
             log.info('Saving tree nodes...')
@@ -43,8 +41,8 @@ class DataImportService {
                 throw new InvalidDataException("Data validation exception. " +
                         "Non public item cannot be loaded to a public environment")
             }
-            jsonDataDeserializer.replace("conceptCode", "concept", (JSONArray) json.items)
-            jsonDataDeserializer.replace("projectName", "project", (JSONArray) json.items)
+            replace("conceptCode", "concept", (JSONArray) json.items)
+            replace("projectName", "project", (JSONArray) json.items)
             def items = json.items?.collect { new Item(it) }
             validate(items)
             log.info('Saving items, summaries, values...')
@@ -67,5 +65,29 @@ class DataImportService {
 
     private static boolean allItemsArePublic(JSONArray items) {
         return items.every { it.publicItem == true }
+    }
+
+    private static JSONArray replace(String oldKey, String newKey, JSONArray jsonObj) {
+        jsonObj.forEach { JSONObject node ->
+            if (node[oldKey]) {
+                def value = find(oldKey, (String)node[oldKey])
+                node.remove(oldKey)
+                node.put(newKey, value)
+            } else if (node.children) {
+                replace(oldKey, newKey, (JSONArray) node.children)
+            }
+        }
+        jsonObj
+    }
+
+    private static Object find(String key, String value) {
+        switch (key) {
+            case "conceptCode":
+                return Concept.findByConceptCode(value)
+            case "projectName":
+                return Project.findByName(value)
+            default:
+                throw new ResourceNotFoundException("No domain class related to a key: $key was found")
+        }
     }
 }
