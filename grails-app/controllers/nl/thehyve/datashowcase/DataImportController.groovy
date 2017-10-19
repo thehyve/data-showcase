@@ -45,7 +45,7 @@ class DataImportController {
             render("Data file is missing.")
         }
         log.info('Data successfully uploaded!')
-        return response.status = 500
+        return response.status = 200
     }
 
     def private checkToken(String requestToken) {
