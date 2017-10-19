@@ -38,6 +38,7 @@ class DataImportController {
                         log.info('Uploading the file...')
                         dataImportService.upload((JSONObject) json)
                         log.info('Data successfully uploaded!')
+                        respond message: "Data successfully uploaded"
                         return response.status = 200
                     } else {
                         response.status = 400
@@ -61,13 +62,13 @@ class DataImportController {
     private boolean checkToken(String requestToken) {
         if (!requestToken?.trim()) {
             response.status = 401
-            respond error:"requestToken is required to upload the data"
+            respond error: "requestToken is required to upload the data"
             return false
         }
 
         if (!tokenService.isValid(requestToken)) {
             response.status = 401
-            respond error:"requestToken: $requestToken is invalid"
+            respond error: "requestToken: $requestToken is invalid"
             return false
         }
         return true
