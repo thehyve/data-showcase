@@ -14,7 +14,7 @@ class TokenService implements CommandLineRunner {
     @org.springframework.beans.factory.annotation.Value('${dataShowcase.accessToken}')
     String configAccessToken
 
-    public static String ACCESS_TOKEN
+    public static String hashedAccessToken
 
     private String defaultToken = "<configure a secure token>"
 
@@ -24,10 +24,10 @@ class TokenService implements CommandLineRunner {
             throw new Exception("Access token is not configured correctly. Specify a secure token in external config file.")
         }
         String hashedToken = bcryptEncoder.encode(configAccessToken)
-        ACCESS_TOKEN = hashedToken
+        hashedAccessToken = hashedToken
     }
 
     boolean isValid(String requestToken) {
-        return bcryptEncoder.matches(requestToken, ACCESS_TOKEN)
+        return bcryptEncoder.matches(requestToken, hashedAccessToken)
     }
 }
