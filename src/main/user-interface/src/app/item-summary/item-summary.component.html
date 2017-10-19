@@ -2,73 +2,86 @@
           [closable]="true" [draggable]="false" [resizable]="false">
     <table>
         <tr>
-            <th>Name:</th>
-            <th>{{item?.name}}</th>
+            <td>Name:</td>
+            <td>{{item?.name}}</td>
         </tr>
         <tr>
-            <th>Concept:</th>
-            <th>{{item?.concept}}</th>
+            <td>Concept:</td>
+            <td>{{item?.concept}}</td>
         </tr>
         <tr>
-            <th>Variable label (En):</th>
-            <th>{{item?.label}}</th>
+            <td>Variable label (En):</td>
+            <td>{{item?.label}}</td>
         </tr>
         <tr>
-            <th>Long variable label (En):</th>
-            <th>{{item?.labelLong}}</th>
+            <td>Long variable label (En):</td>
+            <td>{{item?.labelLong}}</td>
         </tr>
         <tr>
-            <th>Variable label (Nl):</th>
-            <th>{{item?.labelNl}}</th>
+            <td>Variable label (Nl):</td>
+            <td>{{item?.labelNl}}</td>
         </tr>
         <tr>
-            <th>Long variable label (Nl):</th>
-            <th>{{item?.labelNlLong}}</th>
+            <td>Long variable label (Nl):</td>
+            <td>{{item?.labelNlLong}}</td>
         </tr>
         <tr>
-            <th>Value labels:</th>
-            <th>?</th>
+            <td>Data stability:</td>
+            <td>{{item?.summary.dataStability}}</td>
         </tr>
         <tr>
-            <th>Type of variable:</th>
-            <th>{{item?.type}}</th>
+            <td>Type of variable:</td>
+            <td>{{item?.type}}</td>
         </tr>
     </table>
     <br/>
     <b>Summary statistics:</b>
     <table>
         <tr>
-            <th>Patient counts:</th>
-            <th>{{item?.summary.patientCount}}</th>
+            <td>Patient counts:</td>
+            <td>{{item?.summary.patientCount}}</td>
         </tr>
         <tr>
-            <th>Observation counts:</th>
-            <th>{{item?.summary.observationCount}}</th>
-        </tr>
-        <tr>
-            <th>Data stability:</th>
-            <th>{{item?.summary.dataStability}}</th>
-        </tr>
-        <tr>
-            <th>Average:</th>
-            <th>{{item?.summary.avgValue}}</th>
-        </tr>
-        <tr>
-            <th>Min:</th>
-            <th>{{item?.summary.minValue}}</th>
-        </tr>
-        <tr>
-            <th>Max:</th>
-            <th>{{item?.summary.maxValue}}</th>
-        </tr>
-        <tr>
-            <th>Standard deviation:</th>
-            <th>{{item?.summary.stdDevValue}}</th>
-        </tr>
-        <tr>
-            <th>Value frequencies:</th>
-            <th>{{item?.summary.frequency}}</th>
+            <td>Observation counts:</td>
+            <td>{{item?.summary.observationCount}}</td>
         </tr>
     </table>
+    <br/>
+    <div *ngIf="item?.type == 'Numerical';then numerical_content;else cathegorical_content"></div>
+    <ng-template #numerical_content>
+        <table>
+            <tr>
+                <td>Average:</td>
+                <td>{{item?.summary.avgValue}}</td>
+            </tr>
+            <tr>
+                <td>Min:</td>
+                <td>{{item?.summary.minValue}}</td>
+            </tr>
+            <tr>
+                <td>Max:</td>
+                <td>{{item?.summary.maxValue}}</td>
+            </tr>
+            <tr>
+                <td>Standard deviation:</td>
+                <td>{{item?.summary.stdDevValue}}</td>
+            </tr>
+        </table>
+    </ng-template>
+    <ng-template #cathegorical_content>
+        <table>
+            <tr>
+                <th>Value:</th>
+                <th>Frequency:</th>
+                <th>Label:</th>
+            </tr>
+            <tr *ngFor="let value of item?.summary.values">
+                <td>{{value.value}}</td>
+                <td>{{value.frequency}}</td>
+                <td>{{value.label}}</td>
+            </tr>
+        </table>
+    </ng-template>
+
     <br/>
 </p-dialog>

@@ -14,6 +14,11 @@ tr:nth-child(even) {
     background-color: #f7f7f7;
 }
 
-th:nth-child(1) {
+td:nth-child(1), th:nth-child(1) {
     width: 200px;
+}
+
+th {
+    font-weight: bold;
+    background-color: #e7f3f1;
 }
