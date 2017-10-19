@@ -15,8 +15,14 @@ class DataImportService {
     @Autowired
     Environment dataShowcaseEnvironment
 
+    @Autowired
+    DataService dataService
+
     def upload(JSONObject json) {
         try {
+            // clear database
+            dataService.clearDatabase()
+            
             // save concepts and related keywords
             def concepts = json.concepts?.collect { new Concept(it) }
             validate(concepts)
