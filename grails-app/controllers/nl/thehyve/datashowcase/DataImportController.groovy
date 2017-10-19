@@ -16,7 +16,9 @@ class DataImportController {
     TokenService tokenService
 
     def upload() {
-        checkToken(params.requestToken)
+        if (!checkToken(params.requestToken)) {
+            return
+        }
 
         if (request instanceof MultipartHttpServletRequest) {
             Iterator names = request.getFileNames()
@@ -25,7 +27,8 @@ class DataImportController {
                 MultipartFile file = request.getFile(fileName)
                 if (file.empty) {
                     response.status = 400
-                    render("File cannot be empty.")
+                    respond error: "File cannot be empty."
+                    return
                 } else {
                     log.info('Parsing the file...')
                     def json = file.inputStream.withReader {
@@ -34,30 +37,40 @@ class DataImportController {
                     if (json) {
                         log.info('Uploading the file...')
                         dataImportService.upload((JSONObject) json)
+                        log.info('Data successfully uploaded!')
+                        return response.status = 200
                     } else {
                         response.status = 400
-                        render("$fileName is not a valid JSON.")
+                        respond error: "$fileName is not a valid JSON."
+                        return
                     }
                 }
+            } else {
+                response.status = 400
+                respond error: "Data file is missing."
+                return
             }
         } else {
             response.status = 400
-            render("Data file is missing.")
+            respond error: "Data file is missing."
+            return
         }
-        log.info('Data successfully uploaded!')
-        return response.status = 200
+
     }
 
-    def private checkToken(String requestToken) {
+    private boolean checkToken(String requestToken) {
         if (!requestToken?.trim()) {
             response.status = 401
-            render("requestToken is required to upload the data")
+            respond error:"requestToken is required to upload the data"
+            return false
         }
 
         if (!tokenService.isValid(requestToken)) {
             response.status = 401
-            render("requestToken: $requestToken is invalid")
+            respond error:"requestToken: $requestToken is invalid"
+            return false
         }
+        return true
     }
 
 }
