@@ -32,29 +32,4 @@ class JsonDataDeserializer {
         }
     }
 
-    static JSONArray replaceConceptCodeWithConcept(JSONArray jsonObj) {
-        jsonObj.forEach { JSONObject node ->
-            if(node.conceptCode) {
-                def concept = Concept.findByConceptCode((String)node.conceptCode)
-                node.remove("conceptCode")
-                node.put("concept", concept)
-            } else if (node.children) {
-                replaceConceptCodeWithConcept(node.children)
-            }
-        }
-        jsonObj
-    }
-
-    static JSONArray replaceProjectNameWithProject(JSONArray jsonObj) {
-        jsonObj.forEach { JSONObject node ->
-            if(node.projectName) {
-                def concept = Project.findByName((String)node.projectName)
-                node.remove("projectName")
-                node.put("project", concept)
-            } else if (node.children) {
-                replaceConceptCodeWithConcept(node.children)
-            }
-        }
-        jsonObj
-    }
 }
