@@ -9,6 +9,8 @@ defineSupportCode(function ({ BeforeAll, Before }) {
   Before({}, function (scenario): Promise<any> {
     if (fs.existsSync(__dirname + '/../../downloads/' + 'testDownload.json')) {
       fs.unlinkSync(__dirname + '/../../downloads/' + 'testDownload.json');
+    } else if (!fs.existsSync(__dirname + '/../../downloads/')) {
+      fs.mkdirSync(__dirname + '/../../downloads');
     }
     return browser.get('')
   });
