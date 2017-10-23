@@ -30,7 +30,7 @@ class DataImportService {
 
             // save tree_nodes
             def tree_nodes = json.tree_nodes?.collect { JSONObject it ->
-                it.concept = it.conceptCode
+                copyConceptCode(it)
                 new TreeNode(it)
             }
             validate(tree_nodes)
@@ -77,4 +77,12 @@ class DataImportService {
         return items.every { it.publicItem == true }
     }
 
+    private static void copyConceptCode(JSONObject obj) {
+        obj.concept = obj.conceptCode
+        if (obj.children) {
+            (obj.children as JSONArray).each {
+                copyConceptCode(it as JSONObject)
+            }
+        }
+    }
 }
