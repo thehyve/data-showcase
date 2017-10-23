@@ -131,7 +131,7 @@
               ]
             },
             {
-              "conceptCode": "age",
+              "conceptCode": "weight",
               "path": "/Personal information/Basic information/Weight",
               "nodeType": "Concept",
               "label": "Weight",
