@@ -29,6 +29,10 @@ class Item {
     /**
      * The concept that the item represents in a project.
      */
+    @BindUsing({ obj, source ->
+        String conceptCode = source['concept']
+        Concept.findByConceptCode(conceptCode)
+    })
     Concept concept
 
     /**
