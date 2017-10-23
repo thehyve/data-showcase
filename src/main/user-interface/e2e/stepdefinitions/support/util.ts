@@ -22,7 +22,7 @@ export function promiseTrue(checkResult: boolean, message: string): Promise<any>
 
 export function checkTextElement(element, expectedText): Promise<any> {
   return element.getText().then(function (text) {
-    return promiseTrue(text == expectedText, text + " is not equal to " + expectedText);
+    return promiseTrue(text == expectedText, "expected: " + expectedText + "\nbut was: " + text);
   })
 }
 

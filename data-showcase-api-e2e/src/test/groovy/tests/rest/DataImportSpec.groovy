@@ -8,7 +8,7 @@ class DataImportSpec extends RESTSpec {
         given:
         def env = get([path: '/api/environment'])
         assert env['grailsEnvironment'] == 'test'
-        assert env['environment'] == 'public'
+        assert env['environment'] == 'Public'
 
         get([path: '/api/test/clearDatabase'])
 
@@ -16,15 +16,16 @@ class DataImportSpec extends RESTSpec {
         def file = null
         //file = new GrailsMockMultipartFile('testFile', 'test file contents'.bytes)
         def request = [
-                path: 'api/data_import/upload',
+                path: '/api/data_import/upload',
                 body: toJSON([
                         file        : file,
                         requestToken: null
-                ])
+                ]),
+                statusCode: 401
         ]
         def response = post(request)
 
         then:
-        assert response.status == 401
+        assert response.error == 'requestToken is required to upload the data'
     }
 }
