@@ -5,6 +5,7 @@ import {TreeNode} from "../models/tree-node";
 import {Item} from "../models/item";
 import {Project} from "../models/project";
 import {Subject} from "rxjs/Subject";
+import {BehaviorSubject} from "rxjs/BehaviorSubject";
 
 type LoadingState = 'loading' | 'complete';
 
@@ -23,8 +24,7 @@ export class DataService {
   // items available for currently selected node
   private itemsPerNode: Item[] = [];
   // items added to the shopping cart
-  private shoppingCartItemsSource = new Subject<Item[]>();
-  public shoppingCartItems$ = this.shoppingCartItemsSource.asObservable();
+  public shoppingCartItems = new BehaviorSubject<Item[]>([]);
 
   // global text filter
   private globalFilterSource = new Subject<string>();
@@ -190,7 +190,7 @@ export class DataService {
     this.setFilteredItems();
     this.projects.length = 0;
     for (let item of this.filteredItems) {
-      this.collectUnique(item['project'], this.projects);
+      DataService.collectUnique(item['project'], this.projects);
     }
   }
 
@@ -233,8 +233,19 @@ export class DataService {
     this.globalFilterSource.next(globalFilter);
   }
 
+  addToShoppingCart(newItemSelection: Item[]) {
+    let items: Item[] = this.shoppingCartItems.getValue();
+    let newItems: Item[] = items;
+    for (let item of newItemSelection) {
+      if (!newItems.includes(item)) {
+        newItems.push(item);
+      }
+    }
+    this.shoppingCartItems.next(newItems);
+  }
+
   setShoppingCartItems(items: Item[]) {
-    this.shoppingCartItemsSource.next(items);
+    this.shoppingCartItems.next(items);
   }
 
   private getUniqueFilterValues() {
@@ -244,14 +255,14 @@ export class DataService {
 
     for (let item of this.items) {
       for (let keyword of item['keywords']) {
-        this.collectUnique(keyword, this.keywords);
+        DataService.collectUnique(keyword, this.keywords);
       }
-      this.collectUnique(item['project'], this.projects);
-      this.collectUnique(item['researchLine'], this.researchLines);
+      DataService.collectUnique(item['project'], this.projects);
+      DataService.collectUnique(item['researchLine'], this.researchLines);
     }
   }
 
-  private collectUnique(element, list) {
+  private static collectUnique(element, list) {
     let values = list.map(function (a) {
       return a.value;
     });

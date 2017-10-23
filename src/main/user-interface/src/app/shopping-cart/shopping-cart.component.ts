@@ -17,7 +17,7 @@ export class ShoppingCartComponent implements OnInit {
   disabled: boolean = true;
 
   constructor(private dataService: DataService) {
-    dataService.shoppingCartItems$.subscribe(
+    dataService.shoppingCartItems.subscribe(
       items => {
         this.items = items;
         this.disabled = items.length== 0;
