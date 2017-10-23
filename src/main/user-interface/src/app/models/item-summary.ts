@@ -6,7 +6,6 @@ export class ItemSummary {
   avgValue: number;
   stdDevValue: number;
   values: ItemValue[];
-  frequency: number;
 
   observationCount: number;
   patientCount: number;
