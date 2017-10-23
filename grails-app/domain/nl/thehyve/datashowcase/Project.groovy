@@ -1,5 +1,7 @@
 package nl.thehyve.datashowcase
 
+import grails.databinding.BindUsing
+
 /**
  * Entity class to store projects (surveys).
  */
@@ -18,6 +20,10 @@ class Project {
     /**
      * The line of research the project belongs to.
      */
+    @BindUsing({ obj, source ->
+        LineOfResearch existingResearchLine = LineOfResearch.findByName(source['lineOfResearch'])
+        existingResearchLine ?: new LineOfResearch(name: source['lineOfResearch']).save(flush: true)
+    })
     LineOfResearch lineOfResearch
 
     @Override

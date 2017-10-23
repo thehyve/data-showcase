@@ -5,6 +5,8 @@ dataShowcase:
     # Paths to the logos for Data showcase application to be overwritten by external config
     ntrLogo: 'default'
     vuLogo: 'default'
+    # A default access token for data upload, should be configured before starting the application
+    accessToken: '<configure a secure token>'
 
 ---
 grails:
@@ -118,6 +120,17 @@ environments:
     testInternal:
         dataShowcase:
             environment: Internal
+---
+grails:
+  controllers:
+      upload:
+            maxFileSize: 50000000
+            maxRequestSize: 50000000
+---
+grails:
+  plugin:
+    springsecurity:
+      active: false
 ---
 environments:
     development:

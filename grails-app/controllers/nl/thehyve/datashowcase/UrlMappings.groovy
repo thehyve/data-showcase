@@ -15,6 +15,7 @@ class UrlMappings {
         "/api/lines_of_research"(controller: 'researchLine', includes: ['index'])
         "/api/tree_nodes"(controller: 'tree', includes: ['index'])
         "/api/file/logo/${type}"(controller: 'file', includes: ['getLogo'])
+        "/api/data_import/upload"(controller: 'dataImport', action: 'upload', method: 'POST')
 
         if (Environment.current.name in (Constants.DEV_ENVIRONMENTS + Constants.TEST_ENVIRONMENTS)) {
             "/api/test/clearDatabase"(controller: 'test', action: 'clearDatabase')

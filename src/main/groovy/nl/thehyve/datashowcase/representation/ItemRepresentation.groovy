@@ -37,6 +37,11 @@ abstract class ItemRepresentation {
     String labelNlLong
 
     /**
+     * Associated key words.
+     */
+    List<String> keywords
+
+    /**
      * The full path of the item that can be used in tranSMART
      */
     String itemPath
@@ -66,10 +71,5 @@ abstract class ItemRepresentation {
      * The project (survey) the item belongs to.
      */
     String project
-
-    /**
-     * Associated key words.
-     */
-    List<String> keywords
 
 }
