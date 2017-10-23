@@ -6,9 +6,13 @@ import {TreeNode} from "../models/tree-node";
 import {Http, Response, Headers, ResponseContentType} from '@angular/http';
 import {Endpoint} from "../models/endpoint";
 import {AppConfig} from "../config/app.config";
-import {PATH_ITEMS, PATH_LOGOS, PATH_PROJECTS, PATH_TREE_NODES} from "../constants/endpoints.constants";
+import {
+  PATH_ENVIRONMENT, PATH_ITEMS, PATH_LOGOS, PATH_PROJECTS,
+  PATH_TREE_NODES
+} from "../constants/endpoints.constants";
 import {Item} from "../models/item";
 import {Project} from "../models/project";
+import {Environment} from "../models/environment";
 
 
 @Injectable()
@@ -78,6 +82,17 @@ export class ResourceService {
       responseType: ResponseContentType.Blob
     })
       .map((response: Response) => response.blob())
+      .catch(this.handleError.bind(this));
+  }
+
+  getEnvironment(): Observable<Environment> {
+    let headers = new Headers();
+    let url = this.endpoint.apiUrl + PATH_ENVIRONMENT;
+
+    return this.http.get(url, {
+      headers: headers
+    })
+      .map((response: Response) => response.json() as Environment)
       .catch(this.handleError.bind(this));
   }
 

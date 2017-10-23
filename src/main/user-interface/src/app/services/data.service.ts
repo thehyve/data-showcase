@@ -6,6 +6,7 @@ import {Item} from "../models/item";
 import {Project} from "../models/project";
 import {Subject} from "rxjs/Subject";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import {Environment} from "../models/environment";
 
 type LoadingState = 'loading' | 'complete';
 
@@ -59,11 +60,16 @@ export class DataService {
   private vuLogoUrlSummary = new Subject<string>();
   public vuLogoUrl$ = this.vuLogoUrlSummary.asObservable();
 
+  // item summary popup visibility
+  private environmentSource = new Subject<Environment>();
+  public environment$ = this.environmentSource.asObservable();
+
   constructor(private resourceService: ResourceService) {
     this.updateAvailableProjects();
     this.updateNodes();
     this.updateItems();
     this.setFilteredItems();
+    this.setEnvironment();
   }
 
   loadLogo(type: string) {
@@ -274,4 +280,12 @@ export class DataService {
   displayPopup(item: Item) {
     this.itemSummaryVisibleSource.next(item);
   }
+
+  setEnvironment() {
+    this.resourceService.getEnvironment().subscribe(
+      (env: Environment) => {
+        this.environmentSource.next(env);
+      });
+  }
+
 }

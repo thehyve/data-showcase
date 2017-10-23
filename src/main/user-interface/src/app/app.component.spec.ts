@@ -21,11 +21,13 @@ import {ShoppingCartComponent} from "./shopping-cart/shopping-cart.component";
 import {AppConfigMock} from "./config/app.config.mock";
 import {ItemSummaryComponent} from "./item-summary/item-summary.component";
 import {LogosComponent} from "./logos/logos.component";
+import {PageRibbonComponent} from "./page-ribbon/page-ribbon.component";
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
+        PageRibbonComponent,
         TreeNodesComponent,
         TextFilterComponent,
         CheckboxFilterComponent,
