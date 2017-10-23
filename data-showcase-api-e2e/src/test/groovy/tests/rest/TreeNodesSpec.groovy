@@ -8,7 +8,7 @@ class TreeNodesSpec extends RESTSpec {
         given:
         def env = get([path: '/api/environment'])
         assert env['grailsEnvironment'] == 'test'
-        assert env['environment'] == 'public'
+        assert env['environment'] == 'Public'
 
         get([path: '/api/test/clearDatabase'])
         get([path: '/api/test/createPublicData'])
