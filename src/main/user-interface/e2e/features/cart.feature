@@ -10,7 +10,7 @@ Feature: Data Showcase provides export functionality.
     ["ui-btn", "heightB", "Height", "Project B", "Research line 2", "height"]]
     """
 
-  Scenario: adding items to the cart
+  Scenario: adding height items to the cart
     Given I open all tree nodes
     And I select 'Height'
     When I select all data in the data table
@@ -28,7 +28,7 @@ Feature: Data Showcase provides export functionality.
     When I remove all from the cart
     Then the cart is empty
 
-  Scenario: remove items from the cart
+  Scenario: export items from the cart
     Given I select all data in the data table
     And I add them to the cart
     And I open the cart

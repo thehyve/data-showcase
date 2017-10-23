@@ -7,14 +7,14 @@ Feature: Data Showcase provides search functionality. (NTRREQ-41)
     [["heightB", "Height at time of survey", "Project B", "Research line 2", "height", "ui-btn"]]
     """
 
-  Scenario: Search and filter based on keywords
+  Scenario: Search and filter based on keyword
     Given I select keywords 'Family related'
     Then the data table contains
     """
     [["heightB", "Height at time of survey", "Project B", "Research line 2", "height", "ui-btn"]]
     """
 
-  Scenario: Search and filter based on keywords
+  Scenario: Search and filter based on multiple keywords
     Given I select keywords 'Family related, Administration'
     Then the data table contains
     """
@@ -22,14 +22,14 @@ Feature: Data Showcase provides search functionality. (NTRREQ-41)
     ["heightB", "Height at time of survey", "Project B", "Research line 2", "height", "ui-btn"]]
     """
 
-  Scenario: Search and filter based on Research lines
+  Scenario: Search and filter based on Research line
     Given I select Research lines 'Research line 2'
     Then the data table contains
     """
     [["heightB", "Height at time of survey", "Project B", "Research line 2", "height", "ui-btn"]]
     """
 
-  Scenario: Search and filter based on Research lines
+  Scenario: Search and filter based on multiple Research lines
     Given I select Research lines 'Research line 1, Research line 2'
     Then the data table contains
     """
