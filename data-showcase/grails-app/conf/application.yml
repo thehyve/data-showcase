@@ -106,10 +106,10 @@ environments:
 
 ---
 grails:
-  controllers:
-      upload:
-          maxFileSize: 50000000
-          maxRequestSize: 50000000
+    controllers:
+        upload:
+            maxFileSize: 2000000000
+            maxRequestSize: 2000000000
 
 ---
 environments:
