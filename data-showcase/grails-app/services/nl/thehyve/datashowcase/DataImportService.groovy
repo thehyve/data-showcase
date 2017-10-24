@@ -51,6 +51,7 @@ class DataImportService {
 
             // save items, related summaries and values
             if (!dataShowcaseEnvironment.internalInstance && !allItemsArePublic((JSONArray) json.items)) {
+                log.error "Non public item cannot be loaded to a public environment"
                 throw new InvalidDataException("Data validation exception. " +
                         "Non public item cannot be loaded to a public environment")
             }
@@ -65,8 +66,10 @@ class DataImportService {
             items*.save(flush: true, failOnError: true)
 
         } catch (ValidationException e) {
+            log.error e.message
             throw new InvalidDataException(e.message)
         } catch (Exception e) {
+            log.error e.message
             throw new InvalidDataException("An error occured when uploading the data: $e.message")
         }
     }
@@ -74,6 +77,7 @@ class DataImportService {
     private static def validate(List<GormEntity> entities) {
         entities.each { entity ->
             if (entity.hasErrors()) {
+                log.error entity.errors.toString()
                 throw new InvalidDataException("Validation errors: ${entity.errors.toString()} ")
             }
         }
