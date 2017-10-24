@@ -1,0 +1,39 @@
+/*
+ * Copyright (c) 2017  The Hyve B.V.
+ *  This file is distributed under the GNU Affero General Public License
+ *  (see accompanying file LICENSE).
+ */
+
+.item-table-container {
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 10px;
+    min-width: 800px;
+}
+
+.form-inline {
+    margin: 5px;
+}
+
+.fa-plus{
+    color: white;
+}
+
+.export-button {
+    margin-top: 5px;
+}
+
+.global-filter {
+    margin: 5px;
+}
+
+.inline {
+    width: 100%;
+    padding-top: 5px;
+    margin-bottom: 20px;
+}
+
+.item-count-container {
+    float:right;
+    padding-right: 0;
+}

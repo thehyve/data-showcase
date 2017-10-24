@@ -1,0 +1,283 @@
+/*
+ * Copyright (c) 2017  The Hyve B.V.
+ *  This file is distributed under the GNU Affero General Public License
+ *  (see accompanying file LICENSE).
+ */
+
+/*
+  All elements have padding and border
+  included in the element's total width and height
+ */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #FCFCFC;
+    cursor: auto;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+    font-family: 'Roboto', sans-serif;
+}
+
+.center-horizontal {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/*
+ * style fix for the primeng tree-container in the side-panel
+ */
+body .ds-tree-container {
+    width: auto;
+    background-color: transparent;
+    border: none;
+}
+
+/*
+ * Style for the search box in the tree-node accordion on the left side
+ */
+.ds-tree-filter-input {
+    border-bottom: 1px solid darkgray;
+    padding-top: 10px;
+    height: 50px;
+    font-size: small !important;
+}
+.ds-tree-filter-input > input{
+    font-size: small !important;
+    height: 2.3em;
+    min-width: 200px;
+    margin-top: 10px;
+}
+
+/*
+ * style class for loading tree nodes and patient counts
+ */
+body .ds-spinner {
+    display: none;
+    visibility: hidden;
+}
+
+body .ds-spinner.loading {
+    display: inline-block;
+    visibility: visible;
+}
+
+/*
+ * Change the font size of the legend - checkbox-filter
+ */
+legend {
+    font-size: larger;
+}
+
+/*
+ * Change the color theme of the accordion in data-selection to NTR blue
+ */
+.md2-accordion-tab.md2-accordion-tab-active>.md2-accordion-header {
+    border-color: #00889C !important;
+    box-shadow: 0 1px 0 #00889C !important;
+}
+
+/*
+ * Change the primeng data table border to lightgrey
+ */
+.ui-datatable .ui-datatable-thead>tr>th,
+.ui-datatable .ui-datatable-tfoot>tr>td,
+.ui-datatable .ui-datatable-data>tr>td {
+    border-color: lightgrey;
+}
+
+/*
+ * Change the primeng data table header
+ */
+body .ui-datatable .ui-datatable-thead > tr > th,
+body .ui-datatable .ui-datatable-thead th.ui-state-active,
+body .ui-datatable thead th.ui-sortable-column:not(.ui-state-active):hover {
+    background-color: #e7f3f1;
+    color: black;
+}
+
+/*
+ * Change the primeng selected listbox item
+ */
+body .ui-listbox-item.ui-corner-all.ui-state-highlight,
+body .ui-state-highlight
+{
+    background-color: white;
+    color: #292b2c;
+}
+body .ui-datatable .ui-datatable-data tr.ui-datatable-even.ui-state-highlight
+{
+    background-color: #f7f7f7;
+    color: #292b2c;
+}
+
+body .ui-listbox.ui-inputtext.ui-widget.ui-widget-content.ui-corner-all {
+    border: none;
+    width: 100%;
+}
+
+body .ui-inputtext.ui-widget.ui-state-default.ui-corner-all{
+    height: 30px;
+    padding-left: 2px;
+}
+body .ui-listbox .ui-listbox-header .ui-listbox-filter-container {
+    width: calc(100% - 40px);
+    height: 30px;
+    margin-bottom: 0;
+}
+body .ui-listbox-filter-container {
+    padding-left: 25px;
+}
+body .ui-fieldset .ui-fieldset-legend {
+    background-color: #e7f3f1;
+    margin-bottom: 0;
+}
+/*
+ * Add scrollbar to listbox-list
+ */
+.ui-listbox-list {
+    max-height: 130px;
+    overflow-x: auto;
+}
+
+/*
+ * Change the primeng titlebar text color
+ */
+body .ui-panel .ui-panel-titlebar .ui-panel-titlebar-icon {
+    color: white;
+}
+
+/*
+ * Checkbox filters
+ */
+body .ui-panel .ui-panel-titlebar {
+    background-color: #00889C;
+}
+body .ui-panel,
+body .ui-fieldset,
+body .ui-fieldset .ui-fieldset-legend {
+    border-color: lightgrey;
+}
+
+/*
+ * Shadow for filter panel and item table
+ */
+body .ui-panel,
+body .ui-datatable {
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14),0 3px 1px -2px rgba(0,0,0,0.12),0 1px 5px 0 rgba(0,0,0,0.2);
+}
+
+body .input:focus {
+    border-color: #00889C !important;
+}
+
+body .ui-panel{
+    overflow: auto;
+}
+/*
+ * Inline alignment of header elements
+ */
+.form-inline{
+    display: inline-block;
+}
+
+/* Change input placeholder text color */
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: lightgray;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color: lightgray;
+    opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: lightgray;
+    opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: lightgray;
+}
+
+.form-control::-webkit-input-placeholder { color: lightgray; }
+.form-control:-moz-placeholder { color: lightgray; }
+.form-control::-moz-placeholder { color: lightgray; }
+.form-control:-ms-input-placeholder { color: lightgray; }
+/*#6BC4B7*/
+
+/* CSS used here will be applied after bootstrap.css */
+.badge-notify{
+    background:red;
+    position:relative;
+    top: 30px;
+    left: -75px;
+    font-size: 16px;
+}
+
+/* Shopping cart delete button */
+.ui-button-danger.ui-button-icon-only {
+    border-radius: 5px;
+    max-width: 19px;
+    min-width: 19px;
+    max-height: 20px;
+    min-height: 20px;
+    margin-left: 3px;
+    margin-top: 4px;
+    margin-bottom: 0;
+}
+/* Shopping cart delete button */
+.ui-button-danger.ui-button-icon-only .fa {
+    margin-top: -.55em;
+    margin-left: -.63em
+}
+
+/* Show item summary button */
+.btn-default.ui-button-icon-only,
+.btn-default.ui-button-icon-only:hover,
+.btn-default.ui-button-icon-only:focus,
+.btn-default.ui-button-icon-only:enabled:active {
+    background-color: transparent !important;
+    box-shadow: none;
+}
+
+/* icon-only buttons */
+.btn-default.ui-button-icon-only .fa {
+    font-size: 28px;
+    color: #00889C;
+    margin-left: -.75em;
+}
+.ds-tree-filter-input .btn-default.ui-button-icon-only .fa {
+    color: #747a7f;
+}
+
+/* Popup datable header */
+body .ui-dialog .ui-dialog-titlebar,
+body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon {
+    background-color: #00889C;
+    color: white;
+}
+
+.ui-dialog-footer {
+    height: 65px;
+}
+
+.ui-inputgroup .ui-inputgroup-addon {
+    background-color: #e7f3f1;
+    border-color: darkgray;
+}
+body .ui-inputgroup .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
+    height: 36px;
+}
+
+.text-filter-container .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
+    width: 500px;
+    height: 36px;
+}
+/*.text-filter-container .ui-inputtext.ui-widget.ui-state-default.ui-corner-all:focus {*/
+    /*width: 500px;*/
+/*}*/

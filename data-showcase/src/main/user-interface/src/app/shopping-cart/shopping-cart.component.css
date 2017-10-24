@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2017  The Hyve B.V.
+ *  This file is distributed under the GNU Affero General Public License
+ *  (see accompanying file LICENSE).
+ */
+
+.shopping-cart-button {
+    font-size:20px;
+    padding: 0;
+    cursor:pointer;
+}
+
+.table_content {
+    text-align: left !important;
+}
+.ui-dialog-footer {
+    height: 65px;
+}
