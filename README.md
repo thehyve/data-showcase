@@ -1,4 +1,6 @@
 # Data showcase
+[![Build Status](https://travis-ci.org/thehyve/data-showcase.svg?branch=master)](https://travis-ci.org/thehyve/data-showcase/branches)
+
 
 A data showcase for displaying a summary of data in TranSMART.
 
