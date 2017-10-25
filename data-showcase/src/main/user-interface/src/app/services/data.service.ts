@@ -26,6 +26,8 @@ export class DataService {
 
   // list of all items
   private items: Item[] = [];
+  // the flag indicating if Items are still being loaded
+  public loadingItems: boolean = false;
   // filtered list of items based on selected node and selected checkbox filters
   public filteredItems: Item[] = [];
   // items available for currently selected node
@@ -165,6 +167,7 @@ export class DataService {
   }
 
   updateItems() {
+    this.loadingItems = true;
     this.itemsPerNode.length = 0;
     this.items.length = 0;
     this.resourceService.getItems()
@@ -181,6 +184,7 @@ export class DataService {
           }
           this.setFilteredItems();
           this.getUniqueFilterValues();
+          this.loadingItems = false;
         },
         err => console.error(err)
       );

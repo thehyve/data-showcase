@@ -11,7 +11,8 @@
                  [rows]="8" [paginator]="true"
                  [headerCheckboxToggleAllPages]="true"
                  [resizableColumns]="true"
-                 [(selection)]="itemsSelection">
+                 [(selection)]="itemsSelection"
+                 [loading]="dataService.loadingItems" loadingIcon="fa fa-spin fa-refresh fa-fw">
         <p-column selectionMode="multiple" [style]="{ width: '45px'}">
         </p-column>
         <p-column field="name" header="Name"
