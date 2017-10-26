@@ -59,6 +59,7 @@ class Summary {
 
     static mapping = {
         version false
+        values cascade: 'all-delete-orphan'
     }
 
     static constraints = {

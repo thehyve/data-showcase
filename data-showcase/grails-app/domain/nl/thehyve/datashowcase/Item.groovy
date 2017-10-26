@@ -7,6 +7,9 @@
 package nl.thehyve.datashowcase
 
 import grails.databinding.BindUsing
+import javax.persistence.OneToOne
+import javax.persistence.CascadeType
+
 
 /**
  * An item represents a variable in a study or survey.
@@ -59,6 +62,7 @@ class Item {
         }
         summary
     })
+    @OneToOne(cascade=CascadeType.PERSIST)
     Summary summary
 
     String getLabel() {

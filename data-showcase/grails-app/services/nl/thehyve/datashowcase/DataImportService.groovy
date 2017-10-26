@@ -6,7 +6,6 @@
 
 package nl.thehyve.datashowcase
 
-import com.sun.org.apache.xpath.internal.compiler.Keywords
 import grails.gorm.transactions.Transactional
 import grails.validation.ValidationException
 import nl.thehyve.datashowcase.exception.InvalidDataException
@@ -14,6 +13,9 @@ import org.grails.datastore.gorm.GormEntity
 import org.grails.web.json.JSONArray
 import org.grails.web.json.JSONObject
 import org.springframework.beans.factory.annotation.Autowired
+import org.hibernate.StatelessSession
+import org.hibernate.Transaction
+import org.hibernate.SessionFactory
 
 @Transactional
 class DataImportService {
@@ -24,12 +26,16 @@ class DataImportService {
     @Autowired
     DataService dataService
 
+    SessionFactory sessionFactory
+
     def upload(JSONObject json) {
         try {
             // clear database
             log.info('Clearing database...')
             dataService.clearDatabase()
 
+            StatelessSession session = sessionFactory.openStatelessSession()
+            Transaction tx = session.beginTransaction()
             // save keywords
             def keywords = json.concepts?.keywords?.flatten().unique().collect {
                 if(it?.trim()) new Keyword(keyword: it)
@@ -37,13 +43,15 @@ class DataImportService {
             keywords.removeAll([null])
             validate(keywords)
             log.info('Saving keywords...')
-            keywords*.save(flush: true, failOnError: true)
+            keywords.each{ session.insert(it)}
+            //keywords*.save(flush: true, failOnError: true)
 
             // save concepts
             def concepts = json.concepts?.collect { new Concept(it) }
             validate(concepts)
             log.info('Saving concepts...')
-            concepts*.save(flush: true, failOnError: true)
+            concepts.each{ session.insert(it) }
+            //concepts*.save(flush: true, failOnError: true)
 
             // save tree_nodes
             def tree_nodes = json.tree_nodes?.collect { JSONObject it ->
@@ -52,7 +60,8 @@ class DataImportService {
             }
             validate(tree_nodes)
             log.info('Saving tree nodes...')
-            tree_nodes*.save(flush: true, failOnError: true)
+            tree_nodes.each{ session.insert(it) }
+            //tree_nodes*.save(flush: true, failOnError: true)
 
             //save research_lines
             def linesOfResearch = json.projects?.lineOfResearch.unique().collect {
@@ -60,13 +69,15 @@ class DataImportService {
             }
             validate(linesOfResearch)
             log.info("Saving lines of research...")
-            linesOfResearch*.save(flush: true, failOnError: true)
+            linesOfResearch.each{ session.insert(it) }
+            //linesOfResearch*.save(flush: true, failOnError: true)
 
             // save projects
             def projects = json.projects?.collect { new Project(it) }
             validate(projects)
             log.info("Saving projects...")
-            projects*.save(flush: true, failOnError: true)
+            projects.each{ session.insert(it) }
+            //projects*.save(flush: true, failOnError: true)
 
             // save items, related summaries and values
             if (!dataShowcaseEnvironment.internalInstance && !allItemsArePublic((JSONArray) json.items)) {
@@ -82,7 +93,11 @@ class DataImportService {
             }
             validate(items)
             log.info("Saving $items.size() items, summaries, values...")
-            items*.save(flush: true, failOnError: true)
+            items.each{ session.insert(it) }
+            //items*.save(flush: true, failOnError: true)
+
+            tx.commit()
+            session.close()
 
         } catch (ValidationException e) {
             log.error e.message
