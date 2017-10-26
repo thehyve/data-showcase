@@ -147,3 +147,6 @@ publishing {
 publishToMavenLocal.dependsOn 'executableWar'
 publish.dependsOn 'executableWar'
 
+bootRun {
+    jvmArgs = ['-Xmx4096m']
+}
