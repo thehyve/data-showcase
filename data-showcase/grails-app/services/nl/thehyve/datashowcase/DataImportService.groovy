@@ -6,6 +6,7 @@
 
 package nl.thehyve.datashowcase
 
+import com.sun.org.apache.xpath.internal.compiler.Keywords
 import grails.gorm.transactions.Transactional
 import grails.validation.ValidationException
 import nl.thehyve.datashowcase.exception.InvalidDataException
@@ -26,9 +27,19 @@ class DataImportService {
     def upload(JSONObject json) {
         try {
             // clear database
+            log.info('Clearing database...')
             dataService.clearDatabase()
 
-            // save concepts and related keywords
+            // save keywords
+            def keywords = json.concepts?.keywords?.flatten().unique().collect {
+                if(it?.trim()) new Keyword(keyword: it)
+            }
+            keywords.removeAll([null])
+            validate(keywords)
+            log.info('Saving keywords...')
+            keywords*.save(flush: true, failOnError: true)
+
+            // save concepts
             def concepts = json.concepts?.collect { new Concept(it) }
             validate(concepts)
             log.info('Saving concepts...')
@@ -43,10 +54,18 @@ class DataImportService {
             log.info('Saving tree nodes...')
             tree_nodes*.save(flush: true, failOnError: true)
 
-            // save projects and related research_lines
+            //save research_lines
+            def linesOfResearch = json.projects?.lineOfResearch.unique().collect {
+                if (it) new LineOfResearch(name: it)
+            }
+            validate(linesOfResearch)
+            log.info("Saving lines of research...")
+            linesOfResearch*.save(flush: true, failOnError: true)
+
+            // save projects
             def projects = json.projects?.collect { new Project(it) }
             validate(projects)
-            log.info('Saving projects and research lines...')
+            log.info("Saving projects...")
             projects*.save(flush: true, failOnError: true)
 
             // save items, related summaries and values
@@ -62,7 +81,7 @@ class DataImportService {
                 item
             }
             validate(items)
-            log.info('Saving items, summaries, values...')
+            log.info("Saving $items.size() items, summaries, values...")
             items*.save(flush: true, failOnError: true)
 
         } catch (ValidationException e) {

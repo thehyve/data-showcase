@@ -51,8 +51,7 @@ class Concept {
     @BindUsing({ obj, source ->
         def keywords = source['keywords'].collect {
             if (it) {
-                Keyword existingKeyword = Keyword.findByKeyword(it)
-                existingKeyword ?: new Keyword(keyword: it).save(flush: true)
+                Keyword.findByKeyword(it)
             }
         }
         keywords

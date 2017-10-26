@@ -27,8 +27,7 @@ class Project {
      * The line of research the project belongs to.
      */
     @BindUsing({ obj, source ->
-        LineOfResearch existingResearchLine = LineOfResearch.findByName(source['lineOfResearch'])
-        existingResearchLine ?: new LineOfResearch(name: source['lineOfResearch']).save(flush: true)
+        LineOfResearch.findByName(source['lineOfResearch'])
     })
     LineOfResearch lineOfResearch
 
