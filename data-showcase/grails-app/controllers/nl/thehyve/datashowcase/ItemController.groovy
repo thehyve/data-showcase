@@ -6,6 +6,7 @@
 
 package nl.thehyve.datashowcase
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 
 class ItemController {
@@ -21,7 +22,9 @@ class ItemController {
      * @return the list of items as JSON.
      */
     def index() {
-        respond items: itemService.items
+        response.status = 200
+        response.contentType = 'application/json'
+        new ObjectMapper().writeValue(response.outputStream, [items: itemService.items])
     }
 
     /**

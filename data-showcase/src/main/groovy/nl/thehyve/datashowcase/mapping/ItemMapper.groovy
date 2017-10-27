@@ -26,12 +26,14 @@ class ItemMapper {
     @Autowired
     Environment dataShowcaseEnvironment
 
-    ItemRepresentation map(Item item) {
-        if (dataShowcaseEnvironment.internalInstance) {
-            modelMapper.map(item, InternalItemRepresentation.class)
-        } else {
-            modelMapper.map(item, PublicItemRepresentation.class)
-        }
-    }
+    @Lazy
+    Closure<ItemRepresentation> map = (dataShowcaseEnvironment.internalInstance) ?
+            { Item item ->
+                modelMapper.map(item, InternalItemRepresentation.class)
+            } as Closure<ItemRepresentation>
+            :
+            { Item item ->
+                modelMapper.map(item, PublicItemRepresentation.class)
+            } as Closure<ItemRepresentation>
 
 }
