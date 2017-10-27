@@ -167,6 +167,8 @@ class DataImportService {
 
             stopWatch.start('Commit transaction')
             tx.commit()
+            session.flush()
+            session.clear()
             stopWatch.stop()
 
             log.info "Upload completed.\n${stopWatch.prettyPrint()}"
@@ -181,8 +183,6 @@ class DataImportService {
             log.error "Error while saving data", e
             tx?.rollback()
             throw new InvalidDataException("An error occured when uploading the data: ${e.message}")
-        } finally{
-            session?.close()
         }
     }
 

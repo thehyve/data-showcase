@@ -66,8 +66,10 @@ class TreeService {
                 concept: map(node.concept),
                 path: node.path,
         )
-        result.children = node.children.collect {
-            map(it)
+        if (node.children) {
+            result.children = node.children.collect {
+                map(it)
+            }
         }
         result
     }
