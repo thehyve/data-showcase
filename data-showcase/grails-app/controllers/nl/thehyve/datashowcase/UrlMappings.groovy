@@ -18,6 +18,7 @@ class UrlMappings {
         "/api/items"(resources: 'item', includes: ['index', 'show'])
         "/api/keywords"(controller: 'keyword', includes: ['index'])
         "/api/projects"(controller: 'project', includes: ['index'])
+        "/api/concepts"(controller: 'concept', includes: ['index'])
         "/api/lines_of_research"(controller: 'researchLine', includes: ['index'])
         "/api/tree_nodes"(controller: 'tree', includes: ['index'])
         "/api/file/logo/${type}"(controller: 'file', includes: ['getLogo'])
