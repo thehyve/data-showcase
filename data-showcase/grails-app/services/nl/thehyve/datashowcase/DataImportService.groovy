@@ -13,12 +13,10 @@ import org.grails.core.util.StopWatch
 import org.grails.datastore.gorm.GormEntity
 import org.grails.web.json.JSONArray
 import org.grails.web.json.JSONObject
-import org.hibernate.HibernateException
 import org.hibernate.Session
-import org.hibernate.SessionFactory
-import org.hibernate.StatelessSession
-import org.hibernate.Transaction
 import org.springframework.beans.factory.annotation.Autowired
+import org.hibernate.Transaction
+import org.hibernate.SessionFactory
 
 @Transactional
 class DataImportService {
