@@ -7,12 +7,12 @@
 package nl.thehyve.datashowcase
 
 import grails.gorm.transactions.Transactional
+import grails.plugin.cache.CacheEvict
 import grails.plugin.cache.Cacheable
-import nl.thehyve.datashowcase.enumeration.NodeType
 import nl.thehyve.datashowcase.exception.ResourceNotFoundException
 import nl.thehyve.datashowcase.mapping.ItemMapper
 import nl.thehyve.datashowcase.representation.ItemRepresentation
-import nl.thehyve.datashowcase.representation.TreeNodeRepresentation
+import org.grails.core.util.StopWatch
 import org.springframework.beans.factory.annotation.Autowired
 
 @Transactional
@@ -27,48 +27,58 @@ class ItemService {
     @Transactional(readOnly = true)
     List<ItemRepresentation> getItems() {
         if (dataShowcaseEnvironment.internalInstance) {
-            Item.findAll().collect({
+            def stopWatch = new StopWatch('Fetch items')
+            stopWatch.start('Retrieve from database')
+            def items = Item.findAll()
+            stopWatch.stop()
+            stopWatch.start('Map to representations')
+            def result = items.collect {
                 itemMapper.map(it)
-            })
+            }
+            stopWatch.stop()
+            log.info "Items fetched.\n${stopWatch.prettyPrint()}"
+            result
         } else {
-            Item.findAllByPublicItem(true).collect({
+            Item.findAllByPublicItem(true).collect {
                 itemMapper.map(it)
-            })
+            }
         }
     }
 
     @Transactional(readOnly = true)
-    @Cacheable('itemcounts')
-    Long countItemsForNode(String path) {
+    @Cacheable('itemCountPerNode')
+    Map<String, Long> getItemCountPerNode() {
         if (dataShowcaseEnvironment.internalInstance) {
-            Item.executeQuery(
-                """ select count(distinct i) from Item i, TreeNode n
+            def itemCountMap = Item.executeQuery(
+                """ select n.path as path, count(distinct i) as itemCount
+                    from Item i, TreeNode n
                     join i.concept c
                     where n.concept = c
-                    and n.path = :path
-                """,
-                [path: path]
-            )[0]
+                    group by n.path
+                """
+            ) as List<List>
+            itemCountMap.collectEntries {
+                [(it[0]): it[1] as Long]
+            }
         } else {
-            Item.executeQuery(
-                """ select count(distinct i) from Item i, TreeNode n
+            def itemCountMap = Item.executeQuery(
+                """ select n.path as path, count(distinct i) as itemCount
+                    from Item i, TreeNode n
                     join i.concept c
                     where n.concept = c
-                    and n.path = :path
-                    and i.publicItem = true 
-                """,
-                [path: path]
-            )[0]
+                    and i.publicItem = true
+                    group by n.path
+                """
+            ) as List<List>
+            itemCountMap.collectEntries {
+                [(it[0]): it[1] as Long]
+            }
         }
     }
 
-    @Transactional(readOnly = true)
-    Long countItemsForNode(TreeNodeRepresentation treeNode) {
-        if (treeNode.nodeType == NodeType.Domain) {
-            0
-        } else {
-            countItemsForNode(treeNode.path)
-        }
+    @CacheEvict(value = 'itemCountPerNode', allEntries = true)
+    void clearItemCountsCache() {
+        log.info "Clear items counts cache."
     }
 
     @Transactional(readOnly = true)
@@ -83,10 +93,6 @@ class ItemService {
             throw new ResourceNotFoundException('Item not found')
         }
         itemMapper.map(item)
-    }
-
-    def saveItems(List<ItemRepresentation> items) {
-
     }
 
 }

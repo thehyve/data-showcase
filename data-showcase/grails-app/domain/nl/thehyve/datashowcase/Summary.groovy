@@ -48,7 +48,12 @@ class Summary {
      */
     Double stdDevValue
 
-    static belongsTo = [item: Item]
+    static belongsTo = [
+            /**
+             * The item this summary belongs to.
+             */
+            item: Item
+    ]
 
     static hasMany = [
             /**
@@ -59,6 +64,8 @@ class Summary {
 
     static mapping = {
         version false
+
+        values batchSize: 1000
     }
 
     static constraints = {

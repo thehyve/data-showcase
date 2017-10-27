@@ -7,7 +7,6 @@
 package nl.thehyve.datashowcase
 
 import grails.gorm.transactions.Transactional
-import nl.thehyve.datashowcase.representation.ItemRepresentation
 import org.springframework.beans.factory.annotation.Autowired
 
 @Transactional
@@ -18,8 +17,8 @@ class DataService {
 
     def clearDatabase() {
         Value.executeUpdate('delete from Value')
-        Item.executeUpdate('delete from Item')
         Summary.executeUpdate('delete from Summary')
+        Item.executeUpdate('delete from Item')
         TreeNode.executeUpdate('delete from TreeNode')
         Concept.executeUpdate('delete from Concept')
         Keyword.executeUpdate('delete from Keyword')
@@ -27,22 +26,4 @@ class DataService {
         LineOfResearch.executeUpdate('delete from LineOfResearch')
     }
 
-    /**
-     * Upload concepts, tree nodes and items.
-     *
-     * @param concepts The concepts to save.
-     * @param nodes The nodes to save.
-     * @param items The items to save.
-     */
-    def uploadData(List<Concept> concepts, List<TreeNode> nodes, List<ItemRepresentation> items) {
-        if (!dataShowcaseEnvironment.internalInstance) {
-            // TODO
-        }
-        // FIXME
-        // - check if no public data is being uploaded.
-        // - truncate tables
-        // - upload concepts
-        // - upload items and associated data
-        // - upload tree nodes
-    }
 }

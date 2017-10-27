@@ -13,6 +13,11 @@ import nl.thehyve.datashowcase.enumeration.VariableType
 class ConceptRepresentation {
 
     /**
+     * The unique code of the concept in Transmart.
+     */
+    String conceptCode
+
+    /**
      * The short name of the variable.
      */
     String label

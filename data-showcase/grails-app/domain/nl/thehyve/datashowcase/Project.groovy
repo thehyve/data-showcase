@@ -6,8 +6,6 @@
 
 package nl.thehyve.datashowcase
 
-import grails.databinding.BindUsing
-
 /**
  * Entity class to store projects (surveys).
  */
@@ -26,9 +24,6 @@ class Project {
     /**
      * The line of research the project belongs to.
      */
-    @BindUsing({ obj, source ->
-        LineOfResearch.findByName(source['lineOfResearch'])
-    })
     LineOfResearch lineOfResearch
 
     @Override
@@ -43,6 +38,8 @@ class Project {
 
     static mapping = {
         version false
+
+        lineOfResearch fetch: 'join'
     }
 
     static constraints = {
