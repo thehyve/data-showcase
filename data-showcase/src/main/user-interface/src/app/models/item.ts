@@ -12,7 +12,6 @@ export class Item {
   itemPath: string;
   type: string;
   project: string;
-  keywords: string[];
   researchLine: string;
   concept: string;
   summary: ItemSummary;

@@ -13,6 +13,8 @@ import {Project} from "../models/project";
 import {Subject} from "rxjs/Subject";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Environment} from "../models/environment";
+import { Concept } from '../models/concept';
+import { CheckboxOption } from '../models/CheckboxOption';
 
 type LoadingState = 'loading' | 'complete';
 
@@ -39,6 +41,7 @@ export class DataService {
   private globalFilterSource = new Subject<string>();
   public globalFilter$ = this.globalFilterSource.asObservable();
 
+  private selectedTreeNode: TreeNode = null;
   // selected checkboxes for keywords filter
   private selectedKeywords: string[] = [];
   // selected checkboxes for projects filter
@@ -47,11 +50,14 @@ export class DataService {
   private selectedResearchLines: string[] = [];
 
   // list of keywords available for current item list
-  private keywords: string[] = [];
-  // list of keywords available for current item list
-  private projects: string[] = [];
-  // list of keywords available for current item list
-  private researchLines: string[] = [];
+  private keywords: CheckboxOption[] = [];
+  // list of project names available for current item list
+  private projects: CheckboxOption[] = [];
+  // list of research lines available for current item list
+  private researchLines: CheckboxOption[] = [];
+
+  // list of all concepts
+  private concepts: Concept[] = [];
 
   // list of all projects
   private availableProjects: Project[] = [];
@@ -74,6 +80,7 @@ export class DataService {
 
   constructor(private resourceService: ResourceService) {
     this.updateAvailableProjects();
+    this.updateConcepts();
     this.updateNodes();
     this.updateItems();
     this.setFilteredItems();
@@ -150,6 +157,19 @@ export class DataService {
       );
   }
 
+  updateConcepts() {
+    this.resourceService.getConcepts()
+      .subscribe((concepts: Concept[]) => {
+          this.concepts = concepts;
+          let keywords: string[] = [].concat.apply([], this.concepts.map((concept: Concept) => concept.keywords));
+          this.keywords.length = 0;
+          keywords.forEach(keyword => this.keywords.push({label: keyword, value: keyword} as CheckboxOption));
+          console.info(`Loaded ${this.keywords.length} key words.`);
+        },
+        err => console.error(err)
+      );
+  }
+
   updateNodes() {
     this.loadingTreeNodes = 'loading';
     // Retrieve all tree nodes
@@ -173,7 +193,6 @@ export class DataService {
     this.resourceService.getItems()
       .subscribe(
         (items: Item[]) => {
-          console.log('item loading');
           for (let item of items) {
             if (this.availableProjects) {
               item['researchLine'] = this.availableProjects.find(p => p.name == item['project']).lineOfResearch;
@@ -184,18 +203,44 @@ export class DataService {
           }
           this.setFilteredItems();
           this.getUniqueFilterValues();
+            console.info(`Loaded ${items.length} items ...`);
           this.loadingItems = false;
         },
         err => console.error(err)
       );
   }
 
-  updateItemTable(treeNode: TreeNode) {
+  static treeConceptCodes(treeNode: TreeNode) : Set<string> {
+    if (treeNode == null) {
+      return new Set();
+    }
+    let conceptCodes = new Set();
+    if (treeNode.concept != null) {
+      conceptCodes.add(treeNode.concept.conceptCode);
+    }
+    if (treeNode.children != null) {
+      treeNode.children.forEach((node: TreeNode) =>
+          DataService.treeConceptCodes(node).forEach((conceptCode: string) =>
+              conceptCodes.add(conceptCode)
+          )
+      )
+    }
+    return conceptCodes;
+  }
+
+  selectTreeNode(treeNode: TreeNode) {
+    this.selectedTreeNode = treeNode;
+    this.updateItemTable();
+  }
+
+  updateItemTable() {
     this.items.length = 0;
-    let nodeItems = treeNode ? this.itemsPerNode.filter(item => item.itemPath.startsWith(treeNode.path))
-      : this.itemsPerNode;
-    for (let node of nodeItems) {
-      this.items.push(node);
+    if (this.selectedTreeNode == null) {
+      this.itemsPerNode.forEach(item => this.items.push(item))
+    } else {
+      let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
+      let nodeItems = this.itemsPerNode.filter(item => selectedConceptCodes.has(item.concept));
+      nodeItems.forEach(item => this.items.push(item))
     }
     this.setFilteredItems();
     this.getUniqueFilterValues();
@@ -206,7 +251,7 @@ export class DataService {
     this.setFilteredItems();
     this.projects.length = 0;
     for (let item of this.filteredItems) {
-      DataService.collectUnique(item['project'], this.projects);
+      DataService.collectUnique(item.project, this.projects);
     }
   }
 
@@ -229,20 +274,54 @@ export class DataService {
     return this.projects;
   }
 
-  getReasearchLines() {
+  getResearchLines() {
     return this.researchLines;
   }
 
-  setFilteredItems() {
-    this.filteredItems.length = 0;
-    for (let item of this.items) {
-      if ((this.selectedKeywords.length == 0 || item['keywords'].some(k => this.selectedKeywords.includes(k)))
-        && (this.selectedProjects.length == 0 || this.selectedProjects.includes(item['project']))
-        && (this.selectedResearchLines.length == 0 || this.selectedResearchLines.includes(item['researchLine']))
-      ) {
-        this.filteredItems.push(item);
+  findConceptCodesByKeywords(keywords: string[]): Set<string> {
+    return new Set(this.concepts.filter(concept =>
+      concept.keywords != null && concept.keywords.some((keyword: string) =>
+        keywords.includes(keyword))
+    ).map(concept => concept.conceptCode));
+  }
+
+  static intersection<T>(a: Set<T>, b: Set<T>): Set<T> {
+    return new Set(
+        Array.from(a).filter(item => b.has(item)));
+  }
+
+  getItemFilter(): (Item) => boolean {
+      let conceptCodesFromTree = DataService.treeConceptCodes(this.selectedTreeNode);
+      let conceptCodesFromKeywords = this.findConceptCodesByKeywords(this.selectedKeywords);
+      let selectedConceptCodes: Set<string>;
+      if (conceptCodesFromKeywords.size > 0 && conceptCodesFromTree.size > 0) {
+          selectedConceptCodes = DataService.intersection(conceptCodesFromTree, conceptCodesFromTree);
+      } else if (conceptCodesFromKeywords.size > 0) {
+          selectedConceptCodes = conceptCodesFromKeywords;
+      } else {
+          selectedConceptCodes = conceptCodesFromTree;
       }
-    }
+
+      return (item: Item) => {
+          return ((selectedConceptCodes.size == 0 || selectedConceptCodes.has(item.concept))
+              && (this.selectedProjects.length == 0 || this.selectedProjects.includes(item.project))
+              && (this.selectedResearchLines.length == 0 || this.selectedResearchLines.includes(item.researchLine))
+          );
+      };
+  }
+
+  setFilteredItems() {
+    let t1 = new Date();
+    console.debug(`Filtering items ...`);
+    this.filteredItems.length = 0;
+    let filter = this.getItemFilter();
+    this.items.forEach(item => {
+      if (filter(item)) {
+        this.filteredItems.push(item)
+      }
+    });
+    let t2 = new Date();
+    console.info(`Selected ${this.filteredItems.length} / ${this.items.length} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);
   }
 
   setGlobalFilter(globalFilter: string) {
@@ -250,8 +329,7 @@ export class DataService {
   }
 
   addToShoppingCart(newItemSelection: Item[]) {
-    let items: Item[] = this.shoppingCartItems.getValue();
-    let newItems: Item[] = items;
+    let newItems: Item[] = this.shoppingCartItems.getValue();
     for (let item of newItemSelection) {
       if (!newItems.includes(item)) {
         newItems.push(item);
@@ -265,25 +343,21 @@ export class DataService {
   }
 
   private getUniqueFilterValues() {
-    this.keywords.length = 0;
     this.projects.length = 0;
     this.researchLines.length = 0;
 
     for (let item of this.items) {
-      for (let keyword of item['keywords']) {
-        DataService.collectUnique(keyword, this.keywords);
-      }
-      DataService.collectUnique(item['project'], this.projects);
-      DataService.collectUnique(item['researchLine'], this.researchLines);
+      DataService.collectUnique(item.project, this.projects);
+      DataService.collectUnique(item.researchLine, this.researchLines);
     }
   }
 
-  private static collectUnique(element, list) {
+  private static collectUnique(element, list: CheckboxOption[]) {
     let values = list.map(function (a) {
       return a.value;
     });
     if (element && !values.includes(element)) {
-      list.push({label: element, value: element});
+      list.push({label: element, value: element} as CheckboxOption);
     }
   }
 

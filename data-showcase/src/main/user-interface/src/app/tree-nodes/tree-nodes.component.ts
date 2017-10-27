@@ -77,7 +77,7 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
 
   selectNode(event) {
     if (event.node) {
-      this.dataService.updateItemTable(event.node)
+      this.dataService.selectTreeNode(event.node)
     }
   }
 
@@ -87,7 +87,7 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
     // https://github.com/primefaces/primeng/issues/2882
     this.autocompleteCharge.inputEL.nativeElement.value = '';
     this.searchTerm = '';
-    this.dataService.updateItemTable(null);
+    this.dataService.selectTreeNode(null);
     this.onFiltering(event);
   }
 

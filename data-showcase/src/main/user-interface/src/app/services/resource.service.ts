@@ -13,12 +13,14 @@ import {Http, Response, Headers, ResponseContentType} from '@angular/http';
 import {Endpoint} from "../models/endpoint";
 import {AppConfig} from "../config/app.config";
 import {
-  PATH_ENVIRONMENT, PATH_ITEMS, PATH_LOGOS, PATH_PROJECTS,
-  PATH_TREE_NODES
+    PATH_CONCEPTS,
+    PATH_ENVIRONMENT, PATH_ITEMS, PATH_LOGOS, PATH_PROJECTS,
+    PATH_TREE_NODES
 } from "../constants/endpoints.constants";
 import {Item} from "../models/item";
 import {Project} from "../models/project";
 import {Environment} from "../models/environment";
+import { Concept } from '../models/concept';
 
 
 @Injectable()
@@ -76,6 +78,17 @@ export class ResourceService {
       headers: headers
     })
       .map((response: Response) => response.json().projects as Project[])
+      .catch(this.handleError.bind(this));
+  }
+
+  getConcepts(): Observable<Concept[]> {
+    let headers = new Headers();
+    let url = this.endpoint.apiUrl + PATH_CONCEPTS;
+
+    return this.http.get(url, {
+      headers: headers
+    })
+      .map((response: Response) => response.json().concepts as Concept[])
       .catch(this.handleError.bind(this));
   }
 

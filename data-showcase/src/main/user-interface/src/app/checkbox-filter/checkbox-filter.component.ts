@@ -7,6 +7,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DataService} from "../services/data.service";
 import {Item} from "../models/item";
+import { CheckboxOption } from '../models/CheckboxOption';
 
 @Component({
   selector: 'app-checkbox-filter',
@@ -16,9 +17,9 @@ import {Item} from "../models/item";
 export class CheckboxFilterComponent implements OnInit {
 
   items: Item[];
-  keywords: string[] = [];
-  projects: string[] = [];
-  researchLines: string[] = [];
+  keywords: CheckboxOption[] = [];
+  projects: CheckboxOption[] = [];
+  researchLines: CheckboxOption[] = [];
   selectedKeywords: string[] = [];
   selectedProjects: string[] = [];
   selectedResearchLines: string[] = [];
@@ -27,7 +28,7 @@ export class CheckboxFilterComponent implements OnInit {
     this.items = this.dataService.getItems();
     this.keywords = this.dataService.getKeywords();
     this.projects = this.dataService.getProjects();
-    this.researchLines = this.dataService.getReasearchLines();
+    this.researchLines = this.dataService.getResearchLines();
   }
 
   ngOnInit() {
