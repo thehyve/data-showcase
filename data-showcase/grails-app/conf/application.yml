@@ -164,6 +164,8 @@ environments:
             username: sa
             password: ''
     production:
+        hibernate:
+            show_sql: false
         dataSource:
             dbCreate: update
             url: jdbc:postgresql://localhost:5432/data_showcase
