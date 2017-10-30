@@ -4,7 +4,7 @@
  *  (see accompanying file LICENSE).
  */
 
-type VariableType = "Numerical"| "Categorical" | "Text" | "None";
+export type VariableType = "Numerical"| "Categorical" | "Text" | "None";
 
 export class Concept {
   conceptCode: string;

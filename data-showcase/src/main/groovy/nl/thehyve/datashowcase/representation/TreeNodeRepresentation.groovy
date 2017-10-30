@@ -6,8 +6,10 @@
 
 package nl.thehyve.datashowcase.representation
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import groovy.transform.CompileStatic
 import nl.thehyve.datashowcase.enumeration.NodeType
+import nl.thehyve.datashowcase.enumeration.VariableType
 
 @CompileStatic
 class TreeNodeRepresentation {
@@ -22,14 +24,17 @@ class TreeNodeRepresentation {
      */
     String label
 
+    VariableType variableType
+
     /**
      * The concept code of the concept the node refers to, if it is of type Concept.
      */
-    ConceptRepresentation concept
+    String concept
 
     /**
      * The complete path of the node, including the name.
      */
+    @JsonIgnore
     String path
 
     /**

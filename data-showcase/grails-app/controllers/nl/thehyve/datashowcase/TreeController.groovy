@@ -6,6 +6,7 @@
 
 package nl.thehyve.datashowcase
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 
 class TreeController {
@@ -15,6 +16,9 @@ class TreeController {
     TreeService treeService
 	
     def index() {
-        respond tree_nodes: treeService.nodes
+        response.status = 200
+        response.contentType = 'application/json'
+        response.characterEncoding = 'utf-8'
+        new ObjectMapper().writeValue(response.outputStream, [tree_nodes: treeService.nodes])
     }
 }
