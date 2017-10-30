@@ -14,6 +14,7 @@ import nl.thehyve.datashowcase.enumeration.NodeType
 import nl.thehyve.datashowcase.enumeration.VariableType
 import nl.thehyve.datashowcase.exception.InvalidDataException
 import org.grails.web.json.JSONObject
+import org.hibernate.SessionFactory
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Requires
 import spock.lang.Specification
@@ -29,18 +30,22 @@ class DataImportServiceSpec extends Specification {
     @Autowired
     DataService dataService
 
+    SessionFactory sessionFactory
+
     URL jsonUrl = getClass().getClassLoader().getResource('test.json')
     File file = new File(jsonUrl.path)
 
     def setupData() {
         log.info "Clear database ..."
         dataService.clearDatabase()
+        sessionFactory.currentSession.flush()
     }
 
     def loadValidData() {
         log.info "Upload test data set ..."
         JSONObject json = (JSONObject)JSON.parse(file.text)
         dataImportService.upload(json)
+        sessionFactory.currentSession.flush()
     }
 
     def loadInvalidData() {
@@ -49,6 +54,7 @@ class DataImportServiceSpec extends Specification {
         JSONObject json = (JSONObject)JSON.parse(file.text)
         log.info "Upload test data set ..."
         dataImportService.upload(json)
+        sessionFactory.currentSession.flush()
     }
 
     @Requires({ -> Environment.grailsEnvironmentIn(Constants.PUBLIC_ENVIRONMENTS) })

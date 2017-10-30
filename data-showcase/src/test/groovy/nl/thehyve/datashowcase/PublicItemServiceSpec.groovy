@@ -47,7 +47,7 @@ class PublicItemServiceSpec extends Specification {
         then: "2 items being returned"
             items.size() == 2
             items*.name == ['ageA', 'heightB']
-            items*.label == ['Age', 'Height']
+            items*.labelLong == ['Age at time of survey', 'Height at time of survey']
             items*.project == ['Project A', 'Project B']
             items*.itemPath == ['/Personal information/Basic information/Age', '/Personal information/Extended information/Height']
             that(items*.concept, hasItem('age'))

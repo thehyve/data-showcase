@@ -23,7 +23,7 @@ class TestController {
     }
 
     def createInternalData() {
-        testService.createInternalTestData()
+        testService.createRandomInternalTestData()
     }
 
     def createPublicData() {
