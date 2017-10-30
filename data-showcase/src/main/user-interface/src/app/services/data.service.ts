@@ -118,7 +118,9 @@ export class DataService {
     let newNode: TreeNodeLib = node;
 
     // filter out empty domains
-    newNode.children = node.children.filter(value => !(value.accumulativeItemCount == 0 && value.nodeType == "Domain" ));
+    if (node.children) {
+      newNode.children = node.children.filter(value => !(value.accumulativeItemCount == 0 && value.nodeType == "Domain" ));
+    }
     let count = node.accumulativeItemCount ? node.accumulativeItemCount : 0;
     let countStr = ' (' + count + ')';
     newNode.label = node.label + countStr;
@@ -362,7 +364,9 @@ export class DataService {
   }
 
   displayPopup(item: Item) {
-    this.itemSummaryVisibleSource.next(item);
+    this.resourceService.getItem(item.id).subscribe(extendedItem =>
+      this.itemSummaryVisibleSource.next(extendedItem)
+    )
   }
 
   setEnvironment() {

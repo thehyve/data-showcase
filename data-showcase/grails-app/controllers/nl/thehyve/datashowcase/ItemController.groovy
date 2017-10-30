@@ -24,6 +24,7 @@ class ItemController {
     def index() {
         response.status = 200
         response.contentType = 'application/json'
+        response.characterEncoding = 'utf-8'
         new ObjectMapper().writeValue(response.outputStream, [items: itemService.items])
     }
 

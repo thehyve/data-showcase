@@ -27,9 +27,6 @@ class DataImportService {
     @Autowired
     DataService dataService
 
-    @Autowired
-    ItemService itemService
-
     SessionFactory sessionFactory
 
     def upload(JSONObject json) {
@@ -173,7 +170,7 @@ class DataImportService {
 
             log.info "Upload completed.\n${stopWatch.prettyPrint()}"
 
-            itemService.clearItemCountsCache()
+            dataService.clearCaches()
 
         } catch (ValidationException e) {
             log.error "Invalid data uploaded", e

@@ -59,6 +59,17 @@ export class ResourceService {
       .catch(this.handleError.bind(this));
   }
 
+  getItem(id: number): Observable<Item> {
+    let headers = new Headers();
+    let url = `${this.endpoint.apiUrl}${PATH_ITEMS}/${id}`;
+
+    return this.http.get(url, {
+      headers: headers
+    })
+    .map((response: Response) => response.json() as Item)
+    .catch(this.handleError.bind(this));
+  }
+
   getItems(): Observable<Item[]> {
     let headers = new Headers();
     let url = this.endpoint.apiUrl + PATH_ITEMS;

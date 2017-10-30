@@ -8,6 +8,7 @@ import {ItemSummary} from "./item-summary";
 import {Concept} from "./concept";
 
 export class Item {
+  id: number;
   name: string;
   itemPath: string;
   type: string;

@@ -15,6 +15,22 @@ class DataService {
     @Autowired
     Environment dataShowcaseEnvironment
 
+    @Autowired
+    ItemService itemService
+
+    @Autowired
+    ConceptService conceptService
+
+    @Autowired
+    TreeService treeService
+
+    def clearCaches() {
+        itemService.clearItemsCache()
+        itemService.clearItemCountsCache()
+        conceptService.clearConceptsCache()
+        treeService.clearTreeNodesCache()
+    }
+
     def clearDatabase() {
         Value.executeUpdate('delete from Value')
         Summary.executeUpdate('delete from Summary')

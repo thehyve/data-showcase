@@ -11,6 +11,9 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class InternalItemRepresentation extends ItemRepresentation {
 
+    /**
+     * Summary data for the variable: aggregate values and value frequencies.
+     */
     InternalSummaryRepresentation summary
 
 }

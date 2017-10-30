@@ -6,6 +6,8 @@
 
 package nl.thehyve.datashowcase
 
+import nl.thehyve.datashowcase.enumeration.VariableType
+
 /**
  * An item represents a variable in a study or survey.
  * Besides links to the concept and project it belongs to,
@@ -63,16 +65,16 @@ class Item {
         concept.labelNlLong
     }
 
-    String getType() {
+    VariableType getType() {
         concept.variableType
     }
 
     static mapping = {
         version false
 
+        summary lazy: true
         concept fetch: 'join'
         project fetch: 'join'
-        summary fetch: 'join'
     }
 
     static constraints = {

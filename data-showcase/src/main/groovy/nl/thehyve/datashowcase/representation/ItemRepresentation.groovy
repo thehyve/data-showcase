@@ -10,7 +10,7 @@ import groovy.transform.CompileStatic
 import nl.thehyve.datashowcase.enumeration.VariableType
 
 @CompileStatic
-abstract class ItemRepresentation {
+class ItemRepresentation {
 
     /**
      * An id of the variable
@@ -57,11 +57,6 @@ abstract class ItemRepresentation {
      * instances of the data showcase and the associated summary data is more extensive.
      */
     boolean publicItem
-
-    /**
-     * Summary data for the variable: aggregate values and value frequencies.
-     */
-    abstract SummaryRepresentation getSummary()
 
     /**
      * The concept code of the associated concept.

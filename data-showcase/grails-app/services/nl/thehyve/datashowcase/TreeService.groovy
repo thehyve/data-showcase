@@ -7,6 +7,8 @@
 package nl.thehyve.datashowcase
 
 import grails.gorm.transactions.Transactional
+import grails.plugin.cache.CacheEvict
+import grails.plugin.cache.Cacheable
 import groovy.transform.CompileStatic
 import nl.thehyve.datashowcase.representation.ConceptRepresentation
 import nl.thehyve.datashowcase.representation.TreeNodeRepresentation
@@ -78,6 +80,7 @@ class TreeService {
      * Fetches all top nodes of the tree.
      * @return the list of top nodes with child nodes embedded.
      */
+    @Cacheable('tree_nodes')
     List<TreeNodeRepresentation> getNodes() {
         def stopWatch = new StopWatch('Fetch tree nodes')
         stopWatch.start('Retrieve from database')
@@ -96,6 +99,11 @@ class TreeService {
         stopWatch.stop()
         log.info "Fetched tree nodes.\n${stopWatch.prettyPrint()}"
         result
+    }
+
+    @CacheEvict(value = 'tree_nodes', allEntries = true)
+    void clearTreeNodesCache() {
+        log.info "Clear tree nodes cache."
     }
 
 }
