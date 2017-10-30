@@ -92,7 +92,7 @@ export class DataService {
       .subscribe(
         (blobContent) => {
           let urlCreator = window.URL;
-          if (type == "NTR") {
+          if (type == 'NTR') {
             this.ntrLogoUrlSummary.next(urlCreator.createObjectURL(blobContent));
           } else {
             this.vuLogoUrlSummary.next(urlCreator.createObjectURL(blobContent));
@@ -103,9 +103,13 @@ export class DataService {
   }
 
   private processTreeNodes(nodes: TreeNode[]): TreeNodeLib[] {
+    if (nodes == null) {
+      return [];
+    }
     let treeNodes: TreeNodeLib[] = [];
     for (let node of nodes) {
-      if (!(node.accumulativeItemCount == 0 && node.nodeType == "Domain" )) {
+      // filter out empty domains
+      if (!(node.accumulativeItemCount == 0 && node.nodeType == 'Domain')) {
         let newNode = this.processTreeNode(node);
         treeNodes.push(newNode);
       }
@@ -114,34 +118,36 @@ export class DataService {
   }
 
   private processTreeNode(node: TreeNode): TreeNodeLib {
+    if (node == null) {
+      return null;
+    }
     // Add PrimeNG visual properties for tree nodes
     let newNode: TreeNodeLib = node;
 
-    // filter out empty domains
-    if (node.children) {
-      newNode.children = node.children.filter(value => !(value.accumulativeItemCount == 0 && value.nodeType == "Domain" ));
-    }
     let count = node.accumulativeItemCount ? node.accumulativeItemCount : 0;
-    let countStr = ' (' + count + ')';
-    newNode.label = node.label + countStr;
+    newNode.label = `${node.label} (${count})`;
 
-    // If this newNode has children, drill down
-    if (node.children && node.children.length > 0) {
-      // Recurse
-      newNode.expandedIcon = 'fa-folder-open';
-      newNode.collapsedIcon = 'fa-folder';
-      newNode.icon = '';
-      this.processTreeNodes(node.children);
+    // If this node has children, drill down
+    if (node.children) {
+      let children = this.processTreeNodes(node.children);
+      if (children.length > 0) {
+        newNode.children = children;
+        newNode.expandedIcon = 'fa-folder-open';
+        newNode.collapsedIcon = 'fa-folder';
+        newNode.icon = '';
+      } else {
+        newNode.icon = 'fa-folder-o';
+      }
     } else {
-      switch (node.concept.variableType) {
-        case "Text":
-          newNode['icon'] = 'icon-abc';
+      switch (node.variableType) {
+        case 'Text':
+          newNode.icon = 'icon-abc';
           break;
-        case "Numerical":
-          newNode['icon'] = 'icon-123';
+        case 'Numerical':
+          newNode.icon = 'icon-123';
           break;
         default: {
-          newNode['icon'] = 'fa-file-text';
+          newNode.icon = 'fa-file-text';
           break;
         }
       }
@@ -218,7 +224,7 @@ export class DataService {
     }
     let conceptCodes = new Set();
     if (treeNode.concept != null) {
-      conceptCodes.add(treeNode.concept.conceptCode);
+      conceptCodes.add(treeNode.concept);
     }
     if (treeNode.children != null) {
       treeNode.children.forEach((node: TreeNode) =>

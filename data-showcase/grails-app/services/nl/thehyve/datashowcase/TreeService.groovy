@@ -46,27 +46,13 @@ class TreeService {
     }
 
     @CompileStatic
-    static ConceptRepresentation map(Concept concept) {
-        if (concept == null) {
-            return null
-        }
-        new ConceptRepresentation(
-                conceptCode: concept.conceptCode,
-                label: concept.label,
-                labelLong: concept.labelLong,
-                labelNl: concept.labelNl,
-                labelNlLong: concept.labelNlLong,
-                variableType: concept.variableType
-        )
-    }
-
-    @CompileStatic
     static TreeNodeRepresentation map(TreeNode node) {
         def result = new TreeNodeRepresentation(
                 nodeType: node.nodeType,
                 label: node.label,
-                concept: map(node.concept),
                 path: node.path,
+                concept: node.concept?.conceptCode,
+                variableType: node.concept?.variableType
         )
         if (node.children) {
             result.children = node.children.collect {
