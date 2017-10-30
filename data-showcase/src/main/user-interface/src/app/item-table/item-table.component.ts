@@ -17,10 +17,7 @@ export class ItemFilter implements PipeTransform {
     return filter && value ?
       value.filter(item =>
         (item.name.toLocaleLowerCase().indexOf(filter) !== -1) ||
-        (item.label.toLocaleLowerCase().indexOf(filter) !== -1) ||
-        (item.labelLong.toLocaleLowerCase().indexOf(filter) !== -1) ||
-        (item.labelNl && item.labelNl.toLocaleLowerCase().indexOf(filter) !== -1) ||
-        (item.labelNlLong && item.labelNlLong.toLocaleLowerCase().indexOf(filter) !== -1)
+        (item.labelLong.toLocaleLowerCase().indexOf(filter) !== -1)
       ) : value;
   }
 }
