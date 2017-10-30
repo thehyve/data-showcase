@@ -13,10 +13,10 @@ import org.grails.core.util.StopWatch
 import org.grails.datastore.gorm.GormEntity
 import org.grails.web.json.JSONArray
 import org.grails.web.json.JSONObject
-import org.hibernate.Session
 import org.springframework.beans.factory.annotation.Autowired
 import org.hibernate.Transaction
 import org.hibernate.SessionFactory
+import org.hibernate.StatelessSession
 
 @Transactional
 class DataImportService {
@@ -36,12 +36,11 @@ class DataImportService {
         stopWatch.start('Clear database')
         dataService.clearDatabase()
         stopWatch.stop()
-
-        Session session = null
+        StatelessSession statelessSession = null
         Transaction tx = null
         try {
-            session = sessionFactory.openSession()
-            tx = session.beginTransaction()
+            statelessSession = sessionFactory.openStatelessSession()
+            tx = statelessSession.beginTransaction()
 
             // save keywords
             def keywords = json.concepts?.keywords?.flatten().unique().collect {
@@ -73,9 +72,7 @@ class DataImportService {
             concepts*.save()
             stopWatch.stop()
             def conceptMap = concepts.collectEntries { [(it.conceptCode): it] } as Map<String, Concept>
-
-            session.flush()
-            session.clear()
+            statelessSession.managedFlush()
 
             // save tree_nodes
             def tree_nodes = flatten(buildTree(json.tree_nodes as JSONArray, conceptMap))
@@ -84,9 +81,7 @@ class DataImportService {
             stopWatch.start('Save tree nodes')
             tree_nodes*.save()
             stopWatch.stop()
-
-            session.flush()
-            session.clear()
+            statelessSession.managedFlush()
 
             //save research_lines
             def linesOfResearch = json.projects?.lineOfResearch.unique().collect {
@@ -115,9 +110,7 @@ class DataImportService {
             projects*.save()
             stopWatch.stop()
             def projectMap = projects.collectEntries { [(it.name): it] } as Map<String, Project>
-
-            session.flush()
-            session.clear()
+            statelessSession.managedFlush()
 
             // save items, related summaries and values
             if (!dataShowcaseEnvironment.internalInstance && !allItemsArePublic((JSONArray) json.items)) {
@@ -155,17 +148,14 @@ class DataImportService {
                 }
                 log.info "  [${count.toString().padLeft(countWidth)} / ${items.size()}] summaries saved"
                 sublist*.summary*.save()
-
-                session.flush()
-                session.clear()
+                statelessSession.managedFlush()
             }
             stopWatch.stop()
             log.info "All items saved."
 
             stopWatch.start('Commit transaction')
             tx.commit()
-            session.flush()
-            session.clear()
+            statelessSession.close()
             stopWatch.stop()
 
             log.info "Upload completed.\n${stopWatch.prettyPrint()}"
