@@ -1,0 +1,26 @@
+
+.filter-container {
+    margin-left: 10px;
+    margin-right: 10px;
+    /* padding: top right bottom left */
+    padding: 0 10px 0 10px;
+    min-width: 800px;
+}
+
+.filter-container-header {
+    color: white;
+    margin-top: -0.8em;
+}
+
+.btn-primary-outline {
+    background-color: transparent;
+    border: none;
+    color: white;
+    height: 40px;
+    padding: 0;
+    box-shadow: none;
+    cursor: pointer;
+}
+.btn-primary-outline:active {
+    color: black;
+}
