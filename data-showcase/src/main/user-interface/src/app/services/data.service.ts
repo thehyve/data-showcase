@@ -34,6 +34,9 @@ export class DataService {
   public filteredItems: Item[] = [];
   // items available for currently selected node
   private itemsPerNode: Item[] = [];
+  // items selected in the itemTable
+  private itemsSelectionSource = new Subject<Item[]>();
+  public itemsSelection$ = this.itemsSelectionSource.asObservable();
   // items added to the shopping cart
   public shoppingCartItems = new BehaviorSubject<Item[]>([]);
 
@@ -243,6 +246,8 @@ export class DataService {
 
   updateItemTable() {
     this.items.length = 0;
+    this.clearItemsSelection();
+    this.clearFilterValues();
     if (this.selectedTreeNode == null) {
       this.itemsPerNode.forEach(item => this.items.push(item))
     } else {
@@ -268,6 +273,16 @@ export class DataService {
     this.selectedProjects = selectedProjects;
     this.selectedResearchLines = selectedResearchLines;
     this.setFilteredItems();
+  }
+
+  clearFilterValues() {
+    this.selectedKeywords.length = 0;
+    this.selectedResearchLines.length = 0;
+    this.selectedProjects.length = 0;
+  }
+
+  clearItemsSelection() {
+    this.itemsSelectionSource.next(null);
   }
 
   getItems() {
@@ -303,7 +318,7 @@ export class DataService {
       let conceptCodesFromKeywords = this.findConceptCodesByKeywords(this.selectedKeywords);
       let selectedConceptCodes: Set<string>;
       if (conceptCodesFromKeywords.size > 0 && conceptCodesFromTree.size > 0) {
-          selectedConceptCodes = DataService.intersection(conceptCodesFromTree, conceptCodesFromTree);
+          selectedConceptCodes = DataService.intersection(conceptCodesFromTree, conceptCodesFromKeywords);
       } else if (conceptCodesFromKeywords.size > 0) {
           selectedConceptCodes = conceptCodesFromKeywords;
       } else {

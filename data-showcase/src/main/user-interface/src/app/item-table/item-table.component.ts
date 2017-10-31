@@ -35,6 +35,11 @@ export class ItemTableComponent implements OnInit {
 
   constructor(public dataService: DataService) {
     this.items = this.dataService.filteredItems;
+    this.dataService.itemsSelection$.subscribe(
+      selection => {
+        this.itemsSelection = selection;
+      }
+    );
     this.dataService.globalFilter$.subscribe(
       filter => {
         this.filterValue = filter;
