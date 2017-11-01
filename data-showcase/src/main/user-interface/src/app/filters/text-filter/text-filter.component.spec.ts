@@ -9,11 +9,11 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TextFilterComponent } from './text-filter.component';
 import {AutoCompleteModule} from "primeng/primeng";
 import {FormsModule} from "@angular/forms";
-import {ResourceService} from "../services/resource.service";
-import {DataService} from "../services/data.service";
+import {ResourceService} from "../../services/resource.service";
+import {DataService} from "../../services/data.service";
 import {HttpModule} from "@angular/http";
-import {AppConfig} from "../config/app.config";
-import {AppConfigMock} from "../config/app.config.mock";
+import {AppConfig} from "../../config/app.config";
+import {AppConfigMock} from "../../config/app.config.mock";
 
 describe('TextFilterComponent', () => {
   let component: TextFilterComponent;

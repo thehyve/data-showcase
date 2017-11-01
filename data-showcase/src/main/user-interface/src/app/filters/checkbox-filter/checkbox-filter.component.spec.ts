@@ -9,12 +9,12 @@ import { CheckboxFilterComponent } from './checkbox-filter.component';
 import {AutoCompleteModule, FieldsetModule, ListboxModule, PanelModule} from "primeng/primeng";
 import {FormsModule} from "@angular/forms";
 import {DataListModule} from "primeng/components/datalist/datalist";
-import {DataService} from "../services/data.service";
-import {ResourceService} from "../services/resource.service";
+import {DataService} from "../../services/data.service";
+import {ResourceService} from "../../services/resource.service";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {HttpModule} from "@angular/http";
-import {AppConfig} from "../config/app.config";
-import {AppConfigMock} from "../config/app.config.mock";
+import {AppConfig} from "../../config/app.config";
+import {AppConfigMock} from "../../config/app.config.mock";
 
 describe('CheckboxFilterComponent', () => {
   let component: CheckboxFilterComponent;

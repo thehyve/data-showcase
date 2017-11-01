@@ -44,6 +44,10 @@ export class DataService {
   private globalFilterSource = new Subject<string>();
   public globalFilter$ = this.globalFilterSource.asObservable();
 
+  // trigger checkboxFilters reload
+  private rerenderCheckboxFiltersSource = new Subject<boolean>();
+  public rerenderCheckboxFilters$ = this.rerenderCheckboxFiltersSource.asObservable();
+
   private selectedTreeNode: TreeNode = null;
   // selected checkboxes for keywords filter
   private selectedKeywords: string[] = [];
@@ -273,6 +277,12 @@ export class DataService {
     this.selectedProjects = selectedProjects;
     this.selectedResearchLines = selectedResearchLines;
     this.setFilteredItems();
+  }
+
+  clearAllFilters() {
+    this.setGlobalFilter(null);
+    this.clearFilterValues()
+    this.rerenderCheckboxFiltersSource.next(true);
   }
 
   clearFilterValues() {

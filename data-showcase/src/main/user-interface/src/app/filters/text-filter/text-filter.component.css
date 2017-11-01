@@ -5,8 +5,9 @@
  */
 
 .text-filter-container {
-    margin-left: 10px;
-    height: 100px;
-    line-height: 100px;
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
     white-space: nowrap;
 }
+.text-filter-containe:focus {outline:none;}
