@@ -277,15 +277,14 @@ body .ui-inputgroup .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
     height: 36px;
 }
 
+/* Global text filter */
 .text-filter-container .ui-inputtext {
     width: 550px;
     height: 36px;
+    padding: 0;
 }
 
 .filter-container .ui-panel .ui-panel-content {
     padding-top: 5px;
     padding-bottom: 5px;
 }
-/*.text-filter-container .ui-inputtext.ui-widget.ui-state-default.ui-corner-all:focus {*/
-    /*width: 500px;*/
-/*}*/
