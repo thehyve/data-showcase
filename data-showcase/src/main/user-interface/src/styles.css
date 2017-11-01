@@ -288,3 +288,13 @@ body .ui-inputgroup .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
     padding-top: 5px;
     padding-bottom: 5px;
 }
+
+/* Table column wrapping */
+.ui-datatable,
+.ui-datatable-resizable thead th,
+.ui-datatable-resizable tbody td,
+.ui-datatable-resizable tfoot td {
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+}

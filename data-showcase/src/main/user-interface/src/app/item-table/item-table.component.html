@@ -13,7 +13,7 @@
                  [resizableColumns]="true"
                  [(selection)]="itemsSelection"
                  [loading]="dataService.loadingItems" loadingIcon="fa fa-spin fa-refresh fa-fw">
-        <p-column selectionMode="multiple" [style]="{ width: '45px'}">
+        <p-column selectionMode="multiple" [style]="{ 'width': '3%'}">
         </p-column>
         <p-column field="name" header="Name"
                   [sortable]="true">
@@ -35,7 +35,7 @@
                   [sortable]="true">
         </p-column>
 
-        <p-column [style]="{ width: '50px'}">
+        <p-column [style]="{ 'width': '5%'}">
             <ng-template let-item="rowData" pTemplate="body">
                 <button pButton type="button" class="btn btn-default btn-circle btn-lg" (click)="showSummary(item)"
                         icon="fa fa-question-circle"></button>
