@@ -11,20 +11,22 @@
     <div class="ui-g-4">
         <p-fieldset legend="Keywords">
             <p-listbox [options]="keywords" [(ngModel)]="selectedKeywords" [filter]=true [multiple]=true
-                       [checkbox]=true [metaKeySelection]=false (onChange)="updateFilters()"></p-listbox>
+                       [checkbox]="keywords.length > 0" [disabled]="keywords.length < 1"
+                       [metaKeySelection]=false (onChange)="updateFilters()"></p-listbox>
         </p-fieldset>
     </div>
     <div class="ui-g-4">
         <p-fieldset legend="Research lines">
             <p-listbox [options]="researchLines" [(ngModel)]="selectedResearchLines" [filter]=true [multiple]=true
-                       [checkbox]=true [metaKeySelection]=false
-                       (onChange)="updateFilters(); updateProjects();"></p-listbox>
+                       [checkbox]="researchLines.length > 0" [disabled]="researchLines.length < 1"
+                       [metaKeySelection]=false (onChange)="updateFilters(); updateProjects();"></p-listbox>
         </p-fieldset>
     </div>
     <div class="ui-g-4">
         <p-fieldset legend="Projects">
             <p-listbox [options]="projects" [(ngModel)]="selectedProjects" [filter]=true [multiple]=true
-                       [checkbox]=true [metaKeySelection]=false (onChange)="updateFilters()"></p-listbox>
+                       [checkbox]="projects.length > 0" [disabled]="projects.length < 1"
+                       [metaKeySelection]=false (onChange)="updateFilters()"></p-listbox>
         </p-fieldset>
     </div>
 </div>
