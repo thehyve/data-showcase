@@ -8,7 +8,7 @@
     <p-dataTable #dt
                  [immutable]=false
                  [value]="items | itemFilter: filterValue"
-                 [rows]="8" [paginator]="true"
+                 [rows]="rowsPerPage" [paginator]="true"
                  [headerCheckboxToggleAllPages]="true"
                  [resizableColumns]="true"
                  [(selection)]="itemsSelection"
@@ -45,7 +45,9 @@
     <div class="inline">
         <button pButton type="button" label="Add to cart" class="export-button" (click)="addToCart()"></button>
         <div class="item-count-container">
-            Items selected: <b>{{itemsSelection? itemsSelection.length : 0}}</b>. Total: <b>{{items? items.length : 0}}</b>
+            Items selected: <b>{{itemsSelection? itemsSelection.length : 0}}</b>.
+            Total results in table: <b>{{items? items.length : 0}}.</b>
+            Number of pages: <b>{{pageCount()}}.</b>
         </div>
     </div>
 </div>
