@@ -8,6 +8,7 @@
     font-size:20px;
     padding: 0;
     cursor:pointer;
+    box-shadow: none;
 }
 
 .table-content {

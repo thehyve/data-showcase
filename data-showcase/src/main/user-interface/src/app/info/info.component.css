@@ -1,0 +1,21 @@
+.info-button {
+    font-size:20px;
+    padding: 0;
+    cursor:pointer;
+    box-shadow: none;
+}
+
+.info-header {
+    font-weight:normal;
+    color: #00889C;
+}
+
+.info-bar {
+    height: 200px;
+}
+
+.info-cancel-button {
+    position: absolute;
+    bottom: 40px;
+    left: 20px;
+}
