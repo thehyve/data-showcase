@@ -20,16 +20,13 @@ export class CheckboxFilterComponent implements OnInit {
   spinner: boolean = false;
 
   items: Item[];
-  keywords: CheckboxOption[] = [];
   projects: CheckboxOption[] = [];
   researchLines: CheckboxOption[] = [];
-  selectedKeywords: string[] = [];
   selectedProjects: string[] = [];
   selectedResearchLines: string[] = [];
 
   constructor(public dataService: DataService) {
     this.items = this.dataService.getItems();
-    this.keywords = this.dataService.getKeywords();
     this.projects = this.dataService.getProjects();
     this.researchLines = this.dataService.getResearchLines();
 
@@ -51,7 +48,6 @@ export class CheckboxFilterComponent implements OnInit {
 
   updateFilters() {
     this.dataService.updateFilterValues(
-      this.selectedKeywords,
       this.selectedProjects,
       this.selectedResearchLines
     );

@@ -272,8 +272,7 @@ export class DataService {
     }
   }
 
-  updateFilterValues(selectedKeywords: string[], selectedProjects: string[], selectedResearchLines: string[]) {
-    this.selectedKeywords = selectedKeywords;
+  updateFilterValues(selectedProjects: string[], selectedResearchLines: string[]) {
     this.selectedProjects = selectedProjects;
     this.selectedResearchLines = selectedResearchLines;
     this.clearItemsSelection();
@@ -287,7 +286,6 @@ export class DataService {
   }
 
   clearFilterValues() {
-    this.selectedKeywords.length = 0;
     this.selectedResearchLines.length = 0;
     this.selectedProjects.length = 0;
   }
@@ -298,10 +296,6 @@ export class DataService {
 
   getItems() {
     return this.items;
-  }
-
-  getKeywords() {
-    return this.keywords;
   }
 
   getProjects() {
