@@ -70,11 +70,16 @@ export class ResourceService {
     .catch(this.handleError.bind(this));
   }
 
-  getItems(): Observable<Item[]> {
+  getItems(conceptCodes?: string[], projects?: string[], linesOfResearch?: string[], jsonSearchQuery?: JSON): Observable<Item[]> {
     let headers = new Headers();
     let url = this.endpoint.apiUrl + PATH_ITEMS;
+    let urlParams = "";
 
-    return this.http.get(url, {
+    if(projects || linesOfResearch || jsonSearchQuery) {
+      urlParams = `?conceptCodes=(${conceptCodes})&projects=(${projects})&linesOfResearch=(${linesOfResearch})&searchQuery=${jsonSearchQuery}`
+    }
+
+    return this.http.get(url + urlParams, {
       headers: headers
     })
       .map((response: Response) => response.json().items as Item[])

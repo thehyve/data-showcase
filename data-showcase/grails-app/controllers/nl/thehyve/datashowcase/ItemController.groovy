@@ -7,6 +7,8 @@
 package nl.thehyve.datashowcase
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import grails.converters.JSON
+import org.grails.web.json.JSONArray
 import org.springframework.beans.factory.annotation.Autowired
 
 class ItemController {
@@ -18,14 +20,26 @@ class ItemController {
 
     /**
      * Fetches all items.
-     *
+     * TODO description
      * @return the list of items as JSON.
      */
     def index() {
+
+        Set concepts = parseParams(params.conceptCodes)
+        Set projects = parseParams(params.projects)
+        Set linesOfResearch = parseParams(params.linesOfResearch)
+        Set searchQuery = parseParams(params.searchQuery)
+
         response.status = 200
         response.contentType = 'application/json'
         response.characterEncoding = 'utf-8'
-        new ObjectMapper().writeValue(response.outputStream, [items: itemService.items])
+        Object value
+        if (concepts || projects || linesOfResearch || searchQuery){
+            value = [items: itemService.getItems(concepts, projects, linesOfResearch, searchQuery)]
+        } else {
+            value = [items: itemService.items]
+        }
+        new ObjectMapper().writeValue(response.outputStream, value)
     }
 
     /**
@@ -40,4 +54,12 @@ class ItemController {
         respond itemService.getItem(id)
     }
 
+    private static Set parseParams(String jsonString){
+        try{
+            JSONArray json = JSON.parse(jsonString)
+            return json.collect{ "'" + it + "'"} as Set
+        } catch (Exception e) {
+            return null
+        }
+    }
 }

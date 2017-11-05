@@ -33,6 +33,8 @@ class ItemService {
 
     SessionFactory sessionFactory
 
+    private final String EMPTY_CONDITION = '1=1'
+
     @CompileStatic
     static ItemRepresentation map(Map itemData) {
         new ItemRepresentation(
@@ -50,7 +52,7 @@ class ItemService {
     @Cacheable('items')
     @Transactional(readOnly = true)
     List<ItemRepresentation> getItems() {
-        def stopWatch = new StopWatch('Fetch items')
+        def stopWatch = new StopWatch('Fetch all items')
         stopWatch.start('Retrieve from database')
         def session = sessionFactory.openStatelessSession()
         def items = session.createQuery(
@@ -63,10 +65,12 @@ class ItemService {
                     c.conceptCode as conceptCode,
                     c.labelLong as labelLong,
                     c.variableType as type,
-                    p.name as projectName
+                    p.name as projectName,
+                    rl.name as lineOfResearch
                 from Item as i
                 join i.concept c
                 join i.project p
+                join p.lineOfResearch rl
                 ${dataShowcaseEnvironment.internalInstance ?
                         '' : 'where i.publicItem = true'
                 }
@@ -81,6 +85,51 @@ class ItemService {
         stopWatch.stop()
         log.info "Items fetched.\n${stopWatch.prettyPrint()}"
         result
+    }
+
+    @Transactional(readOnly = true)
+    List<ItemRepresentation> getItems(Set concepts, Set projects, Set linesOfResearch, Set searchQuery) {
+        String sqlSearchQueryChunk = toSQL(searchQuery)
+        def stopWatch = new StopWatch('Fetch filtered items')
+        stopWatch.start('Retrieve from database')
+        def session = sessionFactory.openStatelessSession()
+
+        def items = session.createQuery(
+                """                
+                select
+                    i.id as id,
+                    i.name as name,
+                    i.publicItem as publicItem,
+                    i.itemPath as itemPath,
+                    c.conceptCode as conceptCode,
+                    c.labelLong as labelLong,
+                    c.variableType as type,
+                    p.name as projectName,
+                    rl.name as lineOfResearch
+                from Item as i
+                join i.concept c
+                join (select p.id, p.name, rl.name from Project as P join p.lineOfResearch rl) on i.project = p
+                where 
+                ${concepts ? 'c.conceptCode IN ' + concepts : EMPTY_CONDITION}
+                AND ${projects ? 'p.name IN $projects' : EMPTY_CONDITION} 
+                AND ${linesOfResearch ? 'rl.name IN $linesOfResearch' : EMPTY_CONDITION} 
+                AND ${dataShowcaseEnvironment.internalInstance ?
+                        EMPTY_CONDITION : 'i.publicItem = true'
+                } 
+                AND $sqlSearchQueryChunk
+            """
+        ).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
+                .list() as List<Map>
+
+        stopWatch.stop()
+        stopWatch.start('Map to representations')
+        def result = items.collect { Map itemData ->
+            map(itemData)
+        }
+        stopWatch.stop()
+        log.info "Filtered items fetched.\n${stopWatch.prettyPrint()}"
+        result
+
     }
 
     @CacheEvict(value = 'items', allEntries = true)
@@ -141,6 +190,10 @@ class ItemService {
             }
         }
         throw new ResourceNotFoundException('Item not found')
+    }
+
+    private String toSQL(Set query) {
+        return EMPTY_CONDITION
     }
 
 }

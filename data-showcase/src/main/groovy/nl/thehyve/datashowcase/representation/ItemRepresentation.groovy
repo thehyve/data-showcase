@@ -68,4 +68,8 @@ class ItemRepresentation {
      */
     String project
 
+    /**
+     * The name of the research line
+     */
+    String lineOfResearch
 }

@@ -22,6 +22,7 @@ import {LogosComponent} from './logos/logos.component';
 import {PageRibbonComponent} from './page-ribbon/page-ribbon.component';
 import {FiltersModule} from "./filters/filters.module";
 import {InfoModule} from "./info/info.module";
+import {SearchParserService} from "./services/search-parser.service";
 
 export function initConfig(config: AppConfig) {
   return () => config.load()
@@ -48,6 +49,7 @@ export function initConfig(config: AppConfig) {
   providers: [
     ResourceService,
     DataService,
+    SearchParserService,
     AppConfig,
     {
       provide: APP_INITIALIZER,

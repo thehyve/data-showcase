@@ -19,16 +19,14 @@ export class CheckboxFilterComponent implements OnInit {
   rerender: boolean = false;
   spinner: boolean = false;
 
-  items: Item[];
   projects: CheckboxOption[] = [];
   researchLines: CheckboxOption[] = [];
   selectedProjects: string[] = [];
   selectedResearchLines: string[] = [];
 
   constructor(public dataService: DataService) {
-    this.items = this.dataService.getItems();
-    this.projects = this.dataService.getProjects();
-    this.researchLines = this.dataService.getResearchLines();
+    this.projects = this.dataService.projects;
+    this.researchLines = this.dataService.linesOfResearch;
 
     /* workaround for primeng listbox not giving possibility to clear filters: reload checkboxFilters component */
     this.dataService.rerenderCheckboxFilters$.subscribe(

@@ -42,7 +42,7 @@ export class ItemTableComponent implements OnInit {
         this.itemsSelection = selection;
       }
     );
-    this.dataService.globalFilter$.subscribe(
+    this.dataService.textFilterInput$.subscribe(
       filter => {
         this.filterValue = filter;
       }
