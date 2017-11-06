@@ -13,8 +13,8 @@ import {Project} from "../models/project";
 import {Subject} from "rxjs/Subject";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Environment} from "../models/environment";
-import { Concept } from '../models/concept';
-import { CheckboxOption } from '../models/CheckboxOption';
+import {Concept} from '../models/concept';
+import {CheckboxOption} from '../models/CheckboxOption';
 
 type LoadingState = 'loading' | 'complete';
 
@@ -167,30 +167,30 @@ export class DataService {
     let t1 = new Date();
     console.debug(`Fetching items ...`);
     this.loadingItems = true;
+    this.filteredItems.length = 0;
     this.items.length = 0;
     let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
     let codes = Array.from(selectedConceptCodes);
     this.resourceService.getItems(
       codes, this.selectedProjects, this.selectedResearchLines, this.jsonSearchQuery).subscribe(
-        (items: Item[]) => {
-          for (let item of items) {
-            if (this.allProjects) {
-              item['lineOfResearch'] = this.allProjects.find(p => p.name == item['project']).lineOfResearch;
-            }
-            this.filteredItems.push(item);
-            this.items.push(item);
+      (items: Item[]) => {
+        for (let item of items) {
+          if (this.allProjects) {
+            item['lineOfResearch'] = this.allProjects.find(p => p.name == item['project']).lineOfResearch;
           }
-          this.getUniqueFilterValues();
-            console.info(`Loaded ${items.length} items ...`);
-        },
-        err => console.error(err)
-      );
+          this.filteredItems.push(item);
+          this.items.push(item);
+        }
+        this.getUniqueFilterValues();
+      },
+      err => console.error(err)
+    );
     let t2 = new Date();
     console.info(`Found ${this.items.length} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);
     this.loadingItems = false;
   }
 
-  static treeConceptCodes(treeNode: TreeNode) : Set<string> {
+  static treeConceptCodes(treeNode: TreeNode): Set<string> {
     if (treeNode == null) {
       return new Set();
     }
@@ -200,9 +200,9 @@ export class DataService {
     }
     if (treeNode.children != null) {
       treeNode.children.forEach((node: TreeNode) =>
-          DataService.treeConceptCodes(node).forEach((conceptCode: string) =>
-              conceptCodes.add(conceptCode)
-          )
+        DataService.treeConceptCodes(node).forEach((conceptCode: string) =>
+          conceptCodes.add(conceptCode)
+        )
       )
     }
     return conceptCodes;
@@ -215,24 +215,23 @@ export class DataService {
 
   updateItemTable() {
     this.items.length = 0;
+    this.linesOfResearch.length =0;
+    this.projects.length = 0;
     this.clearItemsSelection();
     this.clearCheckboxFilterValues();
     this.fetchItems();
-    this.getUniqueFilterValues();
   }
 
-  updateProjectsForResearchLines() {
-    this.selectedProjects.length = 0;
+  filterOnResearchLines(selectedResearchLines) {
     this.projects.length = 0;
+    this.selectedResearchLines = selectedResearchLines;
+    this.clearItemsSelection();
     this.fetchItems();
-    for (let item of this.filteredItems) {
-      DataService.collectUnique(item.project, this.projects);
-    }
   }
 
-  updateFilterValues(selectedProjects: string[], selectedResearchLines: string[]) {
+  filterOnProjects(selectedProjects) {
+    this.linesOfResearch.length = 0;
     this.selectedProjects = selectedProjects;
-    this.selectedResearchLines = selectedResearchLines;
     this.clearItemsSelection();
     this.fetchItems();
   }
@@ -252,53 +251,28 @@ export class DataService {
     this.itemsSelectionSource.next(null);
   }
 
-  // findConceptCodesByKeywords(keywords: string[]): Set<string> {
-  //   return new Set(this.concepts.filter(concept =>
-  //     concept.keywords != null && concept.keywords.some((keyword: string) =>
-  //       keywords.includes(keyword))
-  //   ).map(concept => concept.conceptCode));
-  // }
-  //
-  // static intersection<T>(a: Set<T>, b: Set<T>): Set<T> {
-  //   return new Set(
-  //       Array.from(a).filter(item => b.has(item)));
-  // }
-
-  // getItemFilter(): (Item) => boolean {
-  //     let conceptCodesFromTree = DataService.treeConceptCodes(this.selectedTreeNode);
-  //     let conceptCodesFromKeywords = this.findConceptCodesByKeywords(this.selectedKeywords);
-  //     let selectedConceptCodes: Set<string>;
-  //     if (conceptCodesFromKeywords.size > 0 && conceptCodesFromTree.size > 0) {
-  //         selectedConceptCodes = DataService.intersection(conceptCodesFromTree, conceptCodesFromKeywords);
-  //     } else if (conceptCodesFromKeywords.size > 0) {
-  //         selectedConceptCodes = conceptCodesFromKeywords;
-  //     } else {
-  //         selectedConceptCodes = conceptCodesFromTree;
-  //     }
-  //
-  //     return (item: Item) => {
-  //         return ((selectedConceptCodes.size == 0 || selectedConceptCodes.has(item.concept))
-  //             && (this.selectedProjects.length == 0 || this.selectedProjects.includes(item.project))
-  //             && (this.selectedResearchLines.length == 0 || this.selectedResearchLines.includes(item.lineOfResearch))
-  //         );
-  //     };
-  // }
-
   setTextFilterInput(text: string) {
     this.textFilterInputSource.next(text);
   }
 
-  setJsonSearchQuery(query: JSON){
+  setJsonSearchQuery(query: JSON) {
     this.jsonSearchQuery = query;
   }
 
   private getUniqueFilterValues() {
-    this.projects.length = 0;
-    this.linesOfResearch.length = 0;
-
-    for (let item of this.items) {
-      DataService.collectUnique(item.project, this.projects);
-      DataService.collectUnique(item.lineOfResearch, this.linesOfResearch);
+    if (!this.projects.length && !this.selectedResearchLines.length) {
+      for (let item of this.filteredItems) {
+        DataService.collectUnique(item.project, this.projects);
+        DataService.collectUnique(item.lineOfResearch, this.linesOfResearch);
+      }
+    } else if (!this.linesOfResearch.length) {
+      for (let item of this.filteredItems) {
+        DataService.collectUnique(item.lineOfResearch, this.linesOfResearch);
+      }
+    } else if (!this.projects.length) {
+      for (let item of this.filteredItems) {
+        DataService.collectUnique(item.project, this.projects);
+      }
     }
   }
 

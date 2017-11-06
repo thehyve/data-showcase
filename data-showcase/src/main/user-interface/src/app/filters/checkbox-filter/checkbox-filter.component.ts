@@ -44,14 +44,12 @@ export class CheckboxFilterComponent implements OnInit {
   ngOnInit() {
   }
 
-  updateFilters() {
-    this.dataService.updateFilterValues(
-      this.selectedProjects,
-      this.selectedResearchLines
-    );
+  onResearchLineSelect() {
+    this.dataService.filterOnResearchLines(this.selectedResearchLines)
   }
 
-  updateProjects() {
-    this.dataService.updateProjectsForResearchLines();
+  onProjectSelect(){
+    this.dataService.filterOnProjects(this.selectedProjects)
   }
+
 }

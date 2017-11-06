@@ -16,6 +16,7 @@ import nl.thehyve.datashowcase.representation.InternalItemRepresentation
 import nl.thehyve.datashowcase.representation.ItemRepresentation
 import nl.thehyve.datashowcase.representation.PublicItemRepresentation
 import org.grails.core.util.StopWatch
+import org.hibernate.Query
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.hibernate.transform.Transformers
@@ -89,15 +90,17 @@ class ItemService {
 
     @Transactional(readOnly = true)
     List<ItemRepresentation> getItems(Set concepts, Set projects, Set linesOfResearch, Set searchQuery) {
-        String conceptArray = concepts.toString().replaceAll("\\[", "\\(").replaceAll("\\]","\\)")
-        String projectArray = projects.toString().replaceAll("\\[", "\\(").replaceAll("\\]","\\)")
-        String lineOfResearchArray = linesOfResearch.toString().replaceAll("\\[", "\\(").replaceAll("\\]","\\)")
+
+        String conceptArray = concepts ? toSqlArray(concepts) : ''
+        String projectArray = projects ? toSqlArray(projects) : ''
+        String lineOfResearchArray = linesOfResearch ? toSqlArray(linesOfResearch) : ''
+
         String sqlSearchQueryChunk = toSQL(searchQuery)
         def stopWatch = new StopWatch('Fetch filtered items')
         stopWatch.start('Retrieve from database')
         def session = sessionFactory.openStatelessSession()
 
-        def items = session.createQuery(
+        Query query = session.createQuery(
                 """                
                 select
                     i.id as id,
@@ -114,7 +117,7 @@ class ItemService {
                 join i.project p
                 join p.lineOfResearch rl
                 where 
-                ${concepts ? 'c.conceptCode IN ' + conceptArray : EMPTY_CONDITION}
+                    ${concepts ? 'c.conceptCode IN ' + conceptArray : EMPTY_CONDITION}
                 AND ${projects ? 'p.name IN ' + projectArray : EMPTY_CONDITION} 
                 AND ${linesOfResearch ? 'rl.name IN ' + lineOfResearchArray : EMPTY_CONDITION} 
                 AND ${dataShowcaseEnvironment.internalInstance ?
@@ -122,8 +125,12 @@ class ItemService {
                 } 
                 AND $sqlSearchQueryChunk
             """
-        ).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
-                .list() as List<Map>
+        )
+        query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
+        //query.setParameterList('concepts', concepts)
+
+
+        def items = query.list() as List<Map>
 
         stopWatch.stop()
         stopWatch.start('Map to representations')
@@ -198,6 +205,10 @@ class ItemService {
 
     private String toSQL(Set query) {
         return EMPTY_CONDITION
+    }
+
+    private String toSqlArray(Set set) {
+        return set.toString().replaceAll("\\[", "\\(").replaceAll("\\]","\\)")
     }
 
 }
