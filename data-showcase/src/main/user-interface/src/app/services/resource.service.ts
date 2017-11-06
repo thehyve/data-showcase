@@ -76,7 +76,7 @@ export class ResourceService {
     let urlParams = "";
 
     if(projects || linesOfResearch || jsonSearchQuery) {
-      urlParams = `?conceptCodes=(${conceptCodes})&projects=(${projects})&linesOfResearch=(${linesOfResearch})&searchQuery=${jsonSearchQuery}`
+      urlParams = `?conceptCodes=[${conceptCodes}]&projects=[${projects}]&linesOfResearch=[${linesOfResearch}]&searchQuery=${jsonSearchQuery}`
     }
 
     return this.http.get(url + urlParams, {

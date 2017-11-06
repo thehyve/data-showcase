@@ -89,6 +89,9 @@ class ItemService {
 
     @Transactional(readOnly = true)
     List<ItemRepresentation> getItems(Set concepts, Set projects, Set linesOfResearch, Set searchQuery) {
+        String conceptArray = concepts.toString().replaceAll("\\[", "\\(").replaceAll("\\]","\\)")
+        String projectArray = projects.toString().replaceAll("\\[", "\\(").replaceAll("\\]","\\)")
+        String lineOfResearchArray = linesOfResearch.toString().replaceAll("\\[", "\\(").replaceAll("\\]","\\)")
         String sqlSearchQueryChunk = toSQL(searchQuery)
         def stopWatch = new StopWatch('Fetch filtered items')
         stopWatch.start('Retrieve from database')
@@ -108,13 +111,14 @@ class ItemService {
                     rl.name as lineOfResearch
                 from Item as i
                 join i.concept c
-                join (select p.id, p.name, rl.name from Project as P join p.lineOfResearch rl) on i.project = p
+                join i.project p
+                join p.lineOfResearch rl
                 where 
-                ${concepts ? 'c.conceptCode IN ' + concepts : EMPTY_CONDITION}
-                AND ${projects ? 'p.name IN $projects' : EMPTY_CONDITION} 
-                AND ${linesOfResearch ? 'rl.name IN $linesOfResearch' : EMPTY_CONDITION} 
+                ${concepts ? 'c.conceptCode IN ' + conceptArray : EMPTY_CONDITION}
+                AND ${projects ? 'p.name IN ' + projectArray : EMPTY_CONDITION} 
+                AND ${linesOfResearch ? 'rl.name IN ' + lineOfResearchArray : EMPTY_CONDITION} 
                 AND ${dataShowcaseEnvironment.internalInstance ?
-                        EMPTY_CONDITION : 'i.publicItem = true'
+                        EMPTY_CONDITION : 'i.publicItem=true'
                 } 
                 AND $sqlSearchQueryChunk
             """
