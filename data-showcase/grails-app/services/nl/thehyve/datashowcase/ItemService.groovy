@@ -16,9 +16,11 @@ import nl.thehyve.datashowcase.representation.InternalItemRepresentation
 import nl.thehyve.datashowcase.representation.ItemRepresentation
 import nl.thehyve.datashowcase.representation.PublicItemRepresentation
 import org.grails.core.util.StopWatch
-import org.hibernate.Query
+import org.hibernate.Criteria
 import org.hibernate.Session
 import org.hibernate.SessionFactory
+import org.hibernate.criterion.Projections
+import org.hibernate.criterion.Restrictions
 import org.hibernate.transform.Transformers
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -33,8 +35,6 @@ class ItemService {
     ModelMapper modelMapper
 
     SessionFactory sessionFactory
-
-    private final String EMPTY_CONDITION = '1=1'
 
     @CompileStatic
     static ItemRepresentation map(Map itemData) {
@@ -67,11 +67,9 @@ class ItemService {
                     c.labelLong as labelLong,
                     c.variableType as type,
                     p.name as projectName,
-                    rl.name as lineOfResearch
                 from Item as i
                 join i.concept c
                 join i.project p
-                join p.lineOfResearch rl
                 ${dataShowcaseEnvironment.internalInstance ?
                         '' : 'where i.publicItem = true'
                 }
@@ -89,50 +87,39 @@ class ItemService {
     }
 
     @Transactional(readOnly = true)
-    List<ItemRepresentation> getItems(Set concepts, Set projects, Set linesOfResearch, Set searchQuery) {
-
-        String conceptArray = concepts ? toSqlArray(concepts) : ''
-        String projectArray = projects ? toSqlArray(projects) : ''
-        String lineOfResearchArray = linesOfResearch ? toSqlArray(linesOfResearch) : ''
+    List<ItemRepresentation> getItems(Set concepts, Set projects, def searchQuery) {
 
         String sqlSearchQueryChunk = toSQL(searchQuery)
         def stopWatch = new StopWatch('Fetch filtered items')
         stopWatch.start('Retrieve from database')
         def session = sessionFactory.openStatelessSession()
 
-        Query query = session.createQuery(
-                """                
-                select
-                    i.id as id,
-                    i.name as name,
-                    i.publicItem as publicItem,
-                    i.itemPath as itemPath,
-                    c.conceptCode as conceptCode,
-                    c.labelLong as labelLong,
-                    c.variableType as type,
-                    p.name as projectName,
-                    rl.name as lineOfResearch
-                from Item as i
-                join i.concept c
-                join i.project p
-                join p.lineOfResearch rl
-                where 
-                    ${concepts ? 'c.conceptCode IN ' + conceptArray : EMPTY_CONDITION}
-                AND ${projects ? 'p.name IN ' + projectArray : EMPTY_CONDITION} 
-                AND ${linesOfResearch ? 'rl.name IN ' + lineOfResearchArray : EMPTY_CONDITION} 
-                AND ${dataShowcaseEnvironment.internalInstance ?
-                        EMPTY_CONDITION : 'i.publicItem=true'
-                } 
-                AND $sqlSearchQueryChunk
-            """
-        )
-        query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
-        //query.setParameterList('concepts', concepts)
+        Criteria criteria = session.createCriteria(Item, "i")
+            .createAlias("i.concept", "c")
+            .createAlias("i.project", "p")
+            .setProjection(Projections.projectionList()
+                .add(Projections.property("i.id").as("id"))
+                .add(Projections.property("i.name").as("name"))
+                .add(Projections.property("i.publicItem").as("publicItem"))
+                .add(Projections.property("i.itemPath").as("itemPath"))
+                .add(Projections.property("c.conceptCode").as("conceptCode"))
+                .add(Projections.property("c.labelLong").as("labelLong"))
+                .add(Projections.property("c.variableType").as("variableType"))
+                .add(Projections.property("p.name").as("projectName")))
+        if(concepts) {
+            criteria.add( Restrictions.in('c.conceptCode', concepts))
+        }
+        if(projects) {
+            criteria.add( Restrictions.in('p.name', projects))
+        }
+        if(dataShowcaseEnvironment.internalInstance) {
+            criteria.add( Restrictions.eq('i.publicItem',true))
+        }
+        criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
 
-
-        def items = query.list() as List<Map>
-
+        def items = criteria.list() as List<Map>
         stopWatch.stop()
+
         stopWatch.start('Map to representations')
         def result = items.collect { Map itemData ->
             map(itemData)
@@ -203,12 +190,8 @@ class ItemService {
         throw new ResourceNotFoundException('Item not found')
     }
 
-    private String toSQL(Set query) {
-        return EMPTY_CONDITION
-    }
-
-    private String toSqlArray(Set set) {
-        return set.toString().replaceAll("\\[", "\\(").replaceAll("\\]","\\)")
+    private String toSQL(def query) {
+        return "1=1"
     }
 
 }

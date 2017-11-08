@@ -169,10 +169,14 @@ export class DataService {
     this.loadingItems = true;
     this.filteredItems.length = 0;
     this.items.length = 0;
+
     let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
     let codes = Array.from(selectedConceptCodes);
+    let projects = this.getProjectsForSelectedResearchLines();
+    let searchQuery = JSON.parse(JSON.stringify(this.jsonSearchQuery));
+
     this.resourceService.getItems(
-      codes, this.selectedProjects, this.selectedResearchLines, this.jsonSearchQuery).subscribe(
+      codes, projects, searchQuery).subscribe(
       (items: Item[]) => {
         for (let item of items) {
           if (this.allProjects) {
@@ -236,6 +240,21 @@ export class DataService {
     this.fetchItems();
   }
 
+  getProjectsForSelectedResearchLines(): string[] {
+    if(this.selectedResearchLines.length && !this.selectedProjects.length) {
+      let projects: string[] = [];
+      this.allProjects.forEach( p => {
+        if(this.selectedResearchLines.includes(p.lineOfResearch)) {
+          projects.push(p.name);
+        }
+      });
+      return projects;
+    } else {
+      return this.selectedProjects;
+    }
+  }
+
+
   clearAllFilters() {
     this.setTextFilterInput(null);
     this.clearCheckboxFilterValues();
@@ -257,6 +276,7 @@ export class DataService {
 
   setJsonSearchQuery(query: JSON) {
     this.jsonSearchQuery = query;
+    this.fetchItems();
   }
 
   private getUniqueFilterValues() {

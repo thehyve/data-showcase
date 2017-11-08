@@ -24,18 +24,17 @@ class ItemController {
      * @return the list of items as JSON.
      */
     def index() {
-
-        Set concepts = parseParams(params.conceptCodes)
-        Set projects = parseParams(params.projects)
-        Set linesOfResearch = parseParams(params.linesOfResearch)
-        Set searchQuery = parseParams(params.searchQuery)
+        def args = getGetOrPostParams()
+        Set concepts = args.conceptCodes as Set
+        Set projects =  args.projects as Set
+        def searchQuery = args.searchQuery
 
         response.status = 200
         response.contentType = 'application/json'
         response.characterEncoding = 'utf-8'
         Object value
-        if (concepts || projects || linesOfResearch || searchQuery){
-            value = [items: itemService.getItems(concepts, projects, linesOfResearch, searchQuery)]
+        if (concepts || projects || searchQuery){
+            value = [items: itemService.getItems(concepts, projects, searchQuery)]
         } else {
             value = [items: itemService.items]
         }
@@ -54,12 +53,25 @@ class ItemController {
         respond itemService.getItem(id)
     }
 
-    private static Set parseParams(String jsonString){
+    private static Set parseParams(JSONArray json){
         try{
-            JSONArray json = JSON.parse(jsonString)
             return json.collect{ "'" + it + "'"} as Set
         } catch (Exception e) {
             return null
+        }
+    }
+
+    protected Map getGetOrPostParams() {
+        if (request.method == "POST") {
+            //return ((Map)request.JSON).collectEntries{ String k, v -> if(v) parseParams(v)} as Map
+            return (Map)request.JSON
+        }
+        return params.collectEntries { String k, v ->
+            if (v instanceof Object[] || v instanceof List) {
+                [k, v.collect { URLDecoder.decode(it, 'UTF-8') }]
+            } else {
+                [k, URLDecoder.decode(v, 'UTF-8')]
+            }
         }
     }
 }
