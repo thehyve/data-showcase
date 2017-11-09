@@ -2,7 +2,6 @@ package nl.thehyve.datashowcase.search
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.grails.web.json.JSONObject
 import org.hibernate.criterion.Criterion
 import org.hibernate.criterion.Restrictions
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
@@ -26,15 +25,17 @@ class SearchCriteriaBuilder {
      * @param query
      * @return
      */
-    Criterion buildCriteria(JSONObject query) {
+    Criterion buildCriteria(Map query) {
         def operator = Operator.forSymbol(query.type as String)
         if (isJunctionOperator(operator)) {
             List values = []
             List<Criterion> criteria = []
 
-            query.values.each { JSONObject c ->
+            query.values.each { Map c ->
                 if (c.type == "string") {
-                    values.add(c.value)
+                    if (c.value != ",") {
+                        values.add(c.value)
+                    }
                 } else {
                     criteria.add(buildCriteria(c))
                 }
@@ -42,13 +43,12 @@ class SearchCriteriaBuilder {
             criteria.addAll(buildCriteriaFromChunks(values))
             Criterion[] criteriaArray = criteria.collect { it }
             return expressionToCriteria(operator, criteriaArray)
-
         } else {
             List values = []
             values.addAll(query.value)
             List<Criterion> criteria = buildCriteriaFromChunks(values)
-            if(criteria.size() > 1) {
-                // throw exception
+            if (criteria.size() > 1) {
+                throw new IllegalArgumentException("Specified search query is invalid.")
             }
             return criteria.first()
         }
@@ -63,18 +63,25 @@ class SearchCriteriaBuilder {
     private List<Criterion> buildCriteriaFromChunks(List<String> values) {
         List<Criterion> criteria = []
         int size = values.size()
-        if (size == 2) {
-            criteria.add(applyToAllSearchFields(Operator.forSymbol(values[0]), values[1]))
-            return criteria
-        } else if (size > 0) {
-            if(size == 1) {
+        if (size > 0) {
+            if (size == 1) {
                 criteria.add(applyToAllSearchFields(defaultOperator, values[0]))
                 return criteria
-            } else if (size > 1) {
+            } else if (size == 2) {
+                if (Operator.forSymbol((String) values[0]) != Operator.NONE) {
+                    def criteriaForAllFields = applyToAllSearchFields(Operator.forSymbol((String) values[0]), values[1])
+                    criteria.add(criteriaForAllFields)
+                    return criteria
+                }
+            } else {
                 Operator op = Operator.forSymbol((String) values[1])
                 if (op != Operator.NONE) {
-                    def chunks = values.collate(3)
-                    chunks.each { criteria.add(triplesChunksToCriteria(it)) }
+                    if (op == Operator.IN) {
+                        criteria.add(triplesChunksToCriteria(values))
+                    } else {
+                        def chunks = values.collate(3)
+                        chunks.each { criteria.add(triplesChunksToCriteria(it)) }
+                    }
                     return criteria
                 }
             }
@@ -94,6 +101,9 @@ class SearchCriteriaBuilder {
         String operatorSymbol = chunks[1]
         String[] values = chunks[2..<chunks.size()]
         String propertyName = searchFieldToPropertyName(SearchField.forName(nameElementString))
+        if (propertyName == SearchField.NONE.value) {
+            throw new IllegalArgumentException("Specified property name: $nameElementString is not supported.")
+        }
 
         return buildSingleCriteria(Operator.forSymbol(operatorSymbol), propertyName, values.size() == 1 ? values[0] : values)
     }
@@ -114,7 +124,9 @@ class SearchCriteriaBuilder {
             case Operator.LIKE:
                 return Restrictions.like(propertyName, value)
             case Operator.IN:
-                return Restrictions.in(propertyName, value)
+                List<String> valueList = new ArrayList<String>()
+                value.each { valueList.add(it.toString()) }
+                return Restrictions.in(propertyName, valueList)
         }
     }
 
@@ -151,8 +163,9 @@ class SearchCriteriaBuilder {
     private static Criterion applyToAllSearchFields(Operator operator, Object value) {
         List<Criterion> criteria = []
         SearchField.values().each { SearchField field ->
-            if(field != SearchField.NONE) {
-                criteria.add(buildSingleCriteria(operator, searchFieldToPropertyName(field), value))
+            if (field != SearchField.NONE) {
+                def singleCriteria = buildSingleCriteria(operator, searchFieldToPropertyName(field), value)
+                criteria.add(singleCriteria)
             }
         }
         Criterion[] criteriaArray = criteria.collect { it }

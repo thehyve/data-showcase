@@ -34,10 +34,16 @@ class ItemController {
         response.contentType = 'application/json'
         response.characterEncoding = 'utf-8'
         Object value
-        if (concepts || projects || searchQuery.length()){
-            value = [items: itemService.getItems(concepts, projects, searchQuery)]
-        } else {
-            value = [items: itemService.items]
+        try {
+            if (concepts || projects || searchQuery.length()) {
+                value = [items: itemService.getItems(concepts, projects, searchQuery)]
+            } else {
+                value = [items: itemService.items]
+            }
+        } catch (Exception e) {
+            response.status = 400
+            respond error: "An error occured when fetching items. Error: $e.message"
+            return
         }
         new ObjectMapper().writeValue(response.outputStream, value)
     }
@@ -54,6 +60,11 @@ class ItemController {
         respond itemService.getItem(id)
     }
 
+    /**
+     * Both GET and POST are supported for items filtering
+     * Parameters can be either passed as request params or request body (JSON)
+     * @return a map of query parameters.
+     */
     protected Map getGetOrPostParams() {
         if (request.method == "POST") {
             return (Map)request.JSON

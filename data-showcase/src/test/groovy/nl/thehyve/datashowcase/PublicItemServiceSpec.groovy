@@ -58,13 +58,46 @@ class PublicItemServiceSpec extends Specification {
     void "test free text filter"() {
         given:
             setupData()
-        when:
+        when: "Filter on single word without field and operator specified"
             JSONObject searchQuery = ["type":"string","value":"ageA"]
             def items = itemService.getItems([] as Set, [] as Set, searchQuery)
-
         then:
             items.size() == 1
             items*.name == ['ageA']
+
+        when: "Filter on words conjunction (OR) without field and operator specified"
+            searchQuery = ["type": "or", "values": [
+                    ["type": "string", "value": "ageA"],
+                    ["type": "string", "value": "heightB"]
+            ]]
+            items = itemService.getItems([] as Set, [] as Set, searchQuery)
+        then:
+            items.size() == 2
+            items*.name == ['ageA', 'heightB']
+
+        when: "Filter on single word without field, operator is specified"
+            searchQuery = ["type":"and",
+                           "values":[
+                                   ["type":"string","value":"LIKE"],
+                                   ["type":"string","value":"age%"]
+                           ]]
+            items = itemService.getItems([] as Set, [] as Set, searchQuery)
+        then:
+            items.size() == 1
+            items*.name == ['ageA']
+
+        when: "Filter on single word with specified list of fields and operator ('keyword' IN '[<values>]')"
+            searchQuery = ["type":"and","values":[
+                    ["type":"string","value":"keywords"],
+                    ["type":"string","value":"IN"],
+                    ["type":"string","value":"Personal information"],
+                    ["type":"string","value":","],
+                    ["type":"string","value":"Family related"]]
+            ]
+            items = itemService.getItems([] as Set, [] as Set, searchQuery)
+            then:
+            items.size() == 2
+            items*.name == ['ageA', 'heightB']
     }
 
 }
