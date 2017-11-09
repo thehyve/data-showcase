@@ -6,6 +6,7 @@
 
 import nl.thehyve.datashowcase.Environment
 import nl.thehyve.datashowcase.StartupMessage
+import nl.thehyve.datashowcase.search.SearchCriteriaBuilder
 import org.modelmapper.ModelMapper
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
@@ -15,4 +16,5 @@ beans = {
     modelMapper(ModelMapper) {}
     startupMessage(StartupMessage) {}
     bcryptEncoder(BCryptPasswordEncoder) {}
+    searchCriteriaBuilder(SearchCriteriaBuilder) {}
 }

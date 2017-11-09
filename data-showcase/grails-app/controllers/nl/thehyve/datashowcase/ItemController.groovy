@@ -9,6 +9,7 @@ package nl.thehyve.datashowcase
 import com.fasterxml.jackson.databind.ObjectMapper
 import grails.converters.JSON
 import org.grails.web.json.JSONArray
+import org.grails.web.json.JSONObject
 import org.springframework.beans.factory.annotation.Autowired
 
 class ItemController {
@@ -19,21 +20,21 @@ class ItemController {
     ItemService itemService
 
     /**
-     * Fetches all items.
-     * TODO description
+     * Fetches all items with filter criteria.
+     * Supported criteria: conceptCodes, projects, free text search query.
      * @return the list of items as JSON.
      */
     def index() {
         def args = getGetOrPostParams()
         Set concepts = args.conceptCodes as Set
         Set projects =  args.projects as Set
-        def searchQuery = args.searchQuery
+        JSONObject searchQuery = args.searchQuery ? JSON.parse((String)args.searchQuery) : {}
 
         response.status = 200
         response.contentType = 'application/json'
         response.characterEncoding = 'utf-8'
         Object value
-        if (concepts || projects || searchQuery){
+        if (concepts || projects || searchQuery.length()){
             value = [items: itemService.getItems(concepts, projects, searchQuery)]
         } else {
             value = [items: itemService.items]
@@ -53,17 +54,8 @@ class ItemController {
         respond itemService.getItem(id)
     }
 
-    private static Set parseParams(JSONArray json){
-        try{
-            return json.collect{ "'" + it + "'"} as Set
-        } catch (Exception e) {
-            return null
-        }
-    }
-
     protected Map getGetOrPostParams() {
         if (request.method == "POST") {
-            //return ((Map)request.JSON).collectEntries{ String k, v -> if(v) parseParams(v)} as Map
             return (Map)request.JSON
         }
         return params.collectEntries { String k, v ->

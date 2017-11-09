@@ -175,8 +175,7 @@ export class DataService {
     let projects = this.getProjectsForSelectedResearchLines();
     let searchQuery = JSON.parse(JSON.stringify(this.jsonSearchQuery));
 
-    this.resourceService.getItems(
-      codes, projects, searchQuery).subscribe(
+    this.resourceService.getItems(codes, projects, searchQuery).subscribe(
       (items: Item[]) => {
         for (let item of items) {
           if (this.allProjects) {
@@ -187,7 +186,7 @@ export class DataService {
         }
         this.getUniqueFilterValues();
       },
-      err => console.error(err)
+      err => { this.clearCheckboxFilterValues(); console.error(err);}
     );
     let t2 = new Date();
     console.info(`Found ${this.items.length} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);

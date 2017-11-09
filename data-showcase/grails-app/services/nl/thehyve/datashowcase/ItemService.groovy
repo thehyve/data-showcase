@@ -15,10 +15,13 @@ import nl.thehyve.datashowcase.exception.ResourceNotFoundException
 import nl.thehyve.datashowcase.representation.InternalItemRepresentation
 import nl.thehyve.datashowcase.representation.ItemRepresentation
 import nl.thehyve.datashowcase.representation.PublicItemRepresentation
+import nl.thehyve.datashowcase.search.SearchCriteriaBuilder
 import org.grails.core.util.StopWatch
+import org.grails.web.json.JSONObject
 import org.hibernate.Criteria
 import org.hibernate.Session
 import org.hibernate.SessionFactory
+import org.hibernate.criterion.Criterion
 import org.hibernate.criterion.Projections
 import org.hibernate.criterion.Restrictions
 import org.hibernate.transform.Transformers
@@ -33,6 +36,9 @@ class ItemService {
 
     @Autowired
     ModelMapper modelMapper
+
+    @Autowired
+    SearchCriteriaBuilder searchCriteriaBuilder
 
     SessionFactory sessionFactory
 
@@ -53,7 +59,7 @@ class ItemService {
     @Cacheable('items')
     @Transactional(readOnly = true)
     List<ItemRepresentation> getItems() {
-        def stopWatch = new StopWatch('Fetch all items')
+        def stopWatch = new StopWatch('Fetch items')
         stopWatch.start('Retrieve from database')
         def session = sessionFactory.openStatelessSession()
         def items = session.createQuery(
@@ -66,7 +72,7 @@ class ItemService {
                     c.conceptCode as conceptCode,
                     c.labelLong as labelLong,
                     c.variableType as type,
-                    p.name as projectName,
+                    p.name as projectName
                 from Item as i
                 join i.concept c
                 join i.project p
@@ -75,7 +81,7 @@ class ItemService {
                 }
             """
         ).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
-        .list() as List<Map>
+                .list() as List<Map>
         stopWatch.stop()
         stopWatch.start('Map to representations')
         def result = items.collect { Map itemData ->
@@ -87,9 +93,9 @@ class ItemService {
     }
 
     @Transactional(readOnly = true)
-    List<ItemRepresentation> getItems(Set concepts, Set projects, def searchQuery) {
+    List<ItemRepresentation> getItems(Set concepts, Set projects, JSONObject searchQuery) {
 
-        String sqlSearchQueryChunk = toSQL(searchQuery)
+        Criterion searchQueryCriterion = searchQuery.length() ? searchCriteriaBuilder.buildCriteria(searchQuery) : null
         def stopWatch = new StopWatch('Fetch filtered items')
         stopWatch.start('Retrieve from database')
         def session = sessionFactory.openStatelessSession()
@@ -97,8 +103,9 @@ class ItemService {
         Criteria criteria = session.createCriteria(Item, "i")
             .createAlias("i.concept", "c")
             .createAlias("i.project", "p")
+            .createAlias("c.keywords", "k")
             .setProjection(Projections.projectionList()
-                .add(Projections.property("i.id").as("id"))
+                .add(Projections.distinct(Projections.property("i.id").as("id")))
                 .add(Projections.property("i.name").as("name"))
                 .add(Projections.property("i.publicItem").as("publicItem"))
                 .add(Projections.property("i.itemPath").as("itemPath"))
@@ -114,6 +121,9 @@ class ItemService {
         }
         if(dataShowcaseEnvironment.internalInstance) {
             criteria.add( Restrictions.eq('i.publicItem',true))
+        }
+        if(searchQueryCriterion) {
+            criteria.add(searchQueryCriterion)
         }
         criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
 
@@ -188,10 +198,6 @@ class ItemService {
             }
         }
         throw new ResourceNotFoundException('Item not found')
-    }
-
-    private String toSQL(def query) {
-        return "1=1"
     }
 
 }

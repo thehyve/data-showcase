@@ -1,0 +1,185 @@
+package nl.thehyve.datashowcase.search
+
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import org.grails.web.json.JSONObject
+import org.hibernate.criterion.Criterion
+import org.hibernate.criterion.Restrictions
+import sun.reflect.generics.reflectiveObjects.NotImplementedException
+
+/**
+ * The class for parsing search criteria from free text filter, serialized as JSON
+ * into Hibernate Criteria
+ */
+@CompileStatic
+@Slf4j
+class SearchCriteriaBuilder {
+
+    private final static String ITEM_ALIAS = "i"
+    private final static String CONCEPT_ALIAS = "c"
+    private final static String KEYWORDS_ALIAS = "k"
+
+    private final Operator defaultOperator = Operator.EQUALS
+
+    /**
+     * Construnt criteria from JSON query
+     * @param query
+     * @return
+     */
+    Criterion buildCriteria(JSONObject query) {
+        def operator = Operator.forSymbol(query.type as String)
+        if (isJunctionOperator(operator)) {
+            List values = []
+            List<Criterion> criteria = []
+
+            query.values.each { JSONObject c ->
+                if (c.type == "string") {
+                    values.add(c.value)
+                } else {
+                    criteria.add(buildCriteria(c))
+                }
+            }
+            criteria.addAll(buildCriteriaFromChunks(values))
+            Criterion[] criteriaArray = criteria.collect { it }
+            return expressionToCriteria(operator, criteriaArray)
+
+        } else {
+            List values = []
+            values.addAll(query.value)
+            List<Criterion> criteria = buildCriteriaFromChunks(values)
+            if(criteria.size() > 1) {
+                // throw exception
+            }
+            return criteria.first()
+        }
+    }
+
+    /**
+     * Build criteria for each { "type": "string", "value": "<value>"} element (chunk)
+     * Where chunk can be a representation of search field, operator or values
+     * @param values - list of "<value>" from all elements (chunks)
+     * @return
+     */
+    private List<Criterion> buildCriteriaFromChunks(List<String> values) {
+        List<Criterion> criteria = []
+        int size = values.size()
+        if (size == 2) {
+            criteria.add(applyToAllSearchFields(Operator.forSymbol(values[0]), values[1]))
+            return criteria
+        } else if (size > 0) {
+            if(size == 1) {
+                criteria.add(applyToAllSearchFields(defaultOperator, values[0]))
+                return criteria
+            } else if (size > 1) {
+                Operator op = Operator.forSymbol((String) values[1])
+                if (op != Operator.NONE) {
+                    def chunks = values.collate(3)
+                    chunks.each { criteria.add(triplesChunksToCriteria(it)) }
+                    return criteria
+                }
+            }
+            criteria.add(applyToAllSearchFields(Operator.IN, values))
+        }
+
+        return criteria
+    }
+
+    /**
+     * Create criteria from triple ["property", "operator", "value(s)"]
+     * @param chunks
+     * @return
+     */
+    private static Criterion triplesChunksToCriteria(List<String> chunks) {
+        String nameElementString = chunks[0]
+        String operatorSymbol = chunks[1]
+        String[] values = chunks[2..<chunks.size()]
+        String propertyName = searchFieldToPropertyName(SearchField.forName(nameElementString))
+
+        return buildSingleCriteria(Operator.forSymbol(operatorSymbol), propertyName, values.size() == 1 ? values[0] : values)
+    }
+
+    /**
+     * Create single Restriction criterion for a specified operator
+     * @param operator
+     * @param propertyName
+     * @param value
+     * @return
+     */
+    private static Criterion buildSingleCriteria(Operator operator, String propertyName, Object value) {
+        switch (operator) {
+            case Operator.EQUALS:
+                return Restrictions.eq(propertyName, value)
+            case Operator.NOT_EQUALS:
+                return Restrictions.eq(propertyName, value)
+            case Operator.LIKE:
+                return Restrictions.like(propertyName, value)
+            case Operator.IN:
+                return Restrictions.in(propertyName, value)
+        }
+    }
+
+    /**
+     * Returns true if operator equals AND or OR
+     * @param operator
+     * @return
+     */
+    private static boolean isJunctionOperator(Operator operator) {
+        return operator == Operator.AND || operator == Operator.OR
+    }
+
+    static Criterion expressionToCriteria(Operator operator, Criterion[] criteria) {
+        switch (operator) {
+            case Operator.AND:
+                return Restrictions.and(criteria)
+            case Operator.OR:
+                return Restrictions.or(criteria)
+        }
+    }
+
+    // TODO implement negation criterion
+    private static Criterion nagateExpression(Criterion c) {
+        throw new NotImplementedException()
+        // return Restrictions.not(c)
+    }
+
+    /**
+     * If searchFiled is not specified, search query is applied to all supported properties
+     * @param operator
+     * @param value
+     * @return
+     */
+    private static Criterion applyToAllSearchFields(Operator operator, Object value) {
+        List<Criterion> criteria = []
+        SearchField.values().each { SearchField field ->
+            if(field != SearchField.NONE) {
+                criteria.add(buildSingleCriteria(operator, searchFieldToPropertyName(field), value))
+            }
+        }
+        Criterion[] criteriaArray = criteria.collect { it }
+        return expressionToCriteria(Operator.OR, criteriaArray)
+    }
+
+    /**
+     * Parse specified field to supported property name
+     * @param field
+     * @return
+     */
+    private static String searchFieldToPropertyName(SearchField field) {
+        switch (field) {
+            case SearchField.NAME:
+                return ITEM_ALIAS + "." + SearchField.NAME.value
+            case SearchField.KEYWORDS:
+                return KEYWORDS_ALIAS + "." + "keyword"
+            case SearchField.LABEL:
+                return CONCEPT_ALIAS + "." + SearchField.LABEL.value
+            case SearchField.LABEL_LONG:
+                return CONCEPT_ALIAS + "." + SearchField.LABEL_LONG.value
+            case SearchField.LABEL_NL:
+                return CONCEPT_ALIAS + "." + SearchField.LABEL_NL.value
+            case SearchField.LABEL_NL_LONG:
+                return CONCEPT_ALIAS + "." + SearchField.LABEL_NL_LONG.value
+            default:
+                return SearchField.NONE.value
+        }
+    }
+}
