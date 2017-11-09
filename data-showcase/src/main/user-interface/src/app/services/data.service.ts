@@ -276,6 +276,7 @@ export class DataService {
     this.selectedKeywords = selectedKeywords;
     this.selectedProjects = selectedProjects;
     this.selectedResearchLines = selectedResearchLines;
+    this.clearItemsSelection();
     this.setFilteredItems();
   }
 

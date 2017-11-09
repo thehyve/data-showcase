@@ -32,8 +32,10 @@ export class ItemTableComponent implements OnInit {
   filterValue: string;
   items: Item[];
   itemsSelection: Item[];
+  rowsPerPage: number;
 
   constructor(public dataService: DataService) {
+    this.rowsPerPage = 8;
     this.items = this.dataService.filteredItems;
     this.dataService.itemsSelection$.subscribe(
       selection => {
@@ -56,5 +58,9 @@ export class ItemTableComponent implements OnInit {
 
   showSummary(item: Item){
     this.dataService.displayPopup(item);
+  }
+
+  pageCount(): number {
+    return Math.ceil(this.items.length / this.rowsPerPage)
   }
 }

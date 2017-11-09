@@ -4,7 +4,7 @@
   ~  (see accompanying file LICENSE).
   -->
 
-<p-dialog header="Shopping Cart" [(visible)]="display" [modal]="true" [width]="1100" [responsive]="true"
+<p-dialog header="Shopping Cart" [(visible)]="display" [modal]="true" [width]="1300" [responsive]="true"
           [closable]="true" [draggable]="false" [resizable]="false">
     <div *ngIf="items.length==0; else item_table_content">
         Shopping Cart is empty.
@@ -13,7 +13,7 @@
         <p-dataTable #itemTable
                      [immutable]=false
                      [value]="items"
-                     [style]="table_content"
+                     [style]="table-content"
                      [rows]="10" [paginator]="true">
 
             <p-column [style]="{ width: '50px'}" header="Del">

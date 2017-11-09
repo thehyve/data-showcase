@@ -21,6 +21,7 @@ import {ItemSummaryModule} from "./item-summary/item-summary.module";
 import {LogosComponent} from './logos/logos.component';
 import {PageRibbonComponent} from './page-ribbon/page-ribbon.component';
 import {FiltersModule} from "./filters/filters.module";
+import {InfoModule} from "./info/info.module";
 
 export function initConfig(config: AppConfig) {
   return () => config.load()
@@ -41,7 +42,8 @@ export function initConfig(config: AppConfig) {
     FormsModule,
     ItemTableModule,
     ShoppingCartModule,
-    ItemSummaryModule
+    ItemSummaryModule,
+    InfoModule
   ],
   providers: [
     ResourceService,

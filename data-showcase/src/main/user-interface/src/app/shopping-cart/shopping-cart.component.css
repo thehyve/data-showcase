@@ -8,9 +8,10 @@
     font-size:20px;
     padding: 0;
     cursor:pointer;
+    box-shadow: none;
 }
 
-.table_content {
+.table-content {
     text-align: left !important;
 }
 .ui-dialog-footer {

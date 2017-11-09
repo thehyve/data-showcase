@@ -28,6 +28,7 @@ import {ItemSummaryComponent} from "./item-summary/item-summary.component";
 import {LogosComponent} from "./logos/logos.component";
 import {PageRibbonComponent} from "./page-ribbon/page-ribbon.component";
 import {FiltersModule} from "./filters/filters.module";
+import {InfoModule} from "./info/info.module";
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -54,7 +55,8 @@ describe('AppComponent', () => {
         BrowserModule,
         BrowserAnimationsModule,
         DialogModule,
-        HttpModule
+        HttpModule,
+        InfoModule
       ],
       providers: [
         DataService,
