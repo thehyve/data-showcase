@@ -14,3 +14,8 @@
     </p-autoComplete>
     <button pButton type="button" label="Search" class="export-button" (click)="onFiltering($event);"></button>
 </div>
+<div *ngIf="searchErrorMessage.length > 0" class="search-error-message" role="alert">
+    <i class="fa fa-exclamation-triangle" aria-hidden="true">
+        {{searchErrorMessage}}
+    </i>
+</div>

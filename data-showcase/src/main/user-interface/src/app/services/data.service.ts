@@ -46,7 +46,7 @@ export class DataService {
   // trigger checkboxFilters reload
   private rerenderCheckboxFiltersSource = new Subject<boolean>();
   public rerenderCheckboxFilters$ = this.rerenderCheckboxFiltersSource.asObservable();
-
+  // currently selected tree node
   private selectedTreeNode: TreeNode = null;
   // selected checkboxes for projects filter
   private selectedProjects: string[] = [];
@@ -70,6 +70,10 @@ export class DataService {
   // item summary popup visibility
   private itemSummaryVisibleSource = new Subject<Item>();
   public itemSummaryVisible$ = this.itemSummaryVisibleSource.asObservable();
+
+  // search error message
+  private searchErrorMessageSource = new Subject<string>();
+  public searchErrorMessage$ = this.searchErrorMessageSource.asObservable();
 
   // environment label visibility
   private environmentSource = new Subject<Environment>();
@@ -175,6 +179,7 @@ export class DataService {
     console.debug(`Fetching items ...`);
     this.loadingItems = true;
     this.filteredItems.length = 0;
+    this.clearErrorSearchMessage();
 
     let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
     let codes = Array.from(selectedConceptCodes);
@@ -191,11 +196,21 @@ export class DataService {
         }
         this.getUniqueFilterValues();
       },
-      err => { this.clearCheckboxFilterValues(); console.error(err);}
+      err => {
+        if(err.startsWith('400')){
+          this.searchErrorMessageSource.next(err);
+        }
+        console.error(err);
+        this.clearCheckboxFilterValues();
+      }
     );
     let t2 = new Date();
     console.info(`Found ${this.filteredItems.length} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);
     this.loadingItems = false;
+  }
+
+  clearErrorSearchMessage(){
+    this.searchErrorMessageSource.next('');
   }
 
   static treeConceptCodes(treeNode: TreeNode): Set<string> {
@@ -259,6 +274,8 @@ export class DataService {
   }
 
   clearCheckboxFilterValues() {
+    this.linesOfResearch.length = 0;
+    this.projects.length = 0;
     this.selectedResearchLines.length = 0;
     this.selectedProjects.length = 0;
   }

@@ -10,4 +10,9 @@
     line-height: 50px;
     white-space: nowrap;
 }
-.text-filter-containe:focus {outline:none;}
+.text-filter-container:focus {outline:none;}
+
+.search-error-message {
+    color: red;
+    text-align: center;
+}

@@ -17,12 +17,18 @@ export class TextFilterComponent implements OnInit {
 
   // value of the main text filter
   textFilter: string;
+  // search error message
+  searchErrorMessage: string = '';
   // the delay before triggering updating methods
   delay: number;
 
   constructor(public dataService: DataService,
               public searchParserService: SearchParserService,
               private element: ElementRef) {
+    this.dataService.searchErrorMessage$.subscribe(
+      message => {
+        this.searchErrorMessage = message;
+      });
     this.dataService.textFilterInput$.subscribe(
       filter => {
         this.textFilter = filter;
@@ -34,7 +40,8 @@ export class TextFilterComponent implements OnInit {
   }
 
   onFiltering(event) {
-    let jsonQuery = this.searchParserService.parse(this.textFilter);
+    this.dataService.clearErrorSearchMessage();
+    let jsonQuery = SearchParserService.parse(this.textFilter);
     this.dataService.setJsonSearchQuery(jsonQuery);
   }
 
