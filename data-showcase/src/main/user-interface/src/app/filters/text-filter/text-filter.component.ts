@@ -32,6 +32,9 @@ export class TextFilterComponent implements OnInit {
     this.dataService.textFilterInput$.subscribe(
       filter => {
         this.textFilter = filter;
+        if(this.textFilter == ''){
+          this.onFiltering(null);
+        }
       });
     this.delay = 0;
   }
