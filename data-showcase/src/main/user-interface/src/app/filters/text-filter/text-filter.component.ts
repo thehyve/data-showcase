@@ -6,6 +6,7 @@
 
 import {Component, ElementRef, OnInit} from '@angular/core';
 import {DataService} from "../../services/data.service";
+import {SearchParserService} from "../../services/search-parser.service";
 
 @Component({
   selector: 'app-text-filter',
@@ -15,25 +16,36 @@ import {DataService} from "../../services/data.service";
 export class TextFilterComponent implements OnInit {
 
   // value of the main text filter
-  globalFilter: string;
+  textFilter: string;
+  // search error message
+  searchErrorMessage: string = '';
   // the delay before triggering updating methods
   delay: number;
 
   constructor(public dataService: DataService,
+              public searchParserService: SearchParserService,
               private element: ElementRef) {
-    this.dataService.globalFilter$.subscribe(
-      filter => {
-        this.globalFilter = filter;
+    this.dataService.searchErrorMessage$.subscribe(
+      message => {
+        this.searchErrorMessage = message;
       });
-    this.delay = 500;
+    this.dataService.textFilterInput$.subscribe(
+      filter => {
+        this.textFilter = filter;
+        if(this.textFilter == ''){
+          this.onFiltering(null);
+        }
+      });
+    this.delay = 0;
   }
 
   ngOnInit() {
   }
 
   onFiltering(event) {
-    this.dataService.setGlobalFilter(this.globalFilter);
-    this.removePrimeNgAutocompleteLoader();
+    this.dataService.clearErrorSearchMessage();
+    let jsonQuery = SearchParserService.parse(this.textFilter);
+    this.dataService.setJsonSearchQuery(jsonQuery);
   }
 
   /*

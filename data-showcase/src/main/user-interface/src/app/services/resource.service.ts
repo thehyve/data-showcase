@@ -9,7 +9,7 @@ import {Observable} from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import {TreeNode} from "../models/tree-node";
-import {Http, Response, Headers, ResponseContentType} from '@angular/http';
+import {Http, Response, Headers, ResponseContentType, RequestOptions} from '@angular/http';
 import {Endpoint} from "../models/endpoint";
 import {AppConfig} from "../config/app.config";
 import {
@@ -70,14 +70,25 @@ export class ResourceService {
     .catch(this.handleError.bind(this));
   }
 
-  getItems(): Observable<Item[]> {
+  getItems(conceptCodes?: string[], projects?: string[], jsonSearchQuery?: JSON): Observable<Item[]> {
     let headers = new Headers();
-    let url = this.endpoint.apiUrl + PATH_ITEMS;
+    headers.append('Content-Type', 'application/json');
 
-    return this.http.get(url, {
-      headers: headers
-    })
-      .map((response: Response) => response.json().items as Item[])
+    const options = new RequestOptions({headers: headers});
+    const url = this.endpoint.apiUrl + PATH_ITEMS;
+    let body = null;
+
+    if(projects || jsonSearchQuery) {
+      body = {
+        conceptCodes: conceptCodes,
+        projects: projects,
+        searchQuery: JSON.stringify(jsonSearchQuery)
+      }
+    }
+
+    // use POST because of url length limits in some of the browsers (limit of characters)
+    return this.http.post(url, body, options)
+      .map((res: Response) => res.json().items as Item[])
       .catch(this.handleError.bind(this));
   }
 

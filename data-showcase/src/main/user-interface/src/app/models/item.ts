@@ -13,7 +13,7 @@ export class Item {
   itemPath: string;
   type: string;
   project: string;
-  researchLine: string;
+  lineOfResearch: string;
   concept: string;
   summary: ItemSummary;
   label: string;

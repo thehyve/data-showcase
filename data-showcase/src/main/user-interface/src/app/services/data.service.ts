@@ -13,8 +13,8 @@ import {Project} from "../models/project";
 import {Subject} from "rxjs/Subject";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Environment} from "../models/environment";
-import { Concept } from '../models/concept';
-import { CheckboxOption } from '../models/CheckboxOption';
+import {Concept} from '../models/concept';
+import {CheckboxOption} from '../models/CheckboxOption';
 
 type LoadingState = 'loading' | 'complete';
 
@@ -26,52 +26,38 @@ export class DataService {
   // the status indicating the when the tree is being loaded or finished loading
   public loadingTreeNodes: LoadingState = 'complete';
 
-  // list of all items
-  private items: Item[] = [];
   // the flag indicating if Items are still being loaded
   public loadingItems: boolean = false;
   // filtered list of items based on selected node and selected checkbox filters
   public filteredItems: Item[] = [];
-  // items available for currently selected node
-  private itemsPerNode: Item[] = [];
   // items selected in the itemTable
   private itemsSelectionSource = new Subject<Item[]>();
   public itemsSelection$ = this.itemsSelectionSource.asObservable();
   // items added to the shopping cart
   public shoppingCartItems = new BehaviorSubject<Item[]>([]);
 
-  // global text filter
-  private globalFilterSource = new Subject<string>();
-  public globalFilter$ = this.globalFilterSource.asObservable();
+  // text filter input
+  private textFilterInputSource = new Subject<string>();
+  public textFilterInput$ = this.textFilterInputSource.asObservable();
+
+  // JSON search query
+  private jsonSearchQuery: JSON = null;
 
   // trigger checkboxFilters reload
   private rerenderCheckboxFiltersSource = new Subject<boolean>();
   public rerenderCheckboxFilters$ = this.rerenderCheckboxFiltersSource.asObservable();
-
+  // currently selected tree node
   private selectedTreeNode: TreeNode = null;
-  // selected checkboxes for keywords filter
-  private selectedKeywords: string[] = [];
   // selected checkboxes for projects filter
   private selectedProjects: string[] = [];
   // selected checkboxes for research lines filter
   private selectedResearchLines: string[] = [];
-
-  // list of keywords available for current item list
-  private keywords: CheckboxOption[] = [];
   // list of project names available for current item list
-  private projects: CheckboxOption[] = [];
+  public projects: CheckboxOption[] = [];
   // list of research lines available for current item list
-  private researchLines: CheckboxOption[] = [];
-
-  // list of all concepts
-  private concepts: Concept[] = [];
-
+  public linesOfResearch: CheckboxOption[] = [];
   // list of all projects
-  private availableProjects: Project[] = [];
-
-  // item summary popup visibility
-  private itemSummaryVisibleSource = new Subject<Item>();
-  public itemSummaryVisible$ = this.itemSummaryVisibleSource.asObservable();
+  private allProjects: Project[] = [];
 
   // NTR logo
   private ntrLogoUrlSummary = new Subject<string>();
@@ -82,32 +68,25 @@ export class DataService {
   public vuLogoUrl$ = this.vuLogoUrlSummary.asObservable();
 
   // item summary popup visibility
+  private itemSummaryVisibleSource = new Subject<Item>();
+  public itemSummaryVisible$ = this.itemSummaryVisibleSource.asObservable();
+
+  // search error message
+  private searchErrorMessageSource = new Subject<string>();
+  public searchErrorMessage$ = this.searchErrorMessageSource.asObservable();
+
+  // environment label visibility
   private environmentSource = new Subject<Environment>();
   public environment$ = this.environmentSource.asObservable();
 
   constructor(private resourceService: ResourceService) {
-    this.updateAvailableProjects();
-    this.updateConcepts();
-    this.updateNodes();
-    this.updateItems();
-    this.setFilteredItems();
+    this.fetchAllProjects();
+    this.fetchAllTreeNodes();
+    this.fetchItems();
     this.setEnvironment();
   }
 
-  loadLogo(type: string) {
-    this.resourceService.getLogo(type)
-      .subscribe(
-        (blobContent) => {
-          let urlCreator = window.URL;
-          if (type == 'NTR') {
-            this.ntrLogoUrlSummary.next(urlCreator.createObjectURL(blobContent));
-          } else {
-            this.vuLogoUrlSummary.next(urlCreator.createObjectURL(blobContent));
-          }
-        },
-        err => console.error(err)
-      );
-  }
+  // ------------------------- tree nodes -------------------------
 
   private processTreeNodes(nodes: TreeNode[]): TreeNodeLib[] {
     if (nodes == null) {
@@ -162,30 +141,7 @@ export class DataService {
     return newNode;
   }
 
-  updateAvailableProjects() {
-    this.resourceService.getProjects()
-      .subscribe(
-        (projects: Project[]) => {
-          this.availableProjects = projects;
-        },
-        err => console.error(err)
-      );
-  }
-
-  updateConcepts() {
-    this.resourceService.getConcepts()
-      .subscribe((concepts: Concept[]) => {
-          this.concepts = concepts;
-          let keywords: string[] = [].concat.apply([], this.concepts.map((concept: Concept) => concept.keywords));
-          this.keywords.length = 0;
-          keywords.forEach(keyword => this.keywords.push({label: keyword, value: keyword} as CheckboxOption));
-          console.info(`Loaded ${this.keywords.length} key words.`);
-        },
-        err => console.error(err)
-      );
-  }
-
-  updateNodes() {
+  fetchAllTreeNodes() {
     this.loadingTreeNodes = 'loading';
     // Retrieve all tree nodes
     this.resourceService.getTreeNodes()
@@ -201,31 +157,63 @@ export class DataService {
       );
   }
 
-  updateItems() {
-    this.loadingItems = true;
-    this.itemsPerNode.length = 0;
-    this.items.length = 0;
-    this.resourceService.getItems()
-      .subscribe(
-        (items: Item[]) => {
-          for (let item of items) {
-            if (this.availableProjects) {
-              item['researchLine'] = this.availableProjects.find(p => p.name == item['project']).lineOfResearch;
-            }
+  selectTreeNode(treeNode: TreeNode) {
+    this.selectedTreeNode = treeNode;
+    this.updateItemTable();
+  }
 
-            this.itemsPerNode.push(item);
-            this.items.push(item);
-          }
-          this.setFilteredItems();
-          this.getUniqueFilterValues();
-            console.info(`Loaded ${items.length} items ...`);
-          this.loadingItems = false;
+  // ------------------------- filters and item table -------------------------
+
+  fetchAllProjects() {
+    this.resourceService.getProjects()
+      .subscribe(
+        (projects: Project[]) => {
+          this.allProjects = projects;
         },
         err => console.error(err)
       );
   }
 
-  static treeConceptCodes(treeNode: TreeNode) : Set<string> {
+  fetchItems() {
+    let t1 = new Date();
+    console.debug(`Fetching items ...`);
+    this.loadingItems = true;
+    this.filteredItems.length = 0;
+    this.clearErrorSearchMessage();
+
+    let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
+    let codes = Array.from(selectedConceptCodes);
+    let projects = this.getProjectsForSelectedResearchLines();
+    let searchQuery = JSON.parse(JSON.stringify(this.jsonSearchQuery));
+
+    this.resourceService.getItems(codes, projects, searchQuery).subscribe(
+      (items: Item[]) => {
+        for (let item of items) {
+          if (this.allProjects) {
+            item['lineOfResearch'] = this.allProjects.find(p => p.name == item['project']).lineOfResearch;
+          }
+          this.filteredItems.push(item);
+        }
+        this.getUniqueFilterValues();
+      },
+      err => {
+        if(err.startsWith('400')){
+          this.searchErrorMessageSource.next(err);
+        }
+        console.error(err);
+        this.clearCheckboxFilters();
+      }
+    );
+    let t2 = new Date();
+    console.info(`Found ${this.filteredItems.length} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);
+    this.loadingItems = false;
+  }
+
+  clearErrorSearchMessage(){
+    this.searchErrorMessageSource.next('');
+  }
+
+  static treeConceptCodes(treeNode: TreeNode): Set<string> {
     if (treeNode == null) {
       return new Set();
     }
@@ -235,59 +223,64 @@ export class DataService {
     }
     if (treeNode.children != null) {
       treeNode.children.forEach((node: TreeNode) =>
-          DataService.treeConceptCodes(node).forEach((conceptCode: string) =>
-              conceptCodes.add(conceptCode)
-          )
+        DataService.treeConceptCodes(node).forEach((conceptCode: string) =>
+          conceptCodes.add(conceptCode)
+        )
       )
     }
     return conceptCodes;
   }
 
-  selectTreeNode(treeNode: TreeNode) {
-    this.selectedTreeNode = treeNode;
-    this.updateItemTable();
-  }
-
   updateItemTable() {
-    this.items.length = 0;
-    this.clearItemsSelection();
-    this.clearFilterValues();
-    if (this.selectedTreeNode == null) {
-      this.itemsPerNode.forEach(item => this.items.push(item))
-    } else {
-      let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
-      let nodeItems = this.itemsPerNode.filter(item => selectedConceptCodes.has(item.concept));
-      nodeItems.forEach(item => this.items.push(item))
-    }
-    this.setFilteredItems();
-    this.getUniqueFilterValues();
-  }
-
-  updateProjectsForResearchLines() {
-    this.selectedProjects.length = 0;
-    this.setFilteredItems();
+    this.linesOfResearch.length =0;
     this.projects.length = 0;
-    for (let item of this.filteredItems) {
-      DataService.collectUnique(item.project, this.projects);
-    }
+    this.clearItemsSelection();
+    this.clearCheckboxFilterSelection();
+    this.fetchItems();
   }
 
-  updateFilterValues(selectedKeywords: string[], selectedProjects: string[], selectedResearchLines: string[]) {
-    this.selectedKeywords = selectedKeywords;
-    this.selectedProjects = selectedProjects;
+  filterOnResearchLines(selectedResearchLines) {
+    this.projects.length = 0;
     this.selectedResearchLines = selectedResearchLines;
     this.clearItemsSelection();
-    this.setFilteredItems();
+    this.fetchItems();
+  }
+
+  filterOnProjects(selectedProjects) {
+    this.linesOfResearch.length = 0;
+    this.selectedProjects = selectedProjects;
+    this.clearItemsSelection();
+    this.fetchItems();
+  }
+
+  getProjectsForSelectedResearchLines(): string[] {
+    if(this.selectedResearchLines.length && !this.selectedProjects.length) {
+      let projects: string[] = [];
+      this.allProjects.forEach( p => {
+        if(this.selectedResearchLines.includes(p.lineOfResearch)) {
+          projects.push(p.name);
+        }
+      });
+      return projects;
+    } else {
+      return this.selectedProjects;
+    }
   }
 
   clearAllFilters() {
-    this.setGlobalFilter(null);
-    this.clearFilterValues()
+    this.setTextFilterInput('');
+    this.clearCheckboxFilterSelection();
     this.rerenderCheckboxFiltersSource.next(true);
   }
 
-  clearFilterValues() {
-    this.selectedKeywords.length = 0;
+  clearCheckboxFilters() {
+    this.linesOfResearch.length = 0;
+    this.projects.length = 0;
+    this.selectedResearchLines.length = 0;
+    this.selectedProjects.length = 0;
+  }
+
+  clearCheckboxFilterSelection() {
     this.selectedResearchLines.length = 0;
     this.selectedProjects.length = 0;
   }
@@ -296,71 +289,43 @@ export class DataService {
     this.itemsSelectionSource.next(null);
   }
 
-  getItems() {
-    return this.items;
+  setTextFilterInput(text: string) {
+    this.textFilterInputSource.next(text);
   }
 
-  getKeywords() {
-    return this.keywords;
+  setJsonSearchQuery(query: JSON) {
+    this.jsonSearchQuery = query;
+    this.fetchItems();
   }
 
-  getProjects() {
-    return this.projects;
-  }
-
-  getResearchLines() {
-    return this.researchLines;
-  }
-
-  findConceptCodesByKeywords(keywords: string[]): Set<string> {
-    return new Set(this.concepts.filter(concept =>
-      concept.keywords != null && concept.keywords.some((keyword: string) =>
-        keywords.includes(keyword))
-    ).map(concept => concept.conceptCode));
-  }
-
-  static intersection<T>(a: Set<T>, b: Set<T>): Set<T> {
-    return new Set(
-        Array.from(a).filter(item => b.has(item)));
-  }
-
-  getItemFilter(): (Item) => boolean {
-      let conceptCodesFromTree = DataService.treeConceptCodes(this.selectedTreeNode);
-      let conceptCodesFromKeywords = this.findConceptCodesByKeywords(this.selectedKeywords);
-      let selectedConceptCodes: Set<string>;
-      if (conceptCodesFromKeywords.size > 0 && conceptCodesFromTree.size > 0) {
-          selectedConceptCodes = DataService.intersection(conceptCodesFromTree, conceptCodesFromKeywords);
-      } else if (conceptCodesFromKeywords.size > 0) {
-          selectedConceptCodes = conceptCodesFromKeywords;
-      } else {
-          selectedConceptCodes = conceptCodesFromTree;
+  private getUniqueFilterValues() {
+    if (!this.projects.length && !this.selectedResearchLines.length) {
+      for (let item of this.filteredItems) {
+        DataService.collectUnique(item.project, this.projects);
+        DataService.collectUnique(item.lineOfResearch, this.linesOfResearch);
       }
-
-      return (item: Item) => {
-          return ((selectedConceptCodes.size == 0 || selectedConceptCodes.has(item.concept))
-              && (this.selectedProjects.length == 0 || this.selectedProjects.includes(item.project))
-              && (this.selectedResearchLines.length == 0 || this.selectedResearchLines.includes(item.researchLine))
-          );
-      };
+    } else if (!this.linesOfResearch.length) {
+      for (let item of this.filteredItems) {
+        DataService.collectUnique(item.lineOfResearch, this.linesOfResearch);
+      }
+    } else if (!this.projects.length) {
+      for (let item of this.filteredItems) {
+        DataService.collectUnique(item.project, this.projects);
+      }
+    }
   }
 
-  setFilteredItems() {
-    let t1 = new Date();
-    console.debug(`Filtering items ...`);
-    this.filteredItems.length = 0;
-    let filter = this.getItemFilter();
-    this.items.forEach(item => {
-      if (filter(item)) {
-        this.filteredItems.push(item)
-      }
+  private static collectUnique(element, list: CheckboxOption[]) {
+    let values = list.map(function (a) {
+      return a.value;
     });
-    let t2 = new Date();
-    console.info(`Selected ${this.filteredItems.length} / ${this.items.length} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);
+    if (element && !values.includes(element)) {
+      list.push({label: element, value: element} as CheckboxOption);
+    }
   }
 
-  setGlobalFilter(globalFilter: string) {
-    this.globalFilterSource.next(globalFilter);
-  }
+
+  // ------------------------- shopping cart -------------------------
 
   addToShoppingCart(newItemSelection: Item[]) {
     let newItems: Item[] = this.shoppingCartItems.getValue();
@@ -376,24 +341,7 @@ export class DataService {
     this.shoppingCartItems.next(items);
   }
 
-  private getUniqueFilterValues() {
-    this.projects.length = 0;
-    this.researchLines.length = 0;
-
-    for (let item of this.items) {
-      DataService.collectUnique(item.project, this.projects);
-      DataService.collectUnique(item.researchLine, this.researchLines);
-    }
-  }
-
-  private static collectUnique(element, list: CheckboxOption[]) {
-    let values = list.map(function (a) {
-      return a.value;
-    });
-    if (element && !values.includes(element)) {
-      list.push({label: element, value: element} as CheckboxOption);
-    }
-  }
+  // ------------------------- item summary -------------------------
 
   displayPopup(item: Item) {
     this.resourceService.getItem(item.id).subscribe(extendedItem =>
@@ -401,11 +349,28 @@ export class DataService {
     )
   }
 
+  // ------------------------- environment label -------------------------
   setEnvironment() {
     this.resourceService.getEnvironment().subscribe(
       (env: Environment) => {
         this.environmentSource.next(env);
       });
+  }
+
+  // ------------------------- header logos -------------------------
+  loadLogo(type: string) {
+    this.resourceService.getLogo(type)
+      .subscribe(
+        (blobContent) => {
+          let urlCreator = window.URL;
+          if (type == 'NTR') {
+            this.ntrLogoUrlSummary.next(urlCreator.createObjectURL(blobContent));
+          } else {
+            this.vuLogoUrlSummary.next(urlCreator.createObjectURL(blobContent));
+          }
+        },
+        err => console.error(err)
+      );
   }
 
 }

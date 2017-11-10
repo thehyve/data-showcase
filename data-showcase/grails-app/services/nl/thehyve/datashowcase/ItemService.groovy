@@ -15,9 +15,15 @@ import nl.thehyve.datashowcase.exception.ResourceNotFoundException
 import nl.thehyve.datashowcase.representation.InternalItemRepresentation
 import nl.thehyve.datashowcase.representation.ItemRepresentation
 import nl.thehyve.datashowcase.representation.PublicItemRepresentation
+import nl.thehyve.datashowcase.search.SearchCriteriaBuilder
 import org.grails.core.util.StopWatch
+import org.grails.web.json.JSONObject
+import org.hibernate.Criteria
 import org.hibernate.Session
 import org.hibernate.SessionFactory
+import org.hibernate.criterion.Criterion
+import org.hibernate.criterion.Projections
+import org.hibernate.criterion.Restrictions
 import org.hibernate.transform.Transformers
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,6 +36,9 @@ class ItemService {
 
     @Autowired
     ModelMapper modelMapper
+
+    @Autowired
+    SearchCriteriaBuilder searchCriteriaBuilder
 
     SessionFactory sessionFactory
 
@@ -72,7 +81,7 @@ class ItemService {
                 }
             """
         ).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
-        .list() as List<Map>
+                .list() as List<Map>
         stopWatch.stop()
         stopWatch.start('Map to representations')
         def result = items.collect { Map itemData ->
@@ -81,6 +90,54 @@ class ItemService {
         stopWatch.stop()
         log.info "Items fetched.\n${stopWatch.prettyPrint()}"
         result
+    }
+
+    @Transactional(readOnly = true)
+    List<ItemRepresentation> getItems(Set concepts, Set projects, JSONObject searchQuery) {
+
+        Criterion searchQueryCriterion = searchQuery.length() ? searchCriteriaBuilder.buildCriteria(searchQuery) : null
+        def stopWatch = new StopWatch('Fetch filtered items')
+        stopWatch.start('Retrieve from database')
+        def session = sessionFactory.openStatelessSession()
+
+        Criteria criteria = session.createCriteria(Item, "i")
+            .createAlias("i.concept", "c")
+            .createAlias("i.project", "p")
+            .createAlias("c.keywords", "k")
+            .setProjection(Projections.projectionList()
+                .add(Projections.distinct(Projections.property("i.id").as("id")))
+                .add(Projections.property("i.name").as("name"))
+                .add(Projections.property("i.publicItem").as("publicItem"))
+                .add(Projections.property("i.itemPath").as("itemPath"))
+                .add(Projections.property("c.conceptCode").as("conceptCode"))
+                .add(Projections.property("c.labelLong").as("labelLong"))
+                .add(Projections.property("c.variableType").as("variableType"))
+                .add(Projections.property("p.name").as("projectName")))
+        if(concepts) {
+            criteria.add( Restrictions.in('c.conceptCode', concepts))
+        }
+        if(projects) {
+            criteria.add( Restrictions.in('p.name', projects))
+        }
+        if(dataShowcaseEnvironment.internalInstance) {
+            criteria.add( Restrictions.eq('i.publicItem',true))
+        }
+        if(searchQueryCriterion) {
+            criteria.add(searchQueryCriterion)
+        }
+        criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
+
+        def items = criteria.list() as List<Map>
+        stopWatch.stop()
+
+        stopWatch.start('Map to representations')
+        def result = items.collect { Map itemData ->
+            map(itemData)
+        }
+        stopWatch.stop()
+        log.info "Filtered items fetched.\n${stopWatch.prettyPrint()}"
+        result
+
     }
 
     @CacheEvict(value = 'items', allEntries = true)
