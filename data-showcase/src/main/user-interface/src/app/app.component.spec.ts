@@ -29,6 +29,7 @@ import {LogosComponent} from "./logos/logos.component";
 import {PageRibbonComponent} from "./page-ribbon/page-ribbon.component";
 import {FiltersModule} from "./filters/filters.module";
 import {InfoModule} from "./info/info.module";
+import {SearchParserService} from "./services/search-parser.service";
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -64,7 +65,8 @@ describe('AppComponent', () => {
           provide: AppConfig,
           useClass: AppConfigMock
         },
-        ResourceService
+        ResourceService,
+        SearchParserService
       ]
     }).compileComponents();
   }));

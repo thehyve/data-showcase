@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { InfoComponent } from './info.component';
 import {FormsModule} from "@angular/forms";
-import {PanelModule} from "primeng/primeng";
+import {AccordionModule, PanelModule} from "primeng/primeng";
 import {SidebarModule} from "primeng/components/sidebar/sidebar";
 import {BrowserModule} from "@angular/platform-browser";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
@@ -20,6 +20,7 @@ describe('InfoComponent', () => {
         SidebarModule,
         BrowserModule,
         BrowserAnimationsModule,
+        AccordionModule
         ]
     })
     .compileComponents();

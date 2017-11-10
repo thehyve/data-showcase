@@ -197,7 +197,7 @@ export class DataService {
         this.getUniqueFilterValues();
       },
       err => {
-        if(err.startsWith('400')){
+        if(err != String(undefined) && err.startsWith("400")){
           this.searchErrorMessageSource.next(err);
         }
         console.error(err);

@@ -5,6 +5,7 @@ import {AutoCompleteModule, ButtonModule, FieldsetModule, ListboxModule, PanelMo
 import {FiltersComponent} from "./filters.component";
 import {CheckboxFilterComponent} from "./checkbox-filter/checkbox-filter.component";
 import {TextFilterComponent} from "./text-filter/text-filter.component";
+import {SearchParserService} from "../services/search-parser.service";
 
 @NgModule({
   imports: [
@@ -18,6 +19,7 @@ import {TextFilterComponent} from "./text-filter/text-filter.component";
     ButtonModule
   ],
   declarations: [FiltersComponent, TextFilterComponent, CheckboxFilterComponent],
-  exports: [FiltersComponent]
+  exports: [FiltersComponent],
+  providers: [SearchParserService]
 })
 export class FiltersModule { }

@@ -12,7 +12,7 @@ import {SidebarModule} from "primeng/components/sidebar/sidebar";
     SidebarModule,
     PanelModule,
     DialogModule,
-    AccordionModule
+    AccordionModule,
   ],
   declarations: [InfoComponent],
   exports: [InfoComponent]

@@ -14,6 +14,7 @@ import {DataService} from "../../services/data.service";
 import {HttpModule} from "@angular/http";
 import {AppConfig} from "../../config/app.config";
 import {AppConfigMock} from "../../config/app.config.mock";
+import {SearchParserService} from "../../services/search-parser.service";
 
 describe('TextFilterComponent', () => {
   let component: TextFilterComponent;
@@ -33,7 +34,8 @@ describe('TextFilterComponent', () => {
         {
           provide: AppConfig,
           useClass: AppConfigMock
-        }
+        },
+        SearchParserService
       ]
     })
     .compileComponents();
