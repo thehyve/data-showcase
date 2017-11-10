@@ -201,7 +201,7 @@ export class DataService {
           this.searchErrorMessageSource.next(err);
         }
         console.error(err);
-        this.clearCheckboxFilterValues();
+        this.clearCheckboxFilters();
       }
     );
     let t2 = new Date();
@@ -235,7 +235,7 @@ export class DataService {
     this.linesOfResearch.length =0;
     this.projects.length = 0;
     this.clearItemsSelection();
-    this.clearCheckboxFilterValues();
+    this.clearCheckboxFilterSelection();
     this.fetchItems();
   }
 
@@ -268,14 +268,19 @@ export class DataService {
   }
 
   clearAllFilters() {
-    this.setTextFilterInput(null);
-    this.clearCheckboxFilterValues();
+    this.setTextFilterInput('');
+    this.clearCheckboxFilterSelection();
     this.rerenderCheckboxFiltersSource.next(true);
   }
 
-  clearCheckboxFilterValues() {
+  clearCheckboxFilters() {
     this.linesOfResearch.length = 0;
     this.projects.length = 0;
+    this.selectedResearchLines.length = 0;
+    this.selectedProjects.length = 0;
+  }
+
+  clearCheckboxFilterSelection() {
     this.selectedResearchLines.length = 0;
     this.selectedProjects.length = 0;
   }
