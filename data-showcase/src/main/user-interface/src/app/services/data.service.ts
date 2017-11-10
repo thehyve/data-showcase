@@ -26,8 +26,6 @@ export class DataService {
   // the status indicating the when the tree is being loaded or finished loading
   public loadingTreeNodes: LoadingState = 'complete';
 
-  // list of all items
-  private items: Item[] = [];
   // the flag indicating if Items are still being loaded
   public loadingItems: boolean = false;
   // filtered list of items based on selected node and selected checkbox filters
@@ -61,10 +59,6 @@ export class DataService {
   // list of all projects
   private allProjects: Project[] = [];
 
-  // item summary popup visibility
-  private itemSummaryVisibleSource = new Subject<Item>();
-  public itemSummaryVisible$ = this.itemSummaryVisibleSource.asObservable();
-
   // NTR logo
   private ntrLogoUrlSummary = new Subject<string>();
   public ntrLogoUrl$ = this.ntrLogoUrlSummary.asObservable();
@@ -74,6 +68,10 @@ export class DataService {
   public vuLogoUrl$ = this.vuLogoUrlSummary.asObservable();
 
   // item summary popup visibility
+  private itemSummaryVisibleSource = new Subject<Item>();
+  public itemSummaryVisible$ = this.itemSummaryVisibleSource.asObservable();
+
+  // environment label visibility
   private environmentSource = new Subject<Environment>();
   public environment$ = this.environmentSource.asObservable();
 
@@ -83,6 +81,8 @@ export class DataService {
     this.fetchItems();
     this.setEnvironment();
   }
+
+  // ------------------------- tree nodes -------------------------
 
   private processTreeNodes(nodes: TreeNode[]): TreeNodeLib[] {
     if (nodes == null) {
@@ -137,16 +137,6 @@ export class DataService {
     return newNode;
   }
 
-  fetchAllProjects() {
-    this.resourceService.getProjects()
-      .subscribe(
-        (projects: Project[]) => {
-          this.allProjects = projects;
-        },
-        err => console.error(err)
-      );
-  }
-
   fetchAllTreeNodes() {
     this.loadingTreeNodes = 'loading';
     // Retrieve all tree nodes
@@ -163,12 +153,28 @@ export class DataService {
       );
   }
 
+  selectTreeNode(treeNode: TreeNode) {
+    this.selectedTreeNode = treeNode;
+    this.updateItemTable();
+  }
+
+  // ------------------------- filters and item table -------------------------
+
+  fetchAllProjects() {
+    this.resourceService.getProjects()
+      .subscribe(
+        (projects: Project[]) => {
+          this.allProjects = projects;
+        },
+        err => console.error(err)
+      );
+  }
+
   fetchItems() {
     let t1 = new Date();
     console.debug(`Fetching items ...`);
     this.loadingItems = true;
     this.filteredItems.length = 0;
-    this.items.length = 0;
 
     let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
     let codes = Array.from(selectedConceptCodes);
@@ -182,14 +188,13 @@ export class DataService {
             item['lineOfResearch'] = this.allProjects.find(p => p.name == item['project']).lineOfResearch;
           }
           this.filteredItems.push(item);
-          this.items.push(item);
         }
         this.getUniqueFilterValues();
       },
       err => { this.clearCheckboxFilterValues(); console.error(err);}
     );
     let t2 = new Date();
-    console.info(`Found ${this.items.length} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);
+    console.info(`Found ${this.filteredItems.length} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);
     this.loadingItems = false;
   }
 
@@ -211,13 +216,7 @@ export class DataService {
     return conceptCodes;
   }
 
-  selectTreeNode(treeNode: TreeNode) {
-    this.selectedTreeNode = treeNode;
-    this.updateItemTable();
-  }
-
   updateItemTable() {
-    this.items.length = 0;
     this.linesOfResearch.length =0;
     this.projects.length = 0;
     this.clearItemsSelection();
@@ -252,7 +251,6 @@ export class DataService {
       return this.selectedProjects;
     }
   }
-
 
   clearAllFilters() {
     this.setTextFilterInput(null);
