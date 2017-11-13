@@ -130,7 +130,7 @@ class SearchCriteriaBuilder {
             case Operator.NOT_EQUALS:
                 return Restrictions.eq(propertyName, value)
             case Operator.LIKE:
-                return Restrictions.like(propertyName, value)
+                return Restrictions.ilike(propertyName, value)
             case Operator.IN:
                 List<String> valueList = new ArrayList<String>()
                 value.each { valueList.add(it.toString()) }
