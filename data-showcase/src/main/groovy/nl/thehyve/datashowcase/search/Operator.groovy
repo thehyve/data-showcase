@@ -14,6 +14,7 @@ enum Operator {
 
     AND('and'),
     OR('or'),
+    CONTAINS('contains'),
     EQUALS('='),
     NOT_EQUALS("!="),
     LIKE('like'),

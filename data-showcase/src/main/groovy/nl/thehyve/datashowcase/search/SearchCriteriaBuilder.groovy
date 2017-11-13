@@ -3,6 +3,7 @@ package nl.thehyve.datashowcase.search
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.hibernate.criterion.Criterion
+import org.hibernate.criterion.MatchMode
 import org.hibernate.criterion.Restrictions
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
 
@@ -18,7 +19,7 @@ class SearchCriteriaBuilder {
     private final static String CONCEPT_ALIAS = "c"
     private final static String KEYWORDS_ALIAS = "k"
 
-    private final Operator defaultOperator = Operator.EQUALS
+    private final Operator defaultOperator = Operator.CONTAINS
 
     /**
      * Construct criteria from JSON query
@@ -125,16 +126,20 @@ class SearchCriteriaBuilder {
      */
     private static Criterion buildSingleCriteria(Operator operator, String propertyName, Object value) {
         switch (operator) {
+            case Operator.CONTAINS:
+                return Restrictions.ilike(propertyName, value as String, MatchMode.ANYWHERE)
             case Operator.EQUALS:
-                return Restrictions.eq(propertyName, value)
+                return Restrictions.ilike(propertyName, value as String, MatchMode.EXACT)
             case Operator.NOT_EQUALS:
-                return Restrictions.eq(propertyName, value)
+                return Restrictions.not(Restrictions.ilike(propertyName, value as String, MatchMode.EXACT))
             case Operator.LIKE:
-                return Restrictions.ilike(propertyName, value)
+                return Restrictions.ilike(propertyName, value as String)
             case Operator.IN:
                 List<String> valueList = new ArrayList<String>()
                 value.each { valueList.add(it.toString()) }
                 return Restrictions.in(propertyName, valueList)
+            default:
+                throw new IllegalArgumentException("Unsupported operator: ${operator}.")
         }
     }
 
