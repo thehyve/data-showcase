@@ -266,8 +266,8 @@ export class DataService {
   }
 
   clearAllFilters() {
-    this.setTextFilterInput('');
     this.clearCheckboxFilterSelection();
+    this.setTextFilterInput('');
     this.rerenderCheckboxFiltersSource.next(true);
   }
 
