@@ -74,7 +74,7 @@ class PublicItemServiceSpec extends Specification {
             items = itemService.getItems([] as Set, [] as Set, searchQuery)
         then:
             items.size() == 2
-            items*.name == ['ageA', 'heightB']
+            items*.name as Set == ['ageA', 'heightB'] as Set
 
         when: "Filter on single word without field, operator (LIKE) is specified"
             searchQuery = ["type"  : "and",
@@ -98,7 +98,7 @@ class PublicItemServiceSpec extends Specification {
             items = itemService.getItems([] as Set, [] as Set, searchQuery)
         then:
             items.size() == 2
-            items*.name == ['ageA', 'heightB']
+            items*.name as Set == ['ageA', 'heightB'] as Set
 
         when: "Filter on words disjunction (AND) and '=' operator ('field1=val1 OR field2=val2')"
             searchQuery = ["type": "and", "values": [
