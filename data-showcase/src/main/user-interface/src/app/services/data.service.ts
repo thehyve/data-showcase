@@ -232,10 +232,8 @@ export class DataService {
   }
 
   updateItemTable() {
-    this.linesOfResearch.length =0;
-    this.projects.length = 0;
     this.clearItemsSelection();
-    this.clearCheckboxFilterSelection();
+    this.clearAllFilters();
     this.fetchItems();
   }
 
