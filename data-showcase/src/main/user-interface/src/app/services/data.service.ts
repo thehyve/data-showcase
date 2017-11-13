@@ -27,7 +27,7 @@ export class DataService {
   public loadingTreeNodes: LoadingState = 'complete';
 
   // the flag indicating if Items are still being loaded
-  public loadingItems: boolean = false;
+  public loadingItems: LoadingState = 'complete';
   // filtered list of items based on selected node and selected checkbox filters
   public filteredItems: Item[] = [];
   // items selected in the itemTable
@@ -177,7 +177,7 @@ export class DataService {
   fetchItems() {
     let t1 = new Date();
     console.debug(`Fetching items ...`);
-    this.loadingItems = true;
+    this.loadingItems = 'loading';
     this.filteredItems.length = 0;
     this.clearErrorSearchMessage();
 
@@ -194,6 +194,7 @@ export class DataService {
           }
           this.filteredItems.push(item);
         }
+        this.loadingItems = "complete";
         this.getUniqueFilterValues();
       },
       err => {
@@ -206,7 +207,7 @@ export class DataService {
     );
     let t2 = new Date();
     console.info(`Found ${this.filteredItems.length} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);
-    this.loadingItems = false;
+
   }
 
   clearErrorSearchMessage(){

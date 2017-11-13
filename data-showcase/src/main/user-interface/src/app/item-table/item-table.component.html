@@ -4,7 +4,7 @@
   ~  (see accompanying file LICENSE).
   -->
 
-<div class="item-table-container">
+<div class="item-table-container" [@notifyState]="dataService.loadingItems">
     <p-dataTable #dt
                  [immutable]=false
                  [value]="items | itemFilter: filterValue"
@@ -12,7 +12,7 @@
                  [headerCheckboxToggleAllPages]="true"
                  [resizableColumns]="true"
                  [(selection)]="itemsSelection"
-                 [loading]="dataService.loadingItems" loadingIcon="fa fa-spin fa-refresh fa-fw">
+                 [loading]="dataService.loadingItems == 'loading'" loadingIcon="fa fa-spin fa-refresh fa-fw">
         <p-column selectionMode="multiple" [style]="{ 'width': '3%'}">
         </p-column>
         <p-column field="name" header="Name"

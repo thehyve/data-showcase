@@ -7,6 +7,9 @@
 import {Component, OnInit, Pipe, PipeTransform} from '@angular/core';
 import {DataService} from "../services/data.service";
 import {Item} from "../models/item";
+import {
+  trigger, style, animate, transition
+} from '@angular/animations';
 
 @Pipe({
   name: 'itemFilter'
@@ -25,7 +28,19 @@ export class ItemFilter implements PipeTransform {
 @Component({
   selector: 'app-item-table',
   templateUrl: './item-table.component.html',
-  styleUrls: ['./item-table.component.css']
+  styleUrls: ['./item-table.component.css'],
+  animations: [
+    trigger('notifyState', [
+      transition('loading => complete', [
+        style({
+          background: 'rgba(51, 156, 144, 0.5)'
+        }),
+        animate('1000ms ease-out', style({
+          background: 'rgba(255, 255, 255, 0.0)'
+        }))
+      ])
+    ])
+  ]
 })
 export class ItemTableComponent implements OnInit {
 
