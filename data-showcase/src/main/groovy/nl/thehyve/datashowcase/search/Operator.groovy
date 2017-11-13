@@ -36,6 +36,9 @@ enum Operator {
     }
 
     static Operator forSymbol(String symbol) {
+        if (symbol == null) {
+            return null
+        }
         symbol = symbol.toLowerCase()
         if (mapping.containsKey(symbol)) {
             return mapping[symbol]

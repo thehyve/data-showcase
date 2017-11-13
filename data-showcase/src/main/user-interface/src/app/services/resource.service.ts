@@ -82,7 +82,7 @@ export class ResourceService {
       body = {
         conceptCodes: conceptCodes,
         projects: projects,
-        searchQuery: JSON.stringify(jsonSearchQuery)
+        searchQuery: jsonSearchQuery
       }
     }
 

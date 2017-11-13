@@ -93,9 +93,9 @@ class ItemService {
     }
 
     @Transactional(readOnly = true)
-    List<ItemRepresentation> getItems(Set concepts, Set projects, JSONObject searchQuery) {
+    List<ItemRepresentation> getItems(Set concepts, Set projects, Map searchQuery) {
 
-        Criterion searchQueryCriterion = searchQuery.length() ? searchCriteriaBuilder.buildCriteria(searchQuery) : null
+        Criterion searchQueryCriterion = searchQuery ? searchCriteriaBuilder.buildCriteria(searchQuery) : null
         def stopWatch = new StopWatch('Fetch filtered items')
         stopWatch.start('Retrieve from database')
         def session = sessionFactory.openStatelessSession()

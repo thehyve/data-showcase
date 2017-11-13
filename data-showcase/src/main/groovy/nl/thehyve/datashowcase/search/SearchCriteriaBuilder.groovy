@@ -21,29 +21,16 @@ class SearchCriteriaBuilder {
     private final Operator defaultOperator = Operator.EQUALS
 
     /**
-     * Construnt criteria from JSON query
+     * Construct criteria from JSON query
      * @param query
      * @return
      */
     Criterion buildCriteria(Map query) {
-        def operator = Operator.forSymbol(query.type as String)
-        if (isJunctionOperator(operator)) {
-            List values = []
-            List<Criterion> criteria = []
-
-            query.values.each { Map c ->
-                if (c.type == "string") {
-                    if (c.value != ",") {
-                        values.add(c.value)
-                    }
-                } else {
-                    criteria.add(buildCriteria(c))
-                }
-            }
-            criteria.addAll(buildCriteriaFromChunks(values))
-            Criterion[] criteriaArray = criteria.collect { it }
-            return expressionToCriteria(operator, criteriaArray)
-        } else {
+        if (query == null) {
+            return null
+        }
+        def type = query.type as String
+        if (type == 'string') {
             List values = []
             values.addAll(query.value)
             List<Criterion> criteria = buildCriteriaFromChunks(values)
@@ -51,6 +38,27 @@ class SearchCriteriaBuilder {
                 throw new IllegalArgumentException("Specified search query is invalid.")
             }
             return criteria.first()
+        } else {
+            def operator = Operator.forSymbol(type)
+            if (isJunctionOperator(operator)) {
+                List values = []
+                List<Criterion> criteria = []
+
+                query.values.each { Map c ->
+                    if (c.type == "string") {
+                        if (c.value != ",") {
+                            values.add(c.value)
+                        }
+                    } else {
+                        criteria.add(buildCriteria(c))
+                    }
+                }
+                criteria.addAll(buildCriteriaFromChunks(values))
+                Criterion[] criteriaArray = criteria.collect { it }
+                return expressionToCriteria(operator, criteriaArray)
+            } else {
+                throw new IllegalArgumentException("Unsupported search type: ${type}.")
+            }
         }
     }
 
@@ -149,13 +157,13 @@ class SearchCriteriaBuilder {
     }
 
     // TODO implement negation criterion
-    private static Criterion nagateExpression(Criterion c) {
+    private static Criterion negateExpression(Criterion c) {
         throw new NotImplementedException()
         // return Restrictions.not(c)
     }
 
     /**
-     * If searchFiled is not specified, search query is applied to all supported properties
+     * If searchField is not specified, search query is applied to all supported properties
      * @param operator
      * @param value
      * @return
