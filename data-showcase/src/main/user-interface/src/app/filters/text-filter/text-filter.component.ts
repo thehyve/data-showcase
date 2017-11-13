@@ -42,6 +42,13 @@ export class TextFilterComponent implements OnInit {
   ngOnInit() {
   }
 
+  onKeyUp(event) {
+    // "enter" key code = 13
+    if (event.keyCode == 13) {
+      this.onFiltering(event)
+    }
+  }
+
   onFiltering(event) {
     this.dataService.clearErrorSearchMessage();
     let jsonQuery = SearchParserService.parse(this.textFilter);

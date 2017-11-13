@@ -10,7 +10,8 @@
                     placeholder="Enter search term"
                     class="text-filter"
                     (onClear)="onFiltering($event)"
-                    (completeMethod)="removePrimeNgAutocompleteLoader()">
+                    (completeMethod)="removePrimeNgAutocompleteLoader()"
+                    (onKeyUp)="onKeyUp($event)">
     </p-autoComplete>
     <button pButton type="button" label="Search" class="export-button" (click)="onFiltering($event);"></button>
 </div>
