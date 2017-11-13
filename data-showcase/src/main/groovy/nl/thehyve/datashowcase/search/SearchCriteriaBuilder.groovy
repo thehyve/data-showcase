@@ -3,6 +3,7 @@ package nl.thehyve.datashowcase.search
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.hibernate.criterion.Criterion
+import org.hibernate.criterion.MatchMode
 import org.hibernate.criterion.Restrictions
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
 
@@ -18,32 +19,19 @@ class SearchCriteriaBuilder {
     private final static String CONCEPT_ALIAS = "c"
     private final static String KEYWORDS_ALIAS = "k"
 
-    private final Operator defaultOperator = Operator.EQUALS
+    private final Operator defaultOperator = Operator.CONTAINS
 
     /**
-     * Construnt criteria from JSON query
+     * Construct criteria from JSON query
      * @param query
      * @return
      */
     Criterion buildCriteria(Map query) {
-        def operator = Operator.forSymbol(query.type as String)
-        if (isJunctionOperator(operator)) {
-            List values = []
-            List<Criterion> criteria = []
-
-            query.values.each { Map c ->
-                if (c.type == "string") {
-                    if (c.value != ",") {
-                        values.add(c.value)
-                    }
-                } else {
-                    criteria.add(buildCriteria(c))
-                }
-            }
-            criteria.addAll(buildCriteriaFromChunks(values))
-            Criterion[] criteriaArray = criteria.collect { it }
-            return expressionToCriteria(operator, criteriaArray)
-        } else {
+        if (query == null) {
+            return null
+        }
+        def type = query.type as String
+        if (type == 'string') {
             List values = []
             values.addAll(query.value)
             List<Criterion> criteria = buildCriteriaFromChunks(values)
@@ -51,6 +39,27 @@ class SearchCriteriaBuilder {
                 throw new IllegalArgumentException("Specified search query is invalid.")
             }
             return criteria.first()
+        } else {
+            def operator = Operator.forSymbol(type)
+            if (isJunctionOperator(operator)) {
+                List values = []
+                List<Criterion> criteria = []
+
+                query.values.each { Map c ->
+                    if (c.type == "string") {
+                        if (c.value != ",") {
+                            values.add(c.value)
+                        }
+                    } else {
+                        criteria.add(buildCriteria(c))
+                    }
+                }
+                criteria.addAll(buildCriteriaFromChunks(values))
+                Criterion[] criteriaArray = criteria.collect { it }
+                return expressionToCriteria(operator, criteriaArray)
+            } else {
+                throw new IllegalArgumentException("Unsupported search type: ${type}.")
+            }
         }
     }
 
@@ -117,16 +126,20 @@ class SearchCriteriaBuilder {
      */
     private static Criterion buildSingleCriteria(Operator operator, String propertyName, Object value) {
         switch (operator) {
+            case Operator.CONTAINS:
+                return Restrictions.ilike(propertyName, value as String, MatchMode.ANYWHERE)
             case Operator.EQUALS:
-                return Restrictions.eq(propertyName, value)
+                return Restrictions.ilike(propertyName, value as String, MatchMode.EXACT)
             case Operator.NOT_EQUALS:
-                return Restrictions.eq(propertyName, value)
+                return Restrictions.not(Restrictions.ilike(propertyName, value as String, MatchMode.EXACT))
             case Operator.LIKE:
-                return Restrictions.like(propertyName, value)
+                return Restrictions.ilike(propertyName, value as String)
             case Operator.IN:
                 List<String> valueList = new ArrayList<String>()
                 value.each { valueList.add(it.toString()) }
                 return Restrictions.in(propertyName, valueList)
+            default:
+                throw new IllegalArgumentException("Unsupported operator: ${operator}.")
         }
     }
 
@@ -149,13 +162,13 @@ class SearchCriteriaBuilder {
     }
 
     // TODO implement negation criterion
-    private static Criterion nagateExpression(Criterion c) {
+    private static Criterion negateExpression(Criterion c) {
         throw new NotImplementedException()
         // return Restrictions.not(c)
     }
 
     /**
-     * If searchFiled is not specified, search query is applied to all supported properties
+     * If searchField is not specified, search query is applied to all supported properties
      * @param operator
      * @param value
      * @return

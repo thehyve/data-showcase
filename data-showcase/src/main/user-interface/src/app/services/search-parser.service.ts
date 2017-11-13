@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import parser from 'logic-query-parser';
 
 @Injectable()
 export class SearchParserService {
@@ -10,7 +11,6 @@ export class SearchParserService {
    * and parse it to JSON object,
    * using logic-query-parser library*/
   static parse(text: string) {
-    let parser = require('logic-query-parser');
     let binaryTree = parser.parse(text);
     return parser.utils.binaryTreeToQueryJson(binaryTree);
   }

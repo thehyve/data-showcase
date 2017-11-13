@@ -184,7 +184,7 @@ export class DataService {
     let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
     let codes = Array.from(selectedConceptCodes);
     let projects = this.getProjectsForSelectedResearchLines();
-    let searchQuery = JSON.parse(JSON.stringify(this.jsonSearchQuery));
+    let searchQuery = this.jsonSearchQuery; //JSON.parse(JSON.stringify(this.jsonSearchQuery));
 
     this.resourceService.getItems(codes, projects, searchQuery).subscribe(
       (items: Item[]) => {

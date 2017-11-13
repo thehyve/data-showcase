@@ -28,21 +28,22 @@ class ItemController {
         def args = getGetOrPostParams()
         Set concepts = args.conceptCodes as Set
         Set projects =  args.projects as Set
-        JSONObject searchQuery = args.searchQuery ? JSON.parse((String)args.searchQuery) : {}
+        def searchQuery = args.searchQuery as Map
 
         response.status = 200
         response.contentType = 'application/json'
         response.characterEncoding = 'utf-8'
         Object value
         try {
-            if (concepts || projects || searchQuery.length()) {
+            if (concepts || projects || searchQuery) {
                 value = [items: itemService.getItems(concepts, projects, searchQuery)]
             } else {
                 value = [items: itemService.items]
             }
         } catch (Exception e) {
             response.status = 400
-            respond error: "An error occured when fetching items. Error: $e.message"
+            log.error 'An error occurred when fetching items.', e
+            respond error: "An error occurred when fetching items. Error: $e.message"
             return
         }
         new ObjectMapper().writeValue(response.outputStream, value)

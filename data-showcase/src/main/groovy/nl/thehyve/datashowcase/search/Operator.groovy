@@ -14,6 +14,7 @@ enum Operator {
 
     AND('and'),
     OR('or'),
+    CONTAINS('contains'),
     EQUALS('='),
     NOT_EQUALS("!="),
     LIKE('like'),
@@ -36,6 +37,9 @@ enum Operator {
     }
 
     static Operator forSymbol(String symbol) {
+        if (symbol == null) {
+            return null
+        }
         symbol = symbol.toLowerCase()
         if (mapping.containsKey(symbol)) {
             return mapping[symbol]
