@@ -17,6 +17,8 @@ cache:
     - $HOME/.m2
 
 before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y html2text
   - pushd data-showcase
   - gradle wrapper
   - GRADLE_SCRIPT="$(pwd)/gradlew"
@@ -32,6 +34,11 @@ script:
   - pushd data-showcase
   - ${GRADLE_SCRIPT} test
   - popd
+
+after_failure:
+  - echo "Writing reports..."
+  - html2text data-showcase/build/reports/tests/test/index.html
+  - for f in data-showcase/build/reports/tests/test/classes/*.html; do echo "$f"; html2text "$f"; done
 
 notifications:
   webhooks:
