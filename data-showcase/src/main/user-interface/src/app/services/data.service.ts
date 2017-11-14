@@ -13,7 +13,6 @@ import {Project} from "../models/project";
 import {Subject} from "rxjs/Subject";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Environment} from "../models/environment";
-import {Concept} from '../models/concept';
 import {CheckboxOption} from '../models/CheckboxOption';
 
 type LoadingState = 'loading' | 'complete';
@@ -40,8 +39,8 @@ export class DataService {
   private textFilterInputSource = new Subject<string>();
   public textFilterInput$ = this.textFilterInputSource.asObservable();
 
-  // JSON search query
-  private jsonSearchQuery: JSON = null;
+  // Search query
+  private searchQuery: Object = null;
 
   // trigger checkboxFilters reload
   private rerenderCheckboxFiltersSource = new Subject<boolean>();
@@ -80,9 +79,8 @@ export class DataService {
   public environment$ = this.environmentSource.asObservable();
 
   constructor(private resourceService: ResourceService) {
-    this.fetchAllProjects();
+    this.fetchAllProjectsAndItems();
     this.fetchAllTreeNodes();
-    this.fetchItems();
     this.setEnvironment();
   }
 
@@ -164,14 +162,23 @@ export class DataService {
 
   // ------------------------- filters and item table -------------------------
 
-  fetchAllProjects() {
+  fetchAllProjectsAndItems() {
     this.resourceService.getProjects()
       .subscribe(
         (projects: Project[]) => {
           this.allProjects = projects;
+          this.fetchItems();
         },
         err => console.error(err)
       );
+  }
+
+  projectToResearchLine(projectName: string): string {
+    if (this.allProjects) {
+      return this.allProjects.find(p => p.name == projectName).lineOfResearch;
+    } else {
+      return null;
+    }
   }
 
   fetchItems() {
@@ -184,21 +191,18 @@ export class DataService {
     let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
     let codes = Array.from(selectedConceptCodes);
     let projects = this.getProjectsForSelectedResearchLines();
-    let searchQuery = this.jsonSearchQuery; //JSON.parse(JSON.stringify(this.jsonSearchQuery));
 
-    this.resourceService.getItems(codes, projects, searchQuery).subscribe(
+    this.resourceService.getItems(codes, projects, this.searchQuery).subscribe(
       (items: Item[]) => {
         for (let item of items) {
-          if (this.allProjects) {
-            item['lineOfResearch'] = this.allProjects.find(p => p.name == item['project']).lineOfResearch;
-          }
+          item.lineOfResearch = this.projectToResearchLine(item.project);
           this.filteredItems.push(item);
         }
         this.loadingItems = "complete";
         this.getUniqueFilterValues();
       },
       err => {
-        if(err != String(undefined) && err.startsWith("400")){
+        if (err != String(undefined)) {
           this.searchErrorMessageSource.next(err);
         }
         console.error(err);
@@ -292,8 +296,8 @@ export class DataService {
     this.textFilterInputSource.next(text);
   }
 
-  setJsonSearchQuery(query: JSON) {
-    this.jsonSearchQuery = query;
+  setSearchQuery(query: Object) {
+    this.searchQuery = query;
     this.fetchItems();
   }
 

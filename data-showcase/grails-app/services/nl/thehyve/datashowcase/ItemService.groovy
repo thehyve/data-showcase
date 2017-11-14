@@ -15,13 +15,14 @@ import nl.thehyve.datashowcase.exception.ResourceNotFoundException
 import nl.thehyve.datashowcase.representation.InternalItemRepresentation
 import nl.thehyve.datashowcase.representation.ItemRepresentation
 import nl.thehyve.datashowcase.representation.PublicItemRepresentation
+import nl.thehyve.datashowcase.representation.SearchQueryRepresentation
 import nl.thehyve.datashowcase.search.SearchCriteriaBuilder
 import org.grails.core.util.StopWatch
-import org.grails.web.json.JSONObject
 import org.hibernate.Criteria
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.hibernate.criterion.Criterion
+import org.hibernate.criterion.Order
 import org.hibernate.criterion.Projections
 import org.hibernate.criterion.Restrictions
 import org.hibernate.transform.Transformers
@@ -47,6 +48,7 @@ class ItemService {
         new ItemRepresentation(
                 id: itemData.id as Long,
                 name: itemData.name as String,
+                label: itemData.label as String,
                 labelLong: itemData.labelLong as String,
                 project: itemData.projectName as String,
                 concept: itemData.conceptCode as String,
@@ -70,6 +72,7 @@ class ItemService {
                     i.publicItem as publicItem,
                     i.itemPath as itemPath,
                     c.conceptCode as conceptCode,
+                    c.label as label,
                     c.labelLong as labelLong,
                     c.variableType as type,
                     p.name as projectName
@@ -79,6 +82,7 @@ class ItemService {
                 ${dataShowcaseEnvironment.internalInstance ?
                         '' : 'where i.publicItem = true'
                 }
+                order by p.name asc
             """
         ).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
                 .list() as List<Map>
@@ -93,7 +97,7 @@ class ItemService {
     }
 
     @Transactional(readOnly = true)
-    List<ItemRepresentation> getItems(Set concepts, Set projects, Map searchQuery) {
+    List<ItemRepresentation> getItems(Set concepts, Set projects, SearchQueryRepresentation searchQuery) {
 
         Criterion searchQueryCriterion = searchQuery ? searchCriteriaBuilder.buildCriteria(searchQuery) : null
         def stopWatch = new StopWatch('Fetch filtered items')
@@ -110,6 +114,7 @@ class ItemService {
                 .add(Projections.property("i.publicItem").as("publicItem"))
                 .add(Projections.property("i.itemPath").as("itemPath"))
                 .add(Projections.property("c.conceptCode").as("conceptCode"))
+                .add(Projections.property("c.label").as("label"))
                 .add(Projections.property("c.labelLong").as("labelLong"))
                 .add(Projections.property("c.variableType").as("variableType"))
                 .add(Projections.property("p.name").as("projectName")))
@@ -119,12 +124,13 @@ class ItemService {
         if(projects) {
             criteria.add( Restrictions.in('p.name', projects))
         }
-        if(dataShowcaseEnvironment.internalInstance) {
+        if(!dataShowcaseEnvironment.internalInstance) {
             criteria.add( Restrictions.eq('i.publicItem',true))
         }
         if(searchQueryCriterion) {
             criteria.add(searchQueryCriterion)
         }
+        criteria.addOrder(Order.asc('i.name'))
         criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
 
         def items = criteria.list() as List<Map>
@@ -135,9 +141,8 @@ class ItemService {
             map(itemData)
         }
         stopWatch.stop()
-        log.info "Filtered items fetched.\n${stopWatch.prettyPrint()}"
+        log.info "${result.size()} filtered items fetched.\n${stopWatch.prettyPrint()}"
         result
-
     }
 
     @CacheEvict(value = 'items', allEntries = true)

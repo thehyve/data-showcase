@@ -1,11 +1,14 @@
 package nl.thehyve.datashowcase.search
 
+import groovy.json.JsonOutput
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import nl.thehyve.datashowcase.enumeration.Operator
+import nl.thehyve.datashowcase.enumeration.SearchField
+import nl.thehyve.datashowcase.representation.SearchQueryRepresentation
 import org.hibernate.criterion.Criterion
 import org.hibernate.criterion.MatchMode
 import org.hibernate.criterion.Restrictions
-import sun.reflect.generics.reflectiveObjects.NotImplementedException
 
 /**
  * The class for parsing search criteria from free text filter, serialized as JSON
@@ -21,110 +24,34 @@ class SearchCriteriaBuilder {
 
     private final Operator defaultOperator = Operator.CONTAINS
 
-    /**
-     * Construct criteria from JSON query
-     * @param query
-     * @return
-     */
-    Criterion buildCriteria(Map query) {
-        if (query == null) {
-            return null
-        }
-        def type = query.type as String
-        if (type == 'string') {
-            List values = []
-            values.addAll(query.value)
-            List<Criterion> criteria = buildCriteriaFromChunks(values)
-            if (criteria.size() > 1) {
-                throw new IllegalArgumentException("Specified search query is invalid.")
-            }
-            return criteria.first()
-        } else {
-            def operator = Operator.forSymbol(type)
-            if (isJunctionOperator(operator)) {
-                List values = []
-                List<Criterion> criteria = []
-
-                query.values.each { Map c ->
-                    if (c.type == "string") {
-                        if (c.value != ",") {
-                            values.add(c.value)
-                        }
-                    } else {
-                        criteria.add(buildCriteria(c))
-                    }
-                }
-                criteria.addAll(buildCriteriaFromChunks(values))
-                Criterion[] criteriaArray = criteria.collect { it }
-                return expressionToCriteria(operator, criteriaArray)
-            } else {
-                throw new IllegalArgumentException("Unsupported search type: ${type}.")
-            }
-        }
-    }
+    private static final EnumSet<Operator> booleanOperators = EnumSet.of(Operator.NOT, Operator.AND, Operator.OR)
+    private static final EnumSet<Operator> valueOperators = EnumSet.of(
+            Operator.EQUALS,
+            Operator.NOT_EQUALS,
+            Operator.CONTAINS,
+            Operator.LIKE,
+            Operator.IN
+    )
 
     /**
-     * Build criteria for each { "type": "string", "value": "<value>"} element (chunk)
-     * Where chunk can be a representation of search field, operator or values
-     * @param values - list of "<value>" from all elements (chunks)
-     * @return
-     */
-    private List<Criterion> buildCriteriaFromChunks(List<String> values) {
-        List<Criterion> criteria = []
-        int size = values.size()
-        if (size > 0) {
-            if (size == 1) {
-                criteria.add(applyToAllSearchFields(defaultOperator, values[0]))
-                return criteria
-            } else if (size == 2) {
-                if (Operator.forSymbol((String) values[0]) != Operator.NONE) {
-                    def criteriaForAllFields = applyToAllSearchFields(Operator.forSymbol((String) values[0]), values[1])
-                    criteria.add(criteriaForAllFields)
-                    return criteria
-                }
-            } else {
-                Operator op = Operator.forSymbol((String) values[1])
-                if (op != Operator.NONE) {
-                    if (op == Operator.IN) {
-                        criteria.add(triplesChunksToCriteria(values))
-                    } else {
-                        def chunks = values.collate(3)
-                        chunks.each { criteria.add(triplesChunksToCriteria(it)) }
-                    }
-                    return criteria
-                }
-            }
-            criteria.add(applyToAllSearchFields(Operator.IN, values))
-        }
-
-        return criteria
-    }
-
-    /**
-     * Create criteria from triple ["property", "operator", "value(s)"]
-     * @param chunks
-     * @return
-     */
-    private static Criterion triplesChunksToCriteria(List<String> chunks) {
-        String nameElementString = chunks[0]
-        String operatorSymbol = chunks[1]
-        String[] values = chunks[2..<chunks.size()]
-        String propertyName = searchFieldToPropertyName(SearchField.forName(nameElementString))
-        if (propertyName == SearchField.NONE.value) {
-            throw new IllegalArgumentException("Specified property name: $nameElementString is not supported.")
-        }
-
-        return buildSingleCriteria(Operator.forSymbol(operatorSymbol), propertyName, values.size() == 1 ? values[0] : values)
-    }
-
-    /**
-     * Create single Restriction criterion for a specified operator
+     * Returns true if operator equals AND or OR
      * @param operator
-     * @param propertyName
-     * @param value
      * @return
      */
-    private static Criterion buildSingleCriteria(Operator operator, String propertyName, Object value) {
+    private static boolean isBooleanOperator(Operator operator) {
+        booleanOperators.contains(operator)
+    }
+
+    /**
+     * Returns true if the operator is a value operator
+     * @param operator
+     * @return
+     */
+    private static boolean isValueOperator(Operator operator) {
+        valueOperators.contains(operator)
+    }
+
+    private static Criterion applyOperator(Operator operator, String propertyName, String value) {
         switch (operator) {
             case Operator.CONTAINS:
                 return Restrictions.ilike(propertyName, value as String, MatchMode.ANYWHERE)
@@ -134,37 +61,64 @@ class SearchCriteriaBuilder {
                 return Restrictions.not(Restrictions.ilike(propertyName, value as String, MatchMode.EXACT))
             case Operator.LIKE:
                 return Restrictions.ilike(propertyName, value as String)
-            case Operator.IN:
-                List<String> valueList = new ArrayList<String>()
-                value.each { valueList.add(it.toString()) }
-                return Restrictions.in(propertyName, valueList)
             default:
                 throw new IllegalArgumentException("Unsupported operator: ${operator}.")
         }
     }
 
     /**
-     * Returns true if operator equals AND or OR
+     * Create single Restriction criterion for a specified operator
      * @param operator
+     * @param propertyName
+     * @param value
      * @return
      */
-    private static boolean isJunctionOperator(Operator operator) {
-        return operator == Operator.AND || operator == Operator.OR
-    }
-
-    static Criterion expressionToCriteria(Operator operator, Criterion[] criteria) {
+    private static Criterion buildSingleCriteria(Operator operator, SearchField field, List<String> values) {
+        String propertyName = searchFieldToPropertyName(field)
         switch (operator) {
-            case Operator.AND:
-                return Restrictions.and(criteria)
-            case Operator.OR:
-                return Restrictions.or(criteria)
+            case Operator.CONTAINS:
+            case Operator.EQUALS:
+            case Operator.LIKE:
+                def criteria = values.collect { applyOperator(operator, propertyName, it) }
+                if (criteria.size() == 1) {
+                    return criteria[0]
+                } else {
+                    return Restrictions.or(criteria.toArray() as Criterion[])
+                }
+            case Operator.NOT_EQUALS:
+                def criteria = values.collect { applyOperator(operator, propertyName, it) }
+                def arg
+                if (criteria.size() == 1) {
+                    arg = criteria[0]
+                } else {
+                    arg = Restrictions.or(criteria.toArray() as Criterion[])
+                }
+                return Restrictions.not(arg)
+            case Operator.IN:
+                return Restrictions.in(propertyName, values)
+            default:
+                throw new IllegalArgumentException("Unsupported operator: ${operator}.")
         }
     }
 
-    // TODO implement negation criterion
-    private static Criterion negateExpression(Criterion c) {
-        throw new NotImplementedException()
-        // return Restrictions.not(c)
+    static Criterion expressionToCriteria(Operator operator, List<Criterion> criteria) {
+        log.info "Applying ${operator} to ${criteria.size()} arguments."
+        switch (operator) {
+            case Operator.NOT:
+                if (criteria.size() != 1) {
+                    throw new IllegalArgumentException("Not can only be applied to a single argument.")
+                }
+                log.info "Applying NOT to ${criteria.size()} argument."
+                return Restrictions.not(criteria[0])
+            case Operator.AND:
+                log.info "Applying AND to ${criteria.size()} arguments."
+                return Restrictions.and(criteria.toArray() as Criterion[])
+            case Operator.OR:
+                log.info "Applying OR to ${criteria.size()} arguments."
+                return Restrictions.or(criteria.toArray() as Criterion[])
+            default:
+                throw new IllegalArgumentException("Unsupported operator: ${operator}.")
+        }
     }
 
     /**
@@ -173,16 +127,15 @@ class SearchCriteriaBuilder {
      * @param value
      * @return
      */
-    private static Criterion applyToAllSearchFields(Operator operator, Object value) {
+    private static Criterion applyToAllSearchFields(Operator operator, List<String> values) {
         List<Criterion> criteria = []
         SearchField.values().each { SearchField field ->
             if (field != SearchField.NONE) {
-                def singleCriteria = buildSingleCriteria(operator, searchFieldToPropertyName(field), value)
+                def singleCriteria = buildSingleCriteria(operator, field, values)
                 criteria.add(singleCriteria)
             }
         }
-        Criterion[] criteriaArray = criteria.collect { it }
-        return expressionToCriteria(Operator.OR, criteriaArray)
+        return expressionToCriteria(Operator.OR, criteria)
     }
 
     /**
@@ -208,4 +161,53 @@ class SearchCriteriaBuilder {
                 return SearchField.NONE.value
         }
     }
+
+    /**
+     * Construct criteria from JSON query
+     * @param query
+     * @return
+     */
+    Criterion buildCriteria(SearchQueryRepresentation query) {
+        log.info "Build criteria: ${query}"
+        if (query == null) {
+            return null
+        }
+        def type = query.type
+        if (type == null) {
+            log.error "Unexpected null type in object: ${JsonOutput.toJson(query)}"
+            return null
+        }
+        else if (type == 'string') {
+            def values = [query.value as String]
+            log.info "Applying default operator ${defaultOperator} on args: ${values}"
+            return applyToAllSearchFields(defaultOperator, values)
+        } else {
+            def operator = Operator.forSymbol(type)
+            if (isBooleanOperator(operator)) {
+                return expressionToCriteria(operator, query.values.collect { buildCriteria(it) })
+            } else if (isValueOperator(operator)) {
+                def propertyName = query.value
+                def property = SearchField.NONE
+                def args = query.values.collect { it.value }
+                if (propertyName) {
+                    property = SearchField.forName(propertyName)
+                    if (property == SearchField.NONE) {
+                        throw new IllegalArgumentException("Unsupported property: ${propertyName}.")
+                    }
+                }
+                if (property != SearchField.NONE) {
+                    log.info "Applying ${operator} on field ${property} with args: ${args}"
+                    // applying an operator to a field with a list of values
+                    return buildSingleCriteria(operator, property, args)
+                } else {
+                    log.info "Applying unary ${operator} on args: ${args}"
+                    // applying a unary operator to all fields with a list of values
+                    return applyToAllSearchFields(operator, args)
+                }
+            } else {
+                throw new IllegalArgumentException("Unsupported type: ${type}.")
+            }
+        }
+    }
+
 }

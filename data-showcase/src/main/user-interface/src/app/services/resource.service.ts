@@ -38,9 +38,13 @@ export class ResourceService {
   private handleError(error: Response | any) {
     let errMsg: string;
     if (error instanceof Response) {
-      const body = error.json() || '';
-      const err = body.error || JSON.stringify(body);
-      errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+      let contentType = error.headers.get('Content-Type') || '';
+      if (contentType == 'application/json') {
+          const body = error.json() || '';
+          errMsg = body.error || JSON.stringify(body);
+      } else {
+        errMsg = `Error: ${error.statusText}`;
+      }
     } else {
       errMsg = error.message ? error.message : error.toString();
     }
@@ -70,7 +74,7 @@ export class ResourceService {
     .catch(this.handleError.bind(this));
   }
 
-  getItems(conceptCodes?: string[], projects?: string[], jsonSearchQuery?: JSON): Observable<Item[]> {
+  getItems(conceptCodes?: string[], projects?: string[], jsonSearchQuery?: Object): Observable<Item[]> {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
 

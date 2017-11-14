@@ -16,3 +16,9 @@
     color: red;
     text-align: center;
 }
+
+.active-search-filter {
+    opacity: .8;
+    background-color: #eee;
+    padding: 1px 5px;
+}
