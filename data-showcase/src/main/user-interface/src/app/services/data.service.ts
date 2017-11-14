@@ -200,6 +200,8 @@ export class DataService {
         }
         this.loadingItems = "complete";
         this.getUniqueFilterValues();
+        let t2 = new Date();
+        console.info(`Found ${this.filteredItems.length} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);
       },
       err => {
         if (err != String(undefined)) {
@@ -209,9 +211,6 @@ export class DataService {
         this.clearCheckboxFilters();
       }
     );
-    let t2 = new Date();
-    console.info(`Found ${this.filteredItems.length} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);
-
   }
 
   clearErrorSearchMessage(){
