@@ -103,6 +103,14 @@ environments:
         grails:
             cors:
                 enabled: true
+    test:
+        grails:
+            cors:
+                enabled: true
+    testInternal:
+        grails:
+            cors:
+                enabled: true
 
 ---
 grails:

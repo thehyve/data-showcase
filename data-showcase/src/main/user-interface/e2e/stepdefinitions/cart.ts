@@ -26,13 +26,15 @@ defineSupportCode(({ Given, When, Then }) => {
 
   Then('the cart contains', function (string) {
     let tableRows: [string] = JSON.parse(string);
-    return countIs($('.ds-shopping-cart').$$(".ui-datatable-data > tr"), tableRows.length).then(() => {
-      return $('.ds-shopping-cart').$$(".ui-datatable-data > tr").map((row, rowIndex) => { // get all data rows
-        return row.$$('.ui-cell-data').map((cell, cellIndex) => {
-          return checkTextElement(cell, tableRows[rowIndex][cellIndex]);
+    return browser.driver.wait(function () {
+      return countIs($('.ds-shopping-cart').$$(".ui-datatable-data > tr"), tableRows.length).then(() => {
+        return $('.ds-shopping-cart').$$(".ui-datatable-data > tr").map((row, rowIndex) => { // get all data rows
+          return row.$$('.ui-cell-data').map((cell, cellIndex) => {
+            return checkTextElement(cell, tableRows[rowIndex][cellIndex]);
+          })
         })
       })
-    })
+    }, 1000000)
   });
 
   Then('the cart is empty', function () {
