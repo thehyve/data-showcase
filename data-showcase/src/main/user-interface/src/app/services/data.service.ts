@@ -239,7 +239,6 @@ export class DataService {
   updateItemTable() {
     this.clearItemsSelection();
     this.clearAllFilters();
-    this.fetchItems();
   }
 
   filterOnResearchLines(selectedResearchLines) {
