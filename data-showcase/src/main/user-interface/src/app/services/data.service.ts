@@ -333,8 +333,9 @@ export class DataService {
 
   addToShoppingCart(newItemSelection: Item[]) {
     let newItems: Item[] = this.shoppingCartItems.getValue();
+    let itemNames = newItems.map((item) => item.name);
     for (let item of newItemSelection) {
-      if (!newItems.includes(item)) {
+      if (!itemNames.includes(item.name)) {
         newItems.push(item);
       }
     }
