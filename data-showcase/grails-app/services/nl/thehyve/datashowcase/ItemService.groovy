@@ -58,9 +58,21 @@ class ItemService {
         )
     }
 
+    static String propertyNameFromRepresentationName(String name) {
+        switch (name){
+            case "project": return "projectName"
+            case "concept": return "conceptCode"
+            case "label": return "label"
+            case "lineofresearch": return "p.lineOfResearch"
+            default: return "i.name"
+        }
+    }
+
     @Cacheable('items')
     @Transactional(readOnly = true)
-    List<ItemRepresentation> getItems() {
+    List<ItemRepresentation> getItems(int firstResult, int maxResults, String order, String propertyName) {
+        def property = propertyNameFromRepresentationName(propertyName)
+
         def stopWatch = new StopWatch('Fetch items')
         stopWatch.start('Retrieve from database')
         def session = sessionFactory.openStatelessSession()
@@ -82,9 +94,13 @@ class ItemService {
                 ${dataShowcaseEnvironment.internalInstance ?
                         '' : 'where i.publicItem = true'
                 }
-                order by p.name asc
+                order by $property ${order == 'desc' ?
+                        'desc' : 'asc' 
+                }                
             """
         ).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults)
                 .list() as List<Map>
         stopWatch.stop()
         stopWatch.start('Map to representations')
@@ -92,13 +108,15 @@ class ItemService {
             map(itemData)
         }
         stopWatch.stop()
-        log.info "Items fetched.\n${stopWatch.prettyPrint()}"
+        log.info "${result.size()} items fetched.\n${stopWatch.prettyPrint()}"
         result
     }
 
     @Transactional(readOnly = true)
-    List<ItemRepresentation> getItems(Set concepts, Set projects, SearchQueryRepresentation searchQuery) {
+    List<ItemRepresentation> getItems(int firstResult, int maxResults, String order, String propertyName,
+                                      Set concepts, Set projects, SearchQueryRepresentation searchQuery) {
 
+        def property = propertyNameFromRepresentationName(propertyName)
         Criterion searchQueryCriterion = searchQuery ? searchCriteriaBuilder.buildCriteria(searchQuery) : null
         def stopWatch = new StopWatch('Fetch filtered items')
         stopWatch.start('Retrieve from database')
@@ -132,7 +150,13 @@ class ItemService {
         }
         criteria.addOrder(Order.asc('i.name'))
         criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
-
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults)
+        if (order == "desc") {
+            criteria.addOrder(Order.desc(property))
+        } else {
+            criteria.addOrder(Order.asc(property))
+        }
         def items = criteria.list() as List<Map>
         stopWatch.stop()
 
@@ -204,5 +228,4 @@ class ItemService {
         }
         throw new ResourceNotFoundException('Item not found')
     }
-
 }

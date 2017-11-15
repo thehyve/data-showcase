@@ -16,6 +16,7 @@ import {Environment} from "../models/environment";
 import {CheckboxOption} from '../models/CheckboxOption';
 
 type LoadingState = 'loading' | 'complete';
+type Order = 'asc' | 'desc';
 
 @Injectable()
 export class DataService {
@@ -34,6 +35,7 @@ export class DataService {
   public itemsSelection$ = this.itemsSelectionSource.asObservable();
   // items added to the shopping cart
   public shoppingCartItems = new BehaviorSubject<Item[]>([]);
+  public totalItemsCount: number = 0;
 
   // text filter input
   private textFilterInputSource = new Subject<string>();
@@ -41,6 +43,16 @@ export class DataService {
 
   // Search query
   private searchQuery: Object = null;
+
+  // item table pagination settings
+  // the first result to retrieve, numbered from '0'
+  public itemsFirstResult: number = 0;
+  // the maximum number of results
+  public itemsMaxResults: number = 8;
+  // ascending/descending order
+  public itemsOrder: number = 1;
+  // the property to order on
+  public itemsPropertyName: string = "";
 
   // trigger checkboxFilters reload
   private rerenderCheckboxFiltersSource = new Subject<boolean>();
@@ -146,6 +158,7 @@ export class DataService {
       .subscribe(
         (nodes: TreeNode[]) => {
           this.loadingTreeNodes = 'complete';
+          nodes.forEach( node => this.totalItemsCount += node.accumulativeItemCount);
           let treeNodes = this.processTreeNodes(nodes);
           treeNodes.forEach((function (node) {
             this.treeNodes.push(node); // to ensure the treeNodes pointer remains unchanged
@@ -168,6 +181,10 @@ export class DataService {
         (projects: Project[]) => {
           this.allProjects = projects;
           this.fetchItems();
+          for (let project of projects) {
+            this.projects.push({label: project.name, value: project.name});
+            DataService.collectUnique(project.lineOfResearch, this.linesOfResearch);
+          }
         },
         err => console.error(err)
       );
@@ -181,6 +198,28 @@ export class DataService {
     }
   }
 
+  fetchFilters() {
+    this.projects.length = 0;
+    this.projects.length = 0;
+    this.linesOfResearch.length = 0;
+
+    let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
+    let codes = Array.from(selectedConceptCodes);
+
+    this.resourceService.getProjects(codes, this.searchQuery).subscribe(
+      (projects: Project[]) => {
+        for (let project of projects) {
+          this.allProjects.push(project);
+          this.projects.push({label: project.name, value: project.name});
+          DataService.collectUnique(project.lineOfResearch, this.linesOfResearch);
+        }
+      },
+      err => {
+        console.error(err);
+      }
+    );
+  }
+
   fetchItems() {
     let t1 = new Date();
     console.debug(`Fetching items ...`);
@@ -192,14 +231,18 @@ export class DataService {
     let codes = Array.from(selectedConceptCodes);
     let projects = this.getProjectsForSelectedResearchLines();
 
-    this.resourceService.getItems(codes, projects, this.searchQuery).subscribe(
+    let order: Order = this.orderFlagToOrderName(this.itemsOrder);
+
+    this.resourceService.getItems(this.itemsFirstResult, this.itemsMaxResults, order, this.itemsPropertyName,
+      codes, projects, this.searchQuery).subscribe(
       (items: Item[]) => {
         for (let item of items) {
-          item.lineOfResearch = this.projectToResearchLine(item.project);
+          if (this.allProjects && this.allProjects.length > 0) {
+            item.lineOfResearch = this.projectToResearchLine(item.project);
+          }
           this.filteredItems.push(item);
         }
         this.loadingItems = "complete";
-        this.getUniqueFilterValues();
         let t2 = new Date();
         console.info(`Found ${this.filteredItems.length} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);
       },
@@ -211,6 +254,11 @@ export class DataService {
         this.clearCheckboxFilters();
       }
     );
+  }
+
+
+  static orderFlagToOrderName(order: number){
+    return order == 1 ? "asc" : "desc";
   }
 
   clearErrorSearchMessage(){
@@ -245,6 +293,7 @@ export class DataService {
     this.selectedResearchLines = selectedResearchLines;
     this.clearItemsSelection();
     this.fetchItems();
+    this.getUniqueProjects();
   }
 
   filterOnProjects(selectedProjects) {
@@ -252,6 +301,7 @@ export class DataService {
     this.selectedProjects = selectedProjects;
     this.clearItemsSelection();
     this.fetchItems();
+    this.getUniqueLinesOfResearch();
   }
 
   getProjectsForSelectedResearchLines(): string[] {
@@ -299,22 +349,15 @@ export class DataService {
     this.fetchItems();
   }
 
-  private getUniqueFilterValues() {
-    if (!this.projects.length && !this.selectedResearchLines.length
-    || !this.selectedProjects.length && !this.selectedResearchLines.length ) {
-      this.clearCheckboxFilters();
-      for (let item of this.filteredItems) {
-        DataService.collectUnique(item.project, this.projects);
-        DataService.collectUnique(item.lineOfResearch, this.linesOfResearch);
-      }
-    } else if (!this.linesOfResearch.length) {
-      for (let item of this.filteredItems) {
-        DataService.collectUnique(item.lineOfResearch, this.linesOfResearch);
-      }
-    } else if (!this.projects.length) {
-      for (let item of this.filteredItems) {
-        DataService.collectUnique(item.project, this.projects);
-      }
+  private getUniqueProjects() {
+    for (let item of this.filteredItems) {
+      DataService.collectUnique(item.project, this.projects);
+    }
+  }
+
+  private getUniqueLinesOfResearch() {
+    for (let project of this.allProjects) {
+      DataService.collectUnique(project.lineOfResearch, this.linesOfResearch);
     }
   }
 
@@ -327,6 +370,9 @@ export class DataService {
     }
   }
 
+  countItems(): number {
+    return this.selectedTreeNode ? this.selectedTreeNode.accumulativeItemCount : this.totalItemsCount;
+  }
 
   // ------------------------- shopping cart -------------------------
 

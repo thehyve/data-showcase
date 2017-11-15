@@ -23,10 +23,17 @@ class ItemController {
      */
     def index() {
         try {
+
+            def args = request.JSON as Map
+            int firstResult = args.firstResult
+            int maxResults = args.maxResults
+            String order = args.order
+            String propertyName = args.propertyName
+
             response.status = 200
             response.contentType = 'application/json'
             response.characterEncoding = 'utf-8'
-            def data = [items: itemService.items]
+            def data = [items: itemService.getItems(firstResult, maxResults, order, propertyName)]
             log.info "Writing ${data.items.size()} items ..."
             new ObjectMapper().writeValue(response.outputStream, data)
         } catch (Exception e) {
@@ -43,9 +50,14 @@ class ItemController {
      */
     def search() {
         try {
+
             def args = request.JSON as Map
             Set concepts = args.conceptCodes as Set
             Set projects =  args.projects as Set
+            int firstResult = args.firstResult
+            int maxResults = args.maxResults
+            String order = args.order
+            String propertyName = args.propertyName
             log.info "Query input: ${args.searchQuery}"
             def searchQuery = new SearchQueryRepresentation()
             bindData(searchQuery, args.searchQuery)
@@ -54,8 +66,11 @@ class ItemController {
             response.contentType = 'application/json'
             response.characterEncoding = 'utf-8'
 
-            def data = [items: itemService.getItems(concepts, projects, searchQuery)]
+            def data = [items: itemService.getItems(
+                    firstResult, maxResults, order, propertyName, concepts, projects, searchQuery)
+            ]
             new ObjectMapper().writeValue(response.outputStream, data)
+
         } catch (Exception e) {
             response.status = 400
             log.error 'An error occurred when fetching items.', e

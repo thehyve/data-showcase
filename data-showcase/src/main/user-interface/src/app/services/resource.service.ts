@@ -74,21 +74,25 @@ export class ResourceService {
     .catch(this.handleError.bind(this));
   }
 
-  getItems(conceptCodes?: string[], projects?: string[], jsonSearchQuery?: Object): Observable<Item[]> {
+
+  getItems(firstResult: number, maxResults: number, order?: string,propertyName?: string,
+           conceptCodes?: string[], projects?: string[], jsonSearchQuery?: Object): Observable<Item[]> {
+
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
 
     const options = new RequestOptions({headers: headers});
     const url = this.endpoint.apiUrl + PATH_ITEMS;
-    let body = null;
 
-    if(projects || jsonSearchQuery) {
-      body = {
+    let body = {
         conceptCodes: conceptCodes,
         projects: projects,
-        searchQuery: jsonSearchQuery
-      }
-    }
+        searchQuery: jsonSearchQuery,
+        firstResult: firstResult,
+        maxResults: maxResults,
+        order: order,
+        propertyName: propertyName
+      };
 
     // use POST because of url length limits in some of the browsers (limit of characters)
     return this.http.post(url, body, options)
@@ -96,14 +100,24 @@ export class ResourceService {
       .catch(this.handleError.bind(this));
   }
 
-  getProjects(): Observable<Project[]> {
+  getProjects(conceptCodes?: string[], jsonSearchQuery?: JSON): Observable<Project[]> {
     let headers = new Headers();
-    let url = this.endpoint.apiUrl + PATH_PROJECTS;
+    headers.append('Content-Type', 'application/json');
 
-    return this.http.get(url, {
-      headers: headers
-    })
-      .map((response: Response) => response.json().projects as Project[])
+    const options = new RequestOptions({headers: headers});
+    const url = this.endpoint.apiUrl + PATH_PROJECTS;
+    let body = null;
+
+    if(conceptCodes || jsonSearchQuery) {
+      body = {
+        conceptCodes: conceptCodes,
+        searchQuery: jsonSearchQuery
+      }
+    }
+
+    // use POST because of url length limits in some of the browsers (limit of characters)
+    return this.http.post(url, body, options)
+      .map((res: Response) => res.json().projects as Project[])
       .catch(this.handleError.bind(this));
   }
 

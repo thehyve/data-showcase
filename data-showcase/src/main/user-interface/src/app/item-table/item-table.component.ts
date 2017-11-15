@@ -76,6 +76,24 @@ export class ItemTableComponent implements OnInit {
   }
 
   pageCount(): number {
-    return Math.ceil(this.items.length / this.rowsPerPage)
+    return Math.ceil(this.countItems() / this.rowsPerPage)
+  }
+
+  countItems(): number {
+    return this.dataService.countItems()
+  }
+
+  changeSort(event) {
+    console.log("Sort: " + event.field + ", " + event.order);
+    this.dataService.itemsOrder = event.order;
+    this.dataService.itemsPropertyName = event.field;
+    this.dataService.fetchItems();
+  }
+
+  paginate(event) {
+    console.log("PAGE: " + event.page);
+    this.dataService.itemsFirstResult = event.page * event.rows;
+    this.dataService.itemsMaxResults = event.rows;
+    this.dataService.fetchItems();
   }
 }
