@@ -159,7 +159,6 @@ export class DataService {
       .subscribe(
         (nodes: TreeNode[]) => {
           this.loadingTreeNodes = 'complete';
-          nodes.forEach( node => this.totalItemsCount += node.accumulativeItemCount);
           let treeNodes = this.processTreeNodes(nodes);
           treeNodes.forEach((function (node) {
             this.treeNodes.push(node); // to ensure the treeNodes pointer remains unchanged
