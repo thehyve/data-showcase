@@ -9,7 +9,7 @@ import { TestBed, async } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import {TreeNodesComponent} from "./tree-nodes/tree-nodes.component";
 import {
-  AutoCompleteModule, DataTableModule, DialogModule, FieldsetModule, PanelModule,
+  AutoCompleteModule, DataTableModule, DialogModule, FieldsetModule, PaginatorModule, PanelModule,
   TreeModule
 } from "primeng/primeng";
 import {FormsModule} from "@angular/forms";
@@ -29,6 +29,7 @@ import {LogosComponent} from "./logos/logos.component";
 import {PageRibbonComponent} from "./page-ribbon/page-ribbon.component";
 import {FiltersModule} from "./filters/filters.module";
 import {InfoModule} from "./info/info.module";
+import {SearchParserService} from "./services/search-parser.service";
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -56,7 +57,8 @@ describe('AppComponent', () => {
         BrowserAnimationsModule,
         DialogModule,
         HttpModule,
-        InfoModule
+        InfoModule,
+        PaginatorModule
       ],
       providers: [
         DataService,
@@ -64,7 +66,8 @@ describe('AppComponent', () => {
           provide: AppConfig,
           useClass: AppConfigMock
         },
-        ResourceService
+        ResourceService,
+        SearchParserService
       ]
     }).compileComponents();
   }));

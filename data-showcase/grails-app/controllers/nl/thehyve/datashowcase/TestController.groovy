@@ -20,14 +20,20 @@ class TestController {
 
     def clearDatabase() {
         dataService.clearDatabase()
+        dataService.clearCaches()
+        response.status = 200
     }
 
     def createInternalData() {
         testService.createRandomInternalTestData()
+        dataService.clearCaches()
+        response.status = 200
     }
 
     def createPublicData() {
         testService.createPublicTestData()
+        dataService.clearCaches()
+        response.status = 200
     }
 
 }

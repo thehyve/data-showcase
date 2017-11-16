@@ -279,7 +279,7 @@ body .ui-inputgroup .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
 
 /* Global text filter */
 .text-filter-container .ui-inputtext {
-    width: 550px;
+    width: 900px;
     height: 36px;
     padding: 0;
 }

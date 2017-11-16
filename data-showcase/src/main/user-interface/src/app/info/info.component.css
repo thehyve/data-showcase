@@ -13,9 +13,3 @@
 .info-bar {
     height: 200px;
 }
-
-.info-cancel-button {
-    position: absolute;
-    bottom: 40px;
-    left: 20px;
-}

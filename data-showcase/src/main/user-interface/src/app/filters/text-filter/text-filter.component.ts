@@ -6,6 +6,7 @@
 
 import {Component, ElementRef, OnInit} from '@angular/core';
 import {DataService} from "../../services/data.service";
+import {SearchParserService} from "../../services/search-parser.service";
 
 @Component({
   selector: 'app-text-filter',
@@ -15,25 +16,52 @@ import {DataService} from "../../services/data.service";
 export class TextFilterComponent implements OnInit {
 
   // value of the main text filter
-  globalFilter: string;
+  textFilter: string;
+  // search error message
+  searchErrorMessage: string = '';
+  // search query as html
+  searchQueryHtml: string = '';
   // the delay before triggering updating methods
   delay: number;
 
   constructor(public dataService: DataService,
+              public searchParserService: SearchParserService,
               private element: ElementRef) {
-    this.dataService.globalFilter$.subscribe(
-      filter => {
-        this.globalFilter = filter;
+    this.dataService.searchErrorMessage$.subscribe(
+      message => {
+        this.searchErrorMessage = message;
       });
-    this.delay = 500;
+    this.dataService.textFilterInput$.subscribe(
+      filter => {
+        this.textFilter = filter;
+        if(this.textFilter == ''){
+          this.onFiltering(null);
+        }
+      });
+    this.delay = 0;
   }
 
   ngOnInit() {
   }
 
+  onKeyUp(event) {
+    // "enter" key code = 13
+    if (event.keyCode == 13) {
+      this.onFiltering(event)
+    }
+  }
+
   onFiltering(event) {
-    this.dataService.setGlobalFilter(this.globalFilter);
-    this.removePrimeNgAutocompleteLoader();
+    this.dataService.clearErrorSearchMessage();
+    try {
+      this.searchQueryHtml = '';
+      let query = SearchParserService.parse(this.textFilter);
+      this.searchQueryHtml = SearchParserService.toHtml(query);
+      this.dataService.setSearchQuery(query);
+    } catch(e) {
+      console.error(`${e}`, e);
+      this.searchErrorMessage = `${e}`;
+    }
   }
 
   /*

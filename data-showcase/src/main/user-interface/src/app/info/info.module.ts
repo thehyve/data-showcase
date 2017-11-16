@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {InfoComponent} from "./info.component";
 import {FormsModule} from "@angular/forms";
-import {DialogModule, PanelModule} from "primeng/primeng";
+import {AccordionModule, DialogModule, PanelModule} from "primeng/primeng";
 import {SidebarModule} from "primeng/components/sidebar/sidebar";
 
 @NgModule({
@@ -11,7 +11,8 @@ import {SidebarModule} from "primeng/components/sidebar/sidebar";
     FormsModule,
     SidebarModule,
     PanelModule,
-    DialogModule
+    DialogModule,
+    AccordionModule,
   ],
   declarations: [InfoComponent],
   exports: [InfoComponent]

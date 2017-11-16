@@ -4,7 +4,10 @@
  *  (see accompanying file LICENSE).
  */
 
-export class CheckboxOption {
-  label: string;
-  value: string;
+import {Item} from "./item";
+
+export class ItemResponse {
+  items: Item[];
+  totalCount: number;
+  page: number;
 }

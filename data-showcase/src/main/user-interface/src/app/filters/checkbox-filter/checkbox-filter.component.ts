@@ -6,8 +6,7 @@
 
 import {Component, OnInit} from '@angular/core';
 import {DataService} from "../../services/data.service";
-import {Item} from "../../models/item";
-import { CheckboxOption } from '../../models/CheckboxOption';
+import { SelectItem } from 'primeng/primeng';
 
 @Component({
   selector: 'app-checkbox-filter',
@@ -19,19 +18,14 @@ export class CheckboxFilterComponent implements OnInit {
   rerender: boolean = false;
   spinner: boolean = false;
 
-  items: Item[];
-  keywords: CheckboxOption[] = [];
-  projects: CheckboxOption[] = [];
-  researchLines: CheckboxOption[] = [];
-  selectedKeywords: string[] = [];
+  projects: SelectItem[] = [];
+  researchLines: SelectItem[] = [];
   selectedProjects: string[] = [];
   selectedResearchLines: string[] = [];
 
   constructor(public dataService: DataService) {
-    this.items = this.dataService.getItems();
-    this.keywords = this.dataService.getKeywords();
-    this.projects = this.dataService.getProjects();
-    this.researchLines = this.dataService.getResearchLines();
+    this.projects = this.dataService.projects;
+    this.researchLines = this.dataService.linesOfResearch;
 
     /* workaround for primeng listbox not giving possibility to clear filters: reload checkboxFilters component */
     this.dataService.rerenderCheckboxFilters$.subscribe(
@@ -49,15 +43,12 @@ export class CheckboxFilterComponent implements OnInit {
   ngOnInit() {
   }
 
-  updateFilters() {
-    this.dataService.updateFilterValues(
-      this.selectedKeywords,
-      this.selectedProjects,
-      this.selectedResearchLines
-    );
+  onResearchLineSelect() {
+    this.dataService.filterOnResearchLines(this.selectedResearchLines)
   }
 
-  updateProjects() {
-    this.dataService.updateProjectsForResearchLines();
+  onProjectSelect(){
+    this.dataService.filterOnProjects(this.selectedProjects)
   }
+
 }

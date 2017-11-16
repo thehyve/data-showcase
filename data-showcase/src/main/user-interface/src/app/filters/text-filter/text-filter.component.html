@@ -6,10 +6,22 @@
 
 <div class="text-filter-container">
     <i class="fa fa-search" style="font-size:24px"></i>
-    <p-autoComplete [(ngModel)]="globalFilter"
+    <p-autoComplete [(ngModel)]="textFilter"
                     placeholder="Enter search term"
                     class="text-filter"
                     (onClear)="onFiltering($event)"
-                    (completeMethod)="onFiltering($event);">
+                    (completeMethod)="removePrimeNgAutocompleteLoader()"
+                    (onKeyUp)="onKeyUp($event)">
     </p-autoComplete>
+    <button pButton type="button" label="Search" class="export-button" (click)="onFiltering($event);"></button>
+</div>
+<div *ngIf="searchQueryHtml.length > 0" class="search-query" role="alert">
+    <span pTooltip="Active search filter" tooltipPosition="bottom">
+        <i class="fa fa-filter"></i>&nbsp;
+        <span class="active-search-filter" [innerHtml]="searchQueryHtml"></span>
+    </span>
+</div>
+<div *ngIf="searchErrorMessage.length > 0" class="search-error-message" role="alert">
+    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+    {{searchErrorMessage}}
 </div>

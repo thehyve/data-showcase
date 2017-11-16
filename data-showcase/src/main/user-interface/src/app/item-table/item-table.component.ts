@@ -7,6 +7,9 @@
 import {Component, OnInit, Pipe, PipeTransform} from '@angular/core';
 import {DataService} from "../services/data.service";
 import {Item} from "../models/item";
+import {
+  trigger, style, animate, transition
+} from '@angular/animations';
 
 @Pipe({
   name: 'itemFilter'
@@ -25,7 +28,19 @@ export class ItemFilter implements PipeTransform {
 @Component({
   selector: 'app-item-table',
   templateUrl: './item-table.component.html',
-  styleUrls: ['./item-table.component.css']
+  styleUrls: ['./item-table.component.css'],
+  animations: [
+    trigger('notifyState', [
+      transition('loading => complete', [
+        style({
+          background: 'rgba(51, 156, 144, 0.5)'
+        }),
+        animate('1000ms ease-out', style({
+          background: 'rgba(255, 255, 255, 0.0)'
+        }))
+      ])
+    ])
+  ]
 })
 export class ItemTableComponent implements OnInit {
 
@@ -42,7 +57,7 @@ export class ItemTableComponent implements OnInit {
         this.itemsSelection = selection;
       }
     );
-    this.dataService.globalFilter$.subscribe(
+    this.dataService.textFilterInput$.subscribe(
       filter => {
         this.filterValue = filter;
       }
@@ -61,6 +76,24 @@ export class ItemTableComponent implements OnInit {
   }
 
   pageCount(): number {
-    return Math.ceil(this.items.length / this.rowsPerPage)
+    return Math.ceil(this.countItems() / this.rowsPerPage)
+  }
+
+  countItems(): number {
+    return this.dataService.totalItemsCount;
+  }
+
+  changeSort(event) {
+    console.log("Sort: " + event.field + ", " + event.order);
+    this.dataService.itemsOrder = event.order;
+    this.dataService.itemsPropertyName = event.field;
+    this.dataService.fetchItems();
+  }
+
+  paginate(event) {
+    console.log("PAGE: " + event.page);
+    this.dataService.itemsFirstResult = event.page * event.rows;
+    this.dataService.itemsMaxResults = event.rows;
+    this.dataService.fetchItems();
   }
 }

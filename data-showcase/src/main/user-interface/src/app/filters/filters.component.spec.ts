@@ -11,6 +11,7 @@ import {DataService} from "../services/data.service";
 import {ResourceService} from "../services/resource.service";
 import {AppConfig} from "../config/app.config";
 import {AppConfigMock} from "../config/app.config.mock";
+import {SearchParserService} from "../services/search-parser.service";
 
 describe('FiltersComponent', () => {
   let component: FiltersComponent;
@@ -35,7 +36,8 @@ describe('FiltersComponent', () => {
         {
           provide: AppConfig,
           useClass: AppConfigMock
-        }
+        },
+        SearchParserService
       ]
     })
     .compileComponents();
