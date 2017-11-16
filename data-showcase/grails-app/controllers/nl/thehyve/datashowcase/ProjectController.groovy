@@ -31,9 +31,12 @@ class ProjectController {
     def search() {
         def args = request.JSON as Map
         Set concepts = args.conceptCodes as Set
-        log.info "Query input: ${args.searchQuery}"
-        def searchQuery = new SearchQueryRepresentation()
-        bindData(searchQuery, args.searchQuery)
+        def searchQuery = null
+        if (args.searchQuery) {
+            log.info "Query input: ${args.searchQuery}"
+            searchQuery = new SearchQueryRepresentation()
+            bindData(searchQuery, args.searchQuery)
+        }
 
         try {
             respond projects: projectService.getProjects(concepts, searchQuery)

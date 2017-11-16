@@ -59,8 +59,11 @@ class ItemController {
             String order = args.order
             String propertyName = args.propertyName
             log.info "Query input: ${args.searchQuery}"
-            def searchQuery = new SearchQueryRepresentation()
-            bindData(searchQuery, args.searchQuery)
+            def searchQuery = null
+            if (args.searchQuery) {
+                searchQuery = new SearchQueryRepresentation()
+                bindData(searchQuery, args.searchQuery)
+            }
 
             response.status = 200
             response.contentType = 'application/json'
