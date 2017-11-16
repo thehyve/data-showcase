@@ -9,7 +9,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import {ItemFilter, ItemTableComponent} from './item-table.component';
 import {FormsModule} from "@angular/forms";
 import {
-  AutoCompleteModule, DataListModule, DataTableModule, FieldsetModule, ListboxModule,
+  AutoCompleteModule, DataListModule, DataTableModule, FieldsetModule, ListboxModule, PaginatorModule,
   PanelModule
 } from "primeng/primeng";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
@@ -35,7 +35,8 @@ describe('ItemTableComponent', () => {
         ListboxModule,
         BrowserAnimationsModule,
         DataTableModule,
-        HttpModule
+        HttpModule,
+        PaginatorModule
       ],
       providers: [
         DataService,
