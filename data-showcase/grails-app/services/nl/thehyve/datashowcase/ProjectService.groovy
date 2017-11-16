@@ -58,10 +58,7 @@ class ProjectService {
         // stateless session does not support collections of associated objects
         // http://forum.spring.io/forum/spring-projects/batch/37785-collections-cannot-be-fetched-by-a-stateless-session
         def session = sessionFactory.openSession()
-        Transaction tx = null
         try {
-            tx = session.beginTransaction();
-
             Criteria criteria = session.createCriteria(Project, "p")
                     .createAlias("p.items", "i")
                     .createAlias("i.concept", "c")
@@ -90,8 +87,6 @@ class ProjectService {
             log.info "Projects fetched.\n${stopWatch.prettyPrint()}"
             result
         } catch (HibernateException e) {
-            if (tx != null)
-                tx.rollback()
             e.printStackTrace()
         } finally {
             session.close()
