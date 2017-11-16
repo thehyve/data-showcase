@@ -6,8 +6,7 @@
 
 import {Component, OnInit} from '@angular/core';
 import {DataService} from "../../services/data.service";
-import {Item} from "../../models/item";
-import { CheckboxOption } from '../../models/CheckboxOption';
+import { SelectItem } from 'primeng/primeng';
 
 @Component({
   selector: 'app-checkbox-filter',
@@ -19,8 +18,8 @@ export class CheckboxFilterComponent implements OnInit {
   rerender: boolean = false;
   spinner: boolean = false;
 
-  projects: CheckboxOption[] = [];
-  researchLines: CheckboxOption[] = [];
+  projects: SelectItem[] = [];
+  researchLines: SelectItem[] = [];
   selectedProjects: string[] = [];
   selectedResearchLines: string[] = [];
 

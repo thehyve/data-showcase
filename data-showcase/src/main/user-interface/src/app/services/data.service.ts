@@ -5,7 +5,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {TreeNode as TreeNodeLib} from 'primeng/primeng';
+import { SelectItem, TreeNode as TreeNodeLib } from 'primeng/primeng';
 import {ResourceService} from './resource.service';
 import {TreeNode} from "../models/tree-node";
 import {Item} from "../models/item";
@@ -13,7 +13,6 @@ import {Project} from "../models/project";
 import {Subject} from "rxjs/Subject";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Environment} from "../models/environment";
-import {CheckboxOption} from '../models/CheckboxOption';
 import {ItemResponse} from "../models/itemResponse";
 
 type LoadingState = 'loading' | 'complete';
@@ -65,9 +64,9 @@ export class DataService {
   // selected checkboxes for research lines filter
   private selectedResearchLines: string[] = [];
   // list of project names available for current item list
-  public projects: CheckboxOption[] = [];
+  public projects: SelectItem[] = [];
   // list of research lines available for current item list
-  public linesOfResearch: CheckboxOption[] = [];
+  public linesOfResearch: SelectItem[] = [];
   // list of all projects
   private allProjects: Project[] = [];
 
@@ -380,12 +379,12 @@ export class DataService {
     }
   }
 
-  private static collectUnique(element, list: CheckboxOption[]) {
+  private static collectUnique(element, list: SelectItem[]) {
     let values = list.map(function (a) {
       return a.value;
     });
     if (element && !values.includes(element)) {
-      list.push({label: element, value: element} as CheckboxOption);
+      list.push({label: element, value: element} as SelectItem);
     }
   }
 
