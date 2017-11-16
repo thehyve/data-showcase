@@ -5,7 +5,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {TreeNode as TreeNodeLib} from 'primeng/primeng';
+import { SelectItem, TreeNode as TreeNodeLib } from 'primeng/primeng';
 import {ResourceService} from './resource.service';
 import {TreeNode} from "../models/tree-node";
 import {Item} from "../models/item";
@@ -13,10 +13,10 @@ import {Project} from "../models/project";
 import {Subject} from "rxjs/Subject";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Environment} from "../models/environment";
-import {Concept} from '../models/concept';
-import {CheckboxOption} from '../models/CheckboxOption';
+import {ItemResponse} from "../models/itemResponse";
 
 type LoadingState = 'loading' | 'complete';
+type Order = 'asc' | 'desc';
 
 @Injectable()
 export class DataService {
@@ -35,13 +35,24 @@ export class DataService {
   public itemsSelection$ = this.itemsSelectionSource.asObservable();
   // items added to the shopping cart
   public shoppingCartItems = new BehaviorSubject<Item[]>([]);
+  public totalItemsCount: number = 0;
 
   // text filter input
   private textFilterInputSource = new Subject<string>();
   public textFilterInput$ = this.textFilterInputSource.asObservable();
 
-  // JSON search query
-  private jsonSearchQuery: JSON = null;
+  // Search query
+  private searchQuery: Object = null;
+
+  // item table pagination settings
+  // the first result to retrieve, numbered from '0'
+  public itemsFirstResult: number = 0;
+  // the maximum number of results
+  public itemsMaxResults: number = 8;
+  // ascending/descending order
+  public itemsOrder: number = 1;
+  // the property to order on
+  public itemsPropertyName: string = "";
 
   // trigger checkboxFilters reload
   private rerenderCheckboxFiltersSource = new Subject<boolean>();
@@ -53,9 +64,9 @@ export class DataService {
   // selected checkboxes for research lines filter
   private selectedResearchLines: string[] = [];
   // list of project names available for current item list
-  public projects: CheckboxOption[] = [];
+  public projects: SelectItem[] = [];
   // list of research lines available for current item list
-  public linesOfResearch: CheckboxOption[] = [];
+  public linesOfResearch: SelectItem[] = [];
   // list of all projects
   private allProjects: Project[] = [];
 
@@ -80,9 +91,8 @@ export class DataService {
   public environment$ = this.environmentSource.asObservable();
 
   constructor(private resourceService: ResourceService) {
-    this.fetchAllProjects();
+    this.fetchAllProjectsAndItems();
     this.fetchAllTreeNodes();
-    this.fetchItems();
     this.setEnvironment();
   }
 
@@ -164,14 +174,50 @@ export class DataService {
 
   // ------------------------- filters and item table -------------------------
 
-  fetchAllProjects() {
-    this.resourceService.getProjects()
+  fetchAllProjectsAndItems() {
+    this.resourceService.getAllProjects()
       .subscribe(
         (projects: Project[]) => {
           this.allProjects = projects;
+          this.fetchItems();
+          for (let project of projects) {
+            this.projects.push({label: project.name, value: project.name});
+            DataService.collectUnique(project.lineOfResearch, this.linesOfResearch);
+          }
+          this.sortLinesOfResearch();
         },
         err => console.error(err)
       );
+  }
+
+  projectToResearchLine(projectName: string): string {
+    if (this.allProjects) {
+      return this.allProjects.find(p => p.name == projectName).lineOfResearch;
+    } else {
+      return null;
+    }
+  }
+
+  fetchFilters() {
+    this.projects.length = 0;
+    this.linesOfResearch.length = 0;
+
+    let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
+    let codes = Array.from(selectedConceptCodes);
+
+    this.resourceService.getProjects(codes, this.searchQuery).subscribe(
+      (projects: Project[]) => {
+        for (let project of projects) {
+          this.allProjects.push(project);
+          this.projects.push({label: project.name, value: project.name});
+          DataService.collectUnique(project.lineOfResearch, this.linesOfResearch);
+        }
+        this.sortLinesOfResearch();
+      },
+      err => {
+        console.error(err);
+      }
+    );
   }
 
   fetchItems() {
@@ -184,30 +230,35 @@ export class DataService {
     let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
     let codes = Array.from(selectedConceptCodes);
     let projects = this.getProjectsForSelectedResearchLines();
-    let searchQuery = this.jsonSearchQuery; //JSON.parse(JSON.stringify(this.jsonSearchQuery));
 
-    this.resourceService.getItems(codes, projects, searchQuery).subscribe(
-      (items: Item[]) => {
-        for (let item of items) {
-          if (this.allProjects) {
-            item['lineOfResearch'] = this.allProjects.find(p => p.name == item['project']).lineOfResearch;
+    let order: Order = this.orderFlagToOrderName(this.itemsOrder);
+
+    this.resourceService.getItems(this.itemsFirstResult, this.itemsMaxResults, order, this.itemsPropertyName,
+      codes, projects, this.searchQuery).subscribe(
+      (response: ItemResponse) => {
+        this.totalItemsCount = response.totalCount;
+        for (let item of response.items) {
+          if (this.allProjects && this.allProjects.length > 0) {
+            item.lineOfResearch = this.projectToResearchLine(item.project);
           }
           this.filteredItems.push(item);
         }
         this.loadingItems = "complete";
-        this.getUniqueFilterValues();
+        let t2 = new Date();
+        console.info(`Found ${this.filteredItems.length} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);
       },
       err => {
-        if(err != String(undefined) && err.startsWith("400")){
+        if (err != String(undefined)) {
           this.searchErrorMessageSource.next(err);
         }
         console.error(err);
         this.clearCheckboxFilters();
       }
     );
-    let t2 = new Date();
-    console.info(`Found ${this.filteredItems.length} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);
+  }
 
+  orderFlagToOrderName(order: number){
+    return order == 1 ? "asc" : "desc";
   }
 
   clearErrorSearchMessage(){
@@ -235,7 +286,6 @@ export class DataService {
   updateItemTable() {
     this.clearItemsSelection();
     this.clearAllFilters();
-    this.fetchItems();
   }
 
   filterOnResearchLines(selectedResearchLines) {
@@ -243,6 +293,7 @@ export class DataService {
     this.selectedResearchLines = selectedResearchLines;
     this.clearItemsSelection();
     this.fetchItems();
+    this.getUniqueProjects();
   }
 
   filterOnProjects(selectedProjects) {
@@ -250,6 +301,7 @@ export class DataService {
     this.selectedProjects = selectedProjects;
     this.clearItemsSelection();
     this.fetchItems();
+    this.getUniqueLinesOfResearch();
   }
 
   getProjectsForSelectedResearchLines(): string[] {
@@ -292,46 +344,74 @@ export class DataService {
     this.textFilterInputSource.next(text);
   }
 
-  setJsonSearchQuery(query: JSON) {
-    this.jsonSearchQuery = query;
+  setSearchQuery(query: Object) {
+    this.searchQuery = query;
     this.fetchItems();
+    this.fetchFilters();
   }
 
-  private getUniqueFilterValues() {
-    if (!this.projects.length && !this.selectedResearchLines.length
-    || !this.selectedProjects.length && !this.selectedResearchLines.length ) {
-      this.clearCheckboxFilters();
-      for (let item of this.filteredItems) {
-        DataService.collectUnique(item.project, this.projects);
-        DataService.collectUnique(item.lineOfResearch, this.linesOfResearch);
+  private getUniqueProjects() {
+    this.allProjects.forEach(ap => {
+      if (!this.projects.find(p => p.value == ap.name)){
+        if (!this.selectedResearchLines.length) {
+          this.projects.push({label: ap.name, value: ap.name});
+        } else {
+          if (this.selectedResearchLines.includes(ap.lineOfResearch)) {
+            this.projects.push({label: ap.name, value: ap.name});
+          }
+        }
       }
-    } else if (!this.linesOfResearch.length) {
-      for (let item of this.filteredItems) {
-        DataService.collectUnique(item.lineOfResearch, this.linesOfResearch);
-      }
-    } else if (!this.projects.length) {
-      for (let item of this.filteredItems) {
-        DataService.collectUnique(item.project, this.projects);
-      }
+    });
+  }
+
+  private static compareSelectItems(a: SelectItem, b: SelectItem) {
+    if (a.value < b.value) {
+      return -1;
+    } else if (a.value > b.value) {
+      return 1;
+    } else {
+      return 0;
     }
   }
 
-  private static collectUnique(element, list: CheckboxOption[]) {
+  private sortLinesOfResearch() {
+    this.linesOfResearch.sort(DataService.compareSelectItems);
+  }
+
+  private getUniqueLinesOfResearch() {
+    if (!this.selectedProjects.length) {
+      this.allProjects.forEach(p => {
+        if(!this.linesOfResearch.find(l=> l.value == p.lineOfResearch)) {
+          this.linesOfResearch.push({label: p.lineOfResearch, value: p.lineOfResearch});
+        }
+      });
+    } else {
+      this.selectedProjects.forEach(p => {
+        let researchLine = this.allProjects.find(ap => ap.name == p).lineOfResearch;
+        if(!this.linesOfResearch.find(l=> l.value == researchLine)) {
+          this.linesOfResearch.push({label: researchLine, value: researchLine});
+        }
+      });
+    }
+    this.sortLinesOfResearch();
+  }
+
+  private static collectUnique(element, list: SelectItem[]) {
     let values = list.map(function (a) {
       return a.value;
     });
     if (element && !values.includes(element)) {
-      list.push({label: element, value: element} as CheckboxOption);
+      list.push({label: element, value: element} as SelectItem);
     }
   }
-
 
   // ------------------------- shopping cart -------------------------
 
   addToShoppingCart(newItemSelection: Item[]) {
     let newItems: Item[] = this.shoppingCartItems.getValue();
+    let itemNames = newItems.map((item) => item.name);
     for (let item of newItemSelection) {
-      if (!newItems.includes(item)) {
+      if (!itemNames.includes(item.name)) {
         newItems.push(item);
       }
     }

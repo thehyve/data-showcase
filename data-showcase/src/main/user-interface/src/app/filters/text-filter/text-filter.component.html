@@ -15,8 +15,13 @@
     </p-autoComplete>
     <button pButton type="button" label="Search" class="export-button" (click)="onFiltering($event);"></button>
 </div>
+<div *ngIf="searchQueryHtml.length > 0" class="search-query" role="alert">
+    <span pTooltip="Active search filter" tooltipPosition="bottom">
+        <i class="fa fa-filter"></i>&nbsp;
+        <span class="active-search-filter" [innerHtml]="searchQueryHtml"></span>
+    </span>
+</div>
 <div *ngIf="searchErrorMessage.length > 0" class="search-error-message" role="alert">
-    <i class="fa fa-exclamation-triangle" aria-hidden="true">
-        {{searchErrorMessage}}
-    </i>
+    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+    {{searchErrorMessage}}
 </div>

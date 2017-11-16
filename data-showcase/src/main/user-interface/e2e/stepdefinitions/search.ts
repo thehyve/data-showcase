@@ -12,7 +12,9 @@ let { defineSupportCode } = require('cucumber');
 defineSupportCode(({ Given, When, Then }) => {
 
   Given(/^In the main search bar I type '(.*)'$/, function (searchText): Promise<any> {
-    return $('.text-filter-container >p-autocomplete > span > input').sendKeys(searchText);
+    return $('.text-filter-container >p-autocomplete > span > input').sendKeys(searchText).then(()=>
+        $('.text-filter-container >button.export-button').click()
+    );
   });
 
   Given(/^I select keywords '(.*)'$/, function (keywordSting) {

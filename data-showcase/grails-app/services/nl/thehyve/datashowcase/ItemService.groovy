@@ -15,13 +15,14 @@ import nl.thehyve.datashowcase.exception.ResourceNotFoundException
 import nl.thehyve.datashowcase.representation.InternalItemRepresentation
 import nl.thehyve.datashowcase.representation.ItemRepresentation
 import nl.thehyve.datashowcase.representation.PublicItemRepresentation
+import nl.thehyve.datashowcase.representation.SearchQueryRepresentation
 import nl.thehyve.datashowcase.search.SearchCriteriaBuilder
 import org.grails.core.util.StopWatch
-import org.grails.web.json.JSONObject
 import org.hibernate.Criteria
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.hibernate.criterion.Criterion
+import org.hibernate.criterion.Order
 import org.hibernate.criterion.Projections
 import org.hibernate.criterion.Restrictions
 import org.hibernate.transform.Transformers
@@ -47,6 +48,7 @@ class ItemService {
         new ItemRepresentation(
                 id: itemData.id as Long,
                 name: itemData.name as String,
+                label: itemData.label as String,
                 labelLong: itemData.labelLong as String,
                 project: itemData.projectName as String,
                 concept: itemData.conceptCode as String,
@@ -56,9 +58,21 @@ class ItemService {
         )
     }
 
+    static String propertyNameFromRepresentationName(String name) {
+        switch (name){
+            case "project": return "projectName"
+            case "concept": return "conceptCode"
+            case "label": return "label"
+            case "lineofresearch": return "p.lineOfResearch"
+            default: return "i.name"
+        }
+    }
+
     @Cacheable('items')
     @Transactional(readOnly = true)
-    List<ItemRepresentation> getItems() {
+    List<ItemRepresentation> getItems(int firstResult, int maxResults, String order, String propertyName) {
+        def property = propertyNameFromRepresentationName(propertyName)
+
         def stopWatch = new StopWatch('Fetch items')
         stopWatch.start('Retrieve from database')
         def session = sessionFactory.openStatelessSession()
@@ -70,6 +84,7 @@ class ItemService {
                     i.publicItem as publicItem,
                     i.itemPath as itemPath,
                     c.conceptCode as conceptCode,
+                    c.label as label,
                     c.labelLong as labelLong,
                     c.variableType as type,
                     p.name as projectName
@@ -79,8 +94,13 @@ class ItemService {
                 ${dataShowcaseEnvironment.internalInstance ?
                         '' : 'where i.publicItem = true'
                 }
+                order by $property ${order == 'desc' ?
+                        'desc' : 'asc' 
+                }                
             """
         ).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults)
                 .list() as List<Map>
         stopWatch.stop()
         stopWatch.start('Map to representations')
@@ -88,13 +108,15 @@ class ItemService {
             map(itemData)
         }
         stopWatch.stop()
-        log.info "Items fetched.\n${stopWatch.prettyPrint()}"
+        log.info "${result.size()} items fetched.\n${stopWatch.prettyPrint()}"
         result
     }
 
     @Transactional(readOnly = true)
-    List<ItemRepresentation> getItems(Set concepts, Set projects, Map searchQuery) {
+    List<ItemRepresentation> getItems(int firstResult, int maxResults, String order, String propertyName,
+                                      Set concepts, Set projects, SearchQueryRepresentation searchQuery) {
 
+        def property = propertyNameFromRepresentationName(propertyName)
         Criterion searchQueryCriterion = searchQuery ? searchCriteriaBuilder.buildCriteria(searchQuery) : null
         def stopWatch = new StopWatch('Fetch filtered items')
         stopWatch.start('Retrieve from database')
@@ -110,6 +132,7 @@ class ItemService {
                 .add(Projections.property("i.publicItem").as("publicItem"))
                 .add(Projections.property("i.itemPath").as("itemPath"))
                 .add(Projections.property("c.conceptCode").as("conceptCode"))
+                .add(Projections.property("c.label").as("label"))
                 .add(Projections.property("c.labelLong").as("labelLong"))
                 .add(Projections.property("c.variableType").as("variableType"))
                 .add(Projections.property("p.name").as("projectName")))
@@ -119,15 +142,22 @@ class ItemService {
         if(projects) {
             criteria.add( Restrictions.in('p.name', projects))
         }
-        if(dataShowcaseEnvironment.internalInstance) {
+        if(!dataShowcaseEnvironment.internalInstance) {
             criteria.add( Restrictions.eq('i.publicItem',true))
         }
         if(searchQueryCriterion) {
             criteria.add(searchQueryCriterion)
         }
         criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
-
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults)
+        if (order == "desc") {
+            criteria.addOrder(Order.desc(property))
+        } else {
+            criteria.addOrder(Order.asc(property))
+        }
         def items = criteria.list() as List<Map>
+
         stopWatch.stop()
 
         stopWatch.start('Map to representations')
@@ -135,9 +165,41 @@ class ItemService {
             map(itemData)
         }
         stopWatch.stop()
-        log.info "Filtered items fetched.\n${stopWatch.prettyPrint()}"
+        log.info "${result.size()} filtered items fetched.\n${stopWatch.prettyPrint()}"
         result
+    }
 
+    @Transactional(readOnly = true)
+    Long getItemsCount(Set concepts, Set projects, SearchQueryRepresentation searchQuery) {
+
+        Criterion searchQueryCriterion = searchQuery ? searchCriteriaBuilder.buildCriteria(searchQuery) : null
+        def stopWatch = new StopWatch('Items count')
+        stopWatch.start('Retrieve from database')
+        def session = sessionFactory.openStatelessSession()
+
+        Criteria criteria = session.createCriteria(Item, "i")
+                .createAlias("i.concept", "c")
+                .createAlias("i.project", "p")
+                .createAlias("c.keywords", "k")
+        if(concepts) {
+            criteria.add( Restrictions.in('c.conceptCode', concepts))
+        }
+        if(projects) {
+            criteria.add( Restrictions.in('p.name', projects))
+        }
+        if(!dataShowcaseEnvironment.internalInstance) {
+            criteria.add( Restrictions.eq('i.publicItem',true))
+        }
+        if(searchQueryCriterion) {
+            criteria.add(searchQueryCriterion)
+        }
+        criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
+                .setProjection(Projections.rowCount())
+        Long totalItemsCount = (Long)criteria.uniqueResult()
+
+        stopWatch.stop()
+        log.info "Total item count: ${totalItemsCount}"
+        totalItemsCount
     }
 
     @CacheEvict(value = 'items', allEntries = true)
@@ -199,5 +261,4 @@ class ItemService {
         }
         throw new ResourceNotFoundException('Item not found')
     }
-
 }

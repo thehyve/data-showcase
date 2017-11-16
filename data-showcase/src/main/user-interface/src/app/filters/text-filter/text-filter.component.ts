@@ -19,6 +19,8 @@ export class TextFilterComponent implements OnInit {
   textFilter: string;
   // search error message
   searchErrorMessage: string = '';
+  // search query as html
+  searchQueryHtml: string = '';
   // the delay before triggering updating methods
   delay: number;
 
@@ -51,8 +53,15 @@ export class TextFilterComponent implements OnInit {
 
   onFiltering(event) {
     this.dataService.clearErrorSearchMessage();
-    let jsonQuery = SearchParserService.parse(this.textFilter);
-    this.dataService.setJsonSearchQuery(jsonQuery);
+    try {
+      this.searchQueryHtml = '';
+      let query = SearchParserService.parse(this.textFilter);
+      this.searchQueryHtml = SearchParserService.toHtml(query);
+      this.dataService.setSearchQuery(query);
+    } catch(e) {
+      console.error(`${e}`, e);
+      this.searchErrorMessage = `${e}`;
+    }
   }
 
   /*

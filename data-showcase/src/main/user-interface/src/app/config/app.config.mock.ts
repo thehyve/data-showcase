@@ -9,7 +9,7 @@ export class AppConfigMock {
   private env: Object = null;
   constructor() {
     this.config = {
-      'api-url': '',
+      'api-url': 'http://localhost:8080',
       'api-version': '',
       'app-url': ''
     };

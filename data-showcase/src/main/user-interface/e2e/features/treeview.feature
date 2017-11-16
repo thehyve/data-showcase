@@ -22,4 +22,4 @@ Feature: As a researcher I want to view the data showcase catalogue from a tree.
     Given I open all tree nodes
     When I select all data in the data table
     When I select 'Age'
-    Then I see the counters Items selected '2' and total '1'
+    Then I see the counters Items selected '0', total '1' and number of pages '1'

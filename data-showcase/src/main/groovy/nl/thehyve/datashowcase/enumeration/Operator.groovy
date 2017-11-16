@@ -1,14 +1,12 @@
-package nl.thehyve.datashowcase.search
+package nl.thehyve.datashowcase.enumeration
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.springframework.stereotype.Component
 
 /**
  * Operator types supported by the criteria builder.
  */
 @CompileStatic
-@Component
 @Slf4j
 enum Operator {
 
@@ -44,7 +42,7 @@ enum Operator {
         if (mapping.containsKey(symbol)) {
             return mapping[symbol]
         } else {
-            log.error "Unknown operator: ${symbol}"
+            log.debug "Unknown operator: ${symbol}"
             return NONE
         }
     }

@@ -7,8 +7,9 @@
 package nl.thehyve.datashowcase
 
 import grails.testing.mixin.integration.Integration
+import grails.web.databinding.DataBinder
 import groovy.util.logging.Slf4j
-import org.grails.web.json.JSONObject
+import nl.thehyve.datashowcase.representation.SearchQueryRepresentation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.annotation.Transactional
 import spock.lang.Requires
@@ -31,6 +32,16 @@ class PublicItemServiceSpec extends Specification {
     @Autowired
     TestService testService
 
+    static class SearchQueryBinder implements DataBinder {}
+
+    static final searchQueryBinder = new SearchQueryBinder()
+
+    static SearchQueryRepresentation parseQuery(final Map values) {
+        def searchQuery = new SearchQueryRepresentation()
+        searchQueryBinder.bindData(searchQuery, values)
+        return searchQuery
+    }
+
     def setupData() {
         log.info "Clear database ..."
         dataService.clearDatabase()
@@ -44,7 +55,7 @@ class PublicItemServiceSpec extends Specification {
             setupData()
         when:
             log.info "Running test ..."
-            def items = itemService.items
+            def items = itemService.getItems(0, 9999, 'asc', 'name')
         then: "2 items being returned"
             items.size() == 2
             items*.name == ['ageA', 'heightB']
@@ -57,112 +68,115 @@ class PublicItemServiceSpec extends Specification {
     @Requires({ -> Environment.grailsEnvironmentIn(Constants.PUBLIC_ENVIRONMENTS) })
     void "test free text filter"() {
         given:
+        int firstResult = 0
+        int maxResults = 9999
+        String order = 'asc'
+        String propertyName = 'name'
         setupData()
+        SearchQueryRepresentation searchQuery
 
         when: "Filter on single word without field and operator specified"
-            JSONObject searchQuery = ["type": "string", "value": "ageA"]
-            def items = itemService.getItems([] as Set, [] as Set, searchQuery)
+            searchQuery = parseQuery(["type": "string", "value": "ageA"])
+            def items = itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery)
         then:
             items.size() == 1
             items*.name == ['ageA']
 
         when: "Filter on words conjunction (OR) without field and operator specified"
-            searchQuery = ["type": "or", "values": [
+            searchQuery = parseQuery(["type": "or", "values": [
                     ["type": "string", "value": "ageA"],
                     ["type": "string", "value": "heightB"]
-            ]]
-            items = itemService.getItems([] as Set, [] as Set, searchQuery)
+            ]])
+            items = itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery)
         then:
             items.size() == 2
             items*.name as Set == ['ageA', 'heightB'] as Set
 
         when: "Filter on single word without field, operator (LIKE) is specified"
-            searchQuery = ["type"  : "and",
+            searchQuery = parseQuery(["type"  : "like",
                            "values": [
-                                   ["type": "string", "value": "LIKE"],
                                    ["type": "string", "value": "a_e%"]
-                           ]]
-            items = itemService.getItems([] as Set, [] as Set, searchQuery)
+                           ]])
+            items = itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery)
         then:
             items.size() == 1
             items*.name == ['ageA']
 
         when: "Filter on single word with specified list of fields and operator ('keyword' IN '[<values>]')"
-            searchQuery = ["type": "and", "values": [
-                    ["type": "string", "value": "keywords"],
-                    ["type": "string", "value": "IN"],
+            searchQuery = parseQuery(["type": "in", "value": "keywords", "values": [
                     ["type": "string", "value": "Personal information"],
-                    ["type": "string", "value": ","],
                     ["type": "string", "value": "Family related"]]
-            ]
-            items = itemService.getItems([] as Set, [] as Set, searchQuery)
+            ])
+            items = itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery)
         then:
             items.size() == 2
             items*.name as Set == ['ageA', 'heightB'] as Set
 
         when: "Filter on words disjunction (AND) and '=' operator ('field1=val1 OR field2=val2')"
-            searchQuery = ["type": "and", "values": [
-                    ["type": "string", "value": "name"],
-                    ["type": "string", "value": "="],
-                    ["type": "string", "value": "ageA"],
-                    ["type": "string", "value": "label"],
-                    ["type": "string", "value": "="],
-                    ["type": "string", "value": "ageB"]
-            ]]
-            items = itemService.getItems([] as Set, [] as Set, searchQuery)
+            searchQuery = parseQuery(["type": "and", "values": [
+                    ["type": "=", "value": "name", "values": [
+                            ["type": "string", "value": "ageA"]
+                    ]],
+                    ["type": "=", "value": "label", "values": [
+                        ["type": "string", "value": "ageB"]
+                    ]]
+            ]])
+            items = itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery)
         then:
             items.size() == 0
 
         when: "Invalid field name specified"
             def invalidProperty = "test_field"
-            searchQuery = ["type": "and", "values": [
-                    ["type": "string", "value": invalidProperty],
-                    ["type": "string", "value": "="],
+            searchQuery = parseQuery(["type": "=", "value": invalidProperty, "values": [
                     ["type": "string", "value": "value"]
-            ]]
-            itemService.getItems([] as Set, [] as Set, searchQuery)
+            ]])
+            itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery)
         then: "Exception is thrown"
             IllegalArgumentException ex = thrown()
-            ex.message == "Specified property name: $invalidProperty is not supported."
+            ex.message == "Unsupported property: ${invalidProperty}."
+
+        when: "Invalid operator specified"
+            def invalidOperator = "~"
+            searchQuery = parseQuery(["type": invalidOperator, "value": "label", "values": [
+                    ["type": "string", "value": "value"]
+            ]])
+            itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery)
+        then: "Exception is thrown"
+            IllegalArgumentException ex2 = thrown()
+            ex2.message == "Unsupported type: ${invalidOperator}."
 
         when: "Brackets are used in junction query"
             // 'name = "ageA" OR (name = "heightA" AND label = "height")'
-            JSONObject searchQuery1 = ["type": "or", "values": [
-                    ["type": "and", "values": [
-                            ["type": "string", "value": "name"],
-                            ["type": "string", "value": "="],
+            def searchQuery1 = parseQuery(["type": "or", "values": [
+                    ["type": "=", "value": "name", "values": [
                             ["type": "string", "value": "ageA"]
                     ]],
                     ["type": "and", "values": [
-                            ["type": "string", "value": "name"],
-                            ["type": "string", "value": "="],
-                            ["type": "string", "value": "heightB"],
-                            ["type": "string", "value": "labelNl"],
-                            ["type": "string", "value": "="],
-                            ["type": "string", "value": "hoogte"]
+                            ["type": "=", "value": "name", "values": [
+                                ["type": "string", "value": "heightB"]
+                            ]],
+                            ["type": "=", "value": "labelNl", "values": [
+                                ["type": "string", "value": "hoogte"]
+                            ]]
                     ]]
-            ]]
+            ]])
 
             // '(name = "ageA" OR name = "heightA") AND label = "height"'
-            JSONObject searchQuery2 = ["type": "and", "values": [
+            def searchQuery2 = parseQuery(["type": "and", "values": [
                     ["type": "or", "values": [
-                            ["type": "and", "values": [
-                                    ["type": "string", "value": "name"],
-                                    ["type": "string", "value": "="],
+                            ["type": "=", "value": "name", "values": [
                                     ["type": "string", "value": "ageA"]
                             ]],
-                            ["type": "and", "values": [
-                                    ["type": "string", "value": "name"],
-                                    ["type": "string", "value": "="],
+                            ["type": "=", "value": "name", "values": [
                                     ["type": "string", "value": "heightB"]
                             ]]
                     ]],
-                    ["type": "string", "value": "labelNl"],
-                    ["type": "string", "value": "="],
-                    ["type": "string", "value": "hoogte"]
-            ]]
-            def itemsForQuery1 = itemService.getItems([] as Set, [] as Set, searchQuery1)
-            def itemsForQuery2 = itemService.getItems([] as Set, [] as Set, searchQuery2)
+                    ["type": "=", "value": "labelNl", "values": [
+                        ["type": "string", "value": "hoogte"]
+                    ]]
+            ]])
+            def itemsForQuery1 = itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery1)
+            def itemsForQuery2 = itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery2)
         then: "Results are different, depending on the distribution of brackets"
             itemsForQuery1 != itemsForQuery2
             itemsForQuery1.size() == 2

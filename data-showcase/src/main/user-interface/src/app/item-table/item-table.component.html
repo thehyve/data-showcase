@@ -8,10 +8,11 @@
     <p-dataTable #dt
                  [immutable]=false
                  [value]="items | itemFilter: filterValue"
-                 [rows]="rowsPerPage" [paginator]="true"
+                 [rows]="rowsPerPage" [paginator]="false"
                  [headerCheckboxToggleAllPages]="true"
                  [resizableColumns]="true"
                  [(selection)]="itemsSelection"
+                 (onSort)="changeSort($event)"
                  [loading]="dataService.loadingItems == 'loading'" loadingIcon="fa fa-spin fa-refresh fa-fw">
         <p-column selectionMode="multiple" [style]="{ 'width': '3%'}">
         </p-column>
@@ -27,7 +28,7 @@
                   [sortable]="true">
         </p-column>
 
-        <p-column field="lineOfResearch" header="Research Line"
+        <p-column field="lineOfResearch" header="Research line"
                   [sortable]="true">
         </p-column>
 
@@ -41,12 +42,15 @@
                         icon="fa fa-question-circle"></button>
             </ng-template>
         </p-column>
+        <p-footer>
+            <p-paginator [rows]="rowsPerPage" (onPageChange)="paginate($event)" [totalRecords]="countItems()"></p-paginator>
+        </p-footer>
     </p-dataTable>
     <div class="inline">
         <button pButton type="button" label="Add to cart" class="export-button" (click)="addToCart()"></button>
         <div class="item-count-container">
             Items selected: <b>{{itemsSelection? itemsSelection.length : 0}}</b>.
-            Total results in table: <b>{{items? items.length : 0}}.</b>
+            Total results in table: <b>{{countItems()}}.</b>
             Number of pages: <b>{{pageCount()}}.</b>
         </div>
     </div>

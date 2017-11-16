@@ -1,14 +1,12 @@
-package nl.thehyve.datashowcase.search
+package nl.thehyve.datashowcase.enumeration
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.springframework.stereotype.Component
 
 /**
  * The fields on which it is possible to search (a free text filter).
  */
 @CompileStatic
-@Component
 @Slf4j
 enum SearchField {
     /**
@@ -58,7 +56,7 @@ enum SearchField {
         if (mapping.containsKey(name)) {
             return mapping[name]
         } else {
-            log.error "Unknown search field: ${name}"
+            log.debug "Unknown search field: ${name}"
             return NONE
         }
     }
