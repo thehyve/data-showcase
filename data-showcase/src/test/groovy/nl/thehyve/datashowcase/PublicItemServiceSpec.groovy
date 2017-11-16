@@ -55,7 +55,7 @@ class PublicItemServiceSpec extends Specification {
             setupData()
         when:
             log.info "Running test ..."
-            def items = itemService.items
+            def items = itemService.getItems(0, 9999, 'asc', 'name')
         then: "2 items being returned"
             items.size() == 2
             items*.name == ['ageA', 'heightB']
@@ -68,12 +68,16 @@ class PublicItemServiceSpec extends Specification {
     @Requires({ -> Environment.grailsEnvironmentIn(Constants.PUBLIC_ENVIRONMENTS) })
     void "test free text filter"() {
         given:
+        int firstResult = 0
+        int maxResults = 9999
+        String order = 'asc'
+        String propertyName = 'name'
         setupData()
         SearchQueryRepresentation searchQuery
 
         when: "Filter on single word without field and operator specified"
             searchQuery = parseQuery(["type": "string", "value": "ageA"])
-            def items = itemService.getItems([] as Set, [] as Set, searchQuery)
+            def items = itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery)
         then:
             items.size() == 1
             items*.name == ['ageA']
@@ -83,7 +87,7 @@ class PublicItemServiceSpec extends Specification {
                     ["type": "string", "value": "ageA"],
                     ["type": "string", "value": "heightB"]
             ]])
-            items = itemService.getItems([] as Set, [] as Set, searchQuery)
+            items = itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery)
         then:
             items.size() == 2
             items*.name as Set == ['ageA', 'heightB'] as Set
@@ -93,7 +97,7 @@ class PublicItemServiceSpec extends Specification {
                            "values": [
                                    ["type": "string", "value": "a_e%"]
                            ]])
-            items = itemService.getItems([] as Set, [] as Set, searchQuery)
+            items = itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery)
         then:
             items.size() == 1
             items*.name == ['ageA']
@@ -103,7 +107,7 @@ class PublicItemServiceSpec extends Specification {
                     ["type": "string", "value": "Personal information"],
                     ["type": "string", "value": "Family related"]]
             ])
-            items = itemService.getItems([] as Set, [] as Set, searchQuery)
+            items = itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery)
         then:
             items.size() == 2
             items*.name as Set == ['ageA', 'heightB'] as Set
@@ -117,7 +121,7 @@ class PublicItemServiceSpec extends Specification {
                         ["type": "string", "value": "ageB"]
                     ]]
             ]])
-            items = itemService.getItems([] as Set, [] as Set, searchQuery)
+            items = itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery)
         then:
             items.size() == 0
 
@@ -126,7 +130,7 @@ class PublicItemServiceSpec extends Specification {
             searchQuery = parseQuery(["type": "=", "value": invalidProperty, "values": [
                     ["type": "string", "value": "value"]
             ]])
-            itemService.getItems([] as Set, [] as Set, searchQuery)
+            itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery)
         then: "Exception is thrown"
             IllegalArgumentException ex = thrown()
             ex.message == "Unsupported property: ${invalidProperty}."
@@ -136,7 +140,7 @@ class PublicItemServiceSpec extends Specification {
             searchQuery = parseQuery(["type": invalidOperator, "value": "label", "values": [
                     ["type": "string", "value": "value"]
             ]])
-            itemService.getItems([] as Set, [] as Set, searchQuery)
+            itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery)
         then: "Exception is thrown"
             IllegalArgumentException ex2 = thrown()
             ex2.message == "Unsupported type: ${invalidOperator}."
@@ -171,8 +175,8 @@ class PublicItemServiceSpec extends Specification {
                         ["type": "string", "value": "hoogte"]
                     ]]
             ]])
-            def itemsForQuery1 = itemService.getItems([] as Set, [] as Set, searchQuery1)
-            def itemsForQuery2 = itemService.getItems([] as Set, [] as Set, searchQuery2)
+            def itemsForQuery1 = itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery1)
+            def itemsForQuery2 = itemService.getItems(firstResult, maxResults, order, propertyName, [] as Set, [] as Set, searchQuery2)
         then: "Results are different, depending on the distribution of brackets"
             itemsForQuery1 != itemsForQuery2
             itemsForQuery1.size() == 2
