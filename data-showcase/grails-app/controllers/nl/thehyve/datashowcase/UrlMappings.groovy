@@ -20,7 +20,7 @@ class UrlMappings {
             action = [GET: 'index', POST: 'search']
         }
         "/api/projects"(controller: 'project') {
-            action = [GET: 'index', POST: 'index']
+            action = [GET: 'index', POST: 'search']
         }
         "/api/keywords"(controller: 'keyword', includes: ['index'])
         "/api/concepts"(controller: 'concept', includes: ['index'])

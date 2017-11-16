@@ -9,6 +9,7 @@ package nl.thehyve.datashowcase
 import grails.gorm.transactions.Transactional
 import groovy.transform.CompileStatic
 import nl.thehyve.datashowcase.representation.ProjectRepresentation
+import nl.thehyve.datashowcase.representation.SearchQueryRepresentation
 import nl.thehyve.datashowcase.search.SearchCriteriaBuilder
 import org.grails.core.util.StopWatch
 import org.hibernate.Criteria
@@ -49,7 +50,7 @@ class ProjectService {
         })
     }
 
-    List<ProjectRepresentation> getProjects(Set concepts, Map searchQuery) {
+    List<ProjectRepresentation> getProjects(Set concepts, SearchQueryRepresentation searchQuery) {
 
         Criterion searchQueryCriterion = searchQuery ? searchCriteriaBuilder.buildCriteria(searchQuery) : null
         def stopWatch = new StopWatch('Fetch projects filtered items')

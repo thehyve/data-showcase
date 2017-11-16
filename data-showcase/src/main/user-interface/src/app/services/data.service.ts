@@ -176,7 +176,7 @@ export class DataService {
   // ------------------------- filters and item table -------------------------
 
   fetchAllProjectsAndItems() {
-    this.resourceService.getProjects()
+    this.resourceService.getAllProjects()
       .subscribe(
         (projects: Project[]) => {
           this.allProjects = projects;
@@ -199,7 +199,6 @@ export class DataService {
   }
 
   fetchFilters() {
-    this.projects.length = 0;
     this.projects.length = 0;
     this.linesOfResearch.length = 0;
 
@@ -256,8 +255,7 @@ export class DataService {
     );
   }
 
-
-  static orderFlagToOrderName(order: number){
+  orderFlagToOrderName(order: number){
     return order == 1 ? "asc" : "desc";
   }
 
@@ -347,19 +345,26 @@ export class DataService {
   setSearchQuery(query: Object) {
     this.searchQuery = query;
     this.fetchItems();
+    this.fetchFilters();
   }
 
   private getUniqueProjects() {
-    for (let item of this.filteredItems) {
-      DataService.collectUnique(item.project, this.projects);
-    }
+    this.allProjects.forEach( p => {
+      if(!this.selectedResearchLines.length){
+        this.projects.push({label: p.name, value: p.name});
+      } else {
+        if (this.selectedResearchLines.includes(p.lineOfResearch)) {
+          this.projects.push({label: p.name, value: p.name});
+        }
+      }
+    });
   }
 
   private getUniqueLinesOfResearch() {
-    for (let project of this.allProjects) {
-      DataService.collectUnique(project.lineOfResearch, this.linesOfResearch);
-    }
-  }
+    if(this.filteredItems.length)
+      for (let item of this.filteredItems) {
+        //DataService.collectUnique()
+  }}
 
   private static collectUnique(element, list: CheckboxOption[]) {
     let values = list.map(function (a) {

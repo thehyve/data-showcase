@@ -100,7 +100,19 @@ export class ResourceService {
       .catch(this.handleError.bind(this));
   }
 
-  getProjects(conceptCodes?: string[], jsonSearchQuery?: JSON): Observable<Project[]> {
+  getAllProjects(): Observable<Project[]> {
+    let headers = new Headers();
+    let url = this.endpoint.apiUrl + PATH_PROJECTS;
+
+    return this.http.get(url, {
+      headers: headers
+    })
+      .map((response: Response) => response.json().projects as Project[])
+      .catch(this.handleError.bind(this));
+  }
+
+
+  getProjects(conceptCodes?: string[], jsonSearchQuery?: Object): Observable<Project[]> {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
 
