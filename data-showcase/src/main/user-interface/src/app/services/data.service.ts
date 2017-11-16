@@ -184,6 +184,7 @@ export class DataService {
             this.projects.push({label: project.name, value: project.name});
             DataService.collectUnique(project.lineOfResearch, this.linesOfResearch);
           }
+          this.sortLinesOfResearch();
         },
         err => console.error(err)
       );
@@ -211,6 +212,7 @@ export class DataService {
           this.projects.push({label: project.name, value: project.name});
           DataService.collectUnique(project.lineOfResearch, this.linesOfResearch);
         }
+        this.sortLinesOfResearch();
       },
       err => {
         console.error(err);
@@ -362,6 +364,20 @@ export class DataService {
     });
   }
 
+  private static compareSelectItems(a: SelectItem, b: SelectItem) {
+    if (a.value < b.value) {
+      return -1;
+    } else if (a.value > b.value) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
+  private sortLinesOfResearch() {
+    this.linesOfResearch.sort(DataService.compareSelectItems);
+  }
+
   private getUniqueLinesOfResearch() {
     if (!this.selectedProjects.length) {
       this.allProjects.forEach(p => {
@@ -377,6 +393,7 @@ export class DataService {
         }
       });
     }
+    this.sortLinesOfResearch();
   }
 
   private static collectUnique(element, list: SelectItem[]) {

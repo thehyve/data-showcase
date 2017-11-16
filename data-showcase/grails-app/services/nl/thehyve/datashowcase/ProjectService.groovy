@@ -17,6 +17,7 @@ import org.hibernate.HibernateException
 import org.hibernate.SessionFactory
 import org.hibernate.Transaction
 import org.hibernate.criterion.Criterion
+import org.hibernate.criterion.Order
 import org.hibernate.criterion.Projections
 import org.hibernate.criterion.Restrictions
 import org.modelmapper.ModelMapper
@@ -45,7 +46,7 @@ class ProjectService {
     }
 
     List<ProjectRepresentation> getProjects() {
-        Project.findAll().collect({
+        Project.findAll([sort: 'name', order: 'asc']).collect({
             modelMapper.map(it, ProjectRepresentation)
         })
     }
@@ -55,42 +56,35 @@ class ProjectService {
         Criterion searchQueryCriterion = searchQuery ? searchCriteriaBuilder.buildCriteria(searchQuery) : null
         def stopWatch = new StopWatch('Fetch projects filtered items')
         stopWatch.start('Retrieve from database')
-        // stateless session does not support collections of associated objects
-        // http://forum.spring.io/forum/spring-projects/batch/37785-collections-cannot-be-fetched-by-a-stateless-session
-        def session = sessionFactory.openSession()
-        try {
-            Criteria criteria = session.createCriteria(Project, "p")
-                    .createAlias("p.items", "i")
-                    .createAlias("i.concept", "c")
-                    .createAlias("c.keywords", "k")
-                    .setProjection(Projections.projectionList()
-                    .add(Projections.distinct(Projections.property("p.name").as("name")))
-                    .add(Projections.property("p.lineOfResearch").as("lineOfResearch")))
-            if (concepts) {
-                criteria.add(Restrictions.in('c.conceptCode', concepts))
-            }
-            if (dataShowcaseEnvironment.internalInstance) {
-                criteria.add(Restrictions.eq('i.publicItem', true))
-            }
-            if (searchQueryCriterion) {
-                criteria.add(searchQueryCriterion)
-            }
-            criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
-            def projects = criteria.list() as List<Map>
-            stopWatch.stop()
 
-            stopWatch.start('Map to representations')
-            def result = projects.collect { Map projectData ->
-                map(projectData)
-            }
-            stopWatch.stop()
-            log.info "Projects fetched.\n${stopWatch.prettyPrint()}"
-            result
-        } catch (HibernateException e) {
-            e.printStackTrace()
-        } finally {
-            session.close()
+        Criteria criteria = sessionFactory.currentSession.createCriteria(Project, "p")
+                .createAlias("p.items", "i")
+                .createAlias("i.concept", "c")
+                .createAlias("c.keywords", "k")
+                .setProjection(Projections.projectionList()
+                .add(Projections.distinct(Projections.property("p.name").as("name")))
+                .add(Projections.property("p.lineOfResearch").as("lineOfResearch")))
+        if (concepts) {
+            criteria.add(Restrictions.in('c.conceptCode', concepts))
         }
+        if (dataShowcaseEnvironment.internalInstance) {
+            criteria.add(Restrictions.eq('i.publicItem', true))
+        }
+        if (searchQueryCriterion) {
+            criteria.add(searchQueryCriterion)
+        }
+        criteria.addOrder(Order.asc('p.name'))
+        criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
+        def projects = criteria.list() as List<Map>
+        stopWatch.stop()
+
+        stopWatch.start('Map to representations')
+        def result = projects.collect { Map projectData ->
+            map(projectData)
+        }
+        stopWatch.stop()
+        log.info "Projects fetched.\n${stopWatch.prettyPrint()}"
+        result
     }
 
 }
