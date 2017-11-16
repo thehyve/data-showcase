@@ -349,22 +349,35 @@ export class DataService {
   }
 
   private getUniqueProjects() {
-    this.allProjects.forEach( p => {
-      if(!this.selectedResearchLines.length){
-        this.projects.push({label: p.name, value: p.name});
-      } else {
-        if (this.selectedResearchLines.includes(p.lineOfResearch)) {
-          this.projects.push({label: p.name, value: p.name});
+    this.allProjects.forEach(ap => {
+      if (!this.projects.find(p => p.value == ap.name)){
+        if (!this.selectedResearchLines.length) {
+          this.projects.push({label: ap.name, value: ap.name});
+        } else {
+          if (this.selectedResearchLines.includes(ap.lineOfResearch)) {
+            this.projects.push({label: ap.name, value: ap.name});
+          }
         }
       }
     });
   }
 
   private getUniqueLinesOfResearch() {
-    if(this.filteredItems.length)
-      for (let item of this.filteredItems) {
-        //DataService.collectUnique()
-  }}
+    if (!this.selectedProjects.length) {
+      this.allProjects.forEach(p => {
+        if(!this.linesOfResearch.find(l=> l.value == p.lineOfResearch)) {
+          this.linesOfResearch.push({label: p.lineOfResearch, value: p.lineOfResearch});
+        }
+      });
+    } else {
+      this.selectedProjects.forEach(p => {
+        let researchLine = this.allProjects.find(ap => ap.name == p).lineOfResearch;
+        if(!this.linesOfResearch.find(l=> l.value == researchLine)) {
+          this.linesOfResearch.push({label: researchLine, value: researchLine});
+        }
+      });
+    }
+  }
 
   private static collectUnique(element, list: CheckboxOption[]) {
     let values = list.map(function (a) {
