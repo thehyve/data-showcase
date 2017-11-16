@@ -46,7 +46,7 @@ class ItemController {
     /**
      * Fetches all items with filter criteria.
      * Supported criteria: conceptCodes, projects, free text search query.
-     * @return the list of items as JSON.
+     * @return the list of items, total count and page number as JSON .
      */
     def search() {
         try {
@@ -66,9 +66,11 @@ class ItemController {
             response.contentType = 'application/json'
             response.characterEncoding = 'utf-8'
 
-            def data = [items: itemService.getItems(
+            def items = itemService.getItems(
                     firstResult, maxResults, order, propertyName, concepts, projects, searchQuery)
-            ]
+            def count = itemService.getItemsCount(concepts, projects, searchQuery)
+            int page = (firstResult/maxResults + 1)
+            def data = [ totalCount: count, page: page, items: items]
             new ObjectMapper().writeValue(response.outputStream, data)
 
         } catch (Exception e) {

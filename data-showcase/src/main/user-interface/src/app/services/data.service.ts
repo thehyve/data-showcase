@@ -14,6 +14,7 @@ import {Subject} from "rxjs/Subject";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Environment} from "../models/environment";
 import {CheckboxOption} from '../models/CheckboxOption';
+import {ItemResponse} from "../models/itemResponse";
 
 type LoadingState = 'loading' | 'complete';
 type Order = 'asc' | 'desc';
@@ -234,8 +235,9 @@ export class DataService {
 
     this.resourceService.getItems(this.itemsFirstResult, this.itemsMaxResults, order, this.itemsPropertyName,
       codes, projects, this.searchQuery).subscribe(
-      (items: Item[]) => {
-        for (let item of items) {
+      (response: ItemResponse) => {
+        this.totalItemsCount = response.totalCount;
+        for (let item of response.items) {
           if (this.allProjects && this.allProjects.length > 0) {
             item.lineOfResearch = this.projectToResearchLine(item.project);
           }
@@ -386,10 +388,6 @@ export class DataService {
     if (element && !values.includes(element)) {
       list.push({label: element, value: element} as CheckboxOption);
     }
-  }
-
-  countItems(): number {
-    return this.selectedTreeNode ? this.selectedTreeNode.accumulativeItemCount : this.totalItemsCount;
   }
 
   // ------------------------- shopping cart -------------------------

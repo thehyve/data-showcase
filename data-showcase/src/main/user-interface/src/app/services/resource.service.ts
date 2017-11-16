@@ -21,6 +21,7 @@ import {Item} from "../models/item";
 import {Project} from "../models/project";
 import {Environment} from "../models/environment";
 import { Concept } from '../models/concept';
+import {ItemResponse} from "../models/itemResponse";
 
 
 @Injectable()
@@ -76,7 +77,7 @@ export class ResourceService {
 
 
   getItems(firstResult: number, maxResults: number, order?: string,propertyName?: string,
-           conceptCodes?: string[], projects?: string[], jsonSearchQuery?: Object): Observable<Item[]> {
+           conceptCodes?: string[], projects?: string[], jsonSearchQuery?: Object): Observable<ItemResponse> {
 
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
@@ -96,7 +97,7 @@ export class ResourceService {
 
     // use POST because of url length limits in some of the browsers (limit of characters)
     return this.http.post(url, body, options)
-      .map((res: Response) => res.json().items as Item[])
+      .map((res: Response) => res.json() as ItemResponse)
       .catch(this.handleError.bind(this));
   }
 

@@ -148,7 +148,6 @@ class ItemService {
         if(searchQueryCriterion) {
             criteria.add(searchQueryCriterion)
         }
-        criteria.addOrder(Order.asc('i.name'))
         criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
                 .setFirstResult(firstResult)
                 .setMaxResults(maxResults)
@@ -158,6 +157,7 @@ class ItemService {
             criteria.addOrder(Order.asc(property))
         }
         def items = criteria.list() as List<Map>
+
         stopWatch.stop()
 
         stopWatch.start('Map to representations')
@@ -167,6 +167,39 @@ class ItemService {
         stopWatch.stop()
         log.info "${result.size()} filtered items fetched.\n${stopWatch.prettyPrint()}"
         result
+    }
+
+    @Transactional(readOnly = true)
+    Long getItemsCount(Set concepts, Set projects, SearchQueryRepresentation searchQuery) {
+
+        Criterion searchQueryCriterion = searchQuery ? searchCriteriaBuilder.buildCriteria(searchQuery) : null
+        def stopWatch = new StopWatch('Items count')
+        stopWatch.start('Retrieve from database')
+        def session = sessionFactory.openStatelessSession()
+
+        Criteria criteria = session.createCriteria(Item, "i")
+                .createAlias("i.concept", "c")
+                .createAlias("i.project", "p")
+                .createAlias("c.keywords", "k")
+        if(concepts) {
+            criteria.add( Restrictions.in('c.conceptCode', concepts))
+        }
+        if(projects) {
+            criteria.add( Restrictions.in('p.name', projects))
+        }
+        if(!dataShowcaseEnvironment.internalInstance) {
+            criteria.add( Restrictions.eq('i.publicItem',true))
+        }
+        if(searchQueryCriterion) {
+            criteria.add(searchQueryCriterion)
+        }
+        criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
+                .setProjection(Projections.rowCount())
+        Long totalItemsCount = (Long)criteria.uniqueResult()
+
+        stopWatch.stop()
+        log.info "Total item count: ${totalItemsCount}"
+        totalItemsCount
     }
 
     @CacheEvict(value = 'items', allEntries = true)

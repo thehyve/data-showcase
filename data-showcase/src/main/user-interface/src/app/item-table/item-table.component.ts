@@ -80,7 +80,7 @@ export class ItemTableComponent implements OnInit {
   }
 
   countItems(): number {
-    return this.dataService.countItems()
+    return this.dataService.totalItemsCount;
   }
 
   changeSort(event) {
