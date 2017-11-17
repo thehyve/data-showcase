@@ -83,8 +83,8 @@ class DataImportService {
             stopWatch.stop()
             statelessSession.managedFlush()
 
-            //save research_lines
-            def linesOfResearch = json.projects?.lineOfResearch.unique().collect {
+            // save research_lines
+            def linesOfResearch = json.projects?.lineOfResearch.unique().findAll {it != null}.collect {
                 if (it) new LineOfResearch(name: it)
             } as List<LineOfResearch>
             validate(linesOfResearch)
