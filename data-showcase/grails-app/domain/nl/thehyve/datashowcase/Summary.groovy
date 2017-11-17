@@ -71,7 +71,7 @@ class Summary {
     static constraints = {
         observationCount    nullable: false
         patientCount        nullable: false
-        dataStability       nullable: false
+        dataStability       nullable: true
         minValue            nullable: true
         maxValue            nullable: true
         avgValue            nullable: true
