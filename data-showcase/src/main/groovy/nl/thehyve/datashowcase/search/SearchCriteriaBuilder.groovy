@@ -189,7 +189,7 @@ class SearchCriteriaBuilder {
                 def propertyName = query.value
                 def property = SearchField.NONE
                 def args = query.values.collect { it.value }
-                if (propertyName) {
+                if (propertyName && propertyName != '*') {
                     property = SearchField.forName(propertyName)
                     if (property == SearchField.NONE) {
                         throw new IllegalArgumentException("Unsupported property: ${propertyName}.")
@@ -200,8 +200,8 @@ class SearchCriteriaBuilder {
                     // applying an operator to a field with a list of values
                     return buildSingleCriteria(operator, property, args)
                 } else {
-                    log.info "Applying unary ${operator} on args: ${args}"
-                    // applying a unary operator to all fields with a list of values
+                    log.info "Applying ${operator} on args: ${args}"
+                    // applying an operator to all fields with a list of values
                     return applyToAllSearchFields(operator, args)
                 }
             } else {
