@@ -6,7 +6,10 @@
 
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {ButtonModule, DataTableModule, ListboxModule, PaginatorModule, PanelModule} from "primeng/primeng";
+import {
+  ButtonModule, CheckboxModule, DataTableModule, ListboxModule, PaginatorModule,
+  PanelModule
+} from "primeng/primeng";
 import {FormsModule} from "@angular/forms";
 import {ItemFilter, ItemTableComponent} from "./item-table.component";
 
@@ -18,7 +21,8 @@ import {ItemFilter, ItemTableComponent} from "./item-table.component";
     DataTableModule,
     ListboxModule,
     ButtonModule,
-    PaginatorModule
+    PaginatorModule,
+    CheckboxModule
   ],
   declarations: [ItemTableComponent, ItemFilter],
   exports: [ItemTableComponent, ItemFilter]

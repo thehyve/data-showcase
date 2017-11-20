@@ -16,7 +16,7 @@ import {
 })
 export class ItemFilter implements PipeTransform {
   transform(value: Item[], filter: string): Item[] {
-    filter = filter ? filter.toLocaleLowerCase(): null;
+    filter = filter ? filter.toLocaleLowerCase() : null;
     return filter && value ?
       value.filter(item =>
         (item.name.toLocaleLowerCase().indexOf(filter) !== -1) ||
@@ -47,14 +47,22 @@ export class ItemTableComponent implements OnInit {
   filterValue: string;
   items: Item[];
   itemsSelection: Item[];
+  itemsSelectionPerPage: Item[];
   rowsPerPage: number;
+  allSelected: boolean;
 
   constructor(public dataService: DataService) {
-    this.rowsPerPage = 8;
-    this.items = this.dataService.filteredItems;
     this.dataService.itemsSelection$.subscribe(
       selection => {
         this.itemsSelection = selection;
+      }
+    );
+    this.dataService.filteredItems$.subscribe(
+      items => {
+        this.items = items;
+        if(items.length > 0) {
+          this.updateCurrentPageItemsSelection(items);
+        }
       }
     );
     this.dataService.textFilterInput$.subscribe(
@@ -65,21 +73,25 @@ export class ItemTableComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.rowsPerPage = 8;
+    this.allSelected = false;
+    this.itemsSelection = [];
+    this.itemsSelectionPerPage = [];
   }
 
-  addToCart(){
+  addToCart() {
     this.dataService.addToShoppingCart(this.itemsSelection);
   }
 
-  showSummary(item: Item){
+  showSummary(item: Item) {
     this.dataService.displayPopup(item);
   }
 
-  pageCount(): number {
-    return Math.ceil(this.countItems() / this.rowsPerPage)
+  pagesCount(): number {
+    return Math.ceil(this.totalItemsCount() / this.rowsPerPage);
   }
 
-  countItems(): number {
+  totalItemsCount(): number {
     return this.dataService.totalItemsCount;
   }
 
@@ -91,9 +103,49 @@ export class ItemTableComponent implements OnInit {
   }
 
   paginate(event) {
-    console.log("PAGE: " + event.page);
+    console.log("On page: " + (event.page + 1));
     this.dataService.itemsFirstResult = event.page * event.rows;
     this.dataService.itemsMaxResults = event.rows;
     this.dataService.fetchItems();
   }
+
+  handleHeaderCheckboxToggle(event) {
+    if (event) {
+      this.dataService.selectAllItems(true);
+      this.itemsSelectionPerPage = this.items;
+      this.allSelected = true;
+      console.log("All items selected");
+    } else {
+      this.dataService.selectAllItems(false);
+      this.itemsSelectionPerPage = [];
+      this.allSelected = false;
+      console.log("All items deselected");
+    }
+  }
+
+  handleRowSelect($event){
+    let item = this.itemsSelection ? this.itemsSelection.filter(items => (items.id === $event.data.id)) : [];
+    if($event.originalEvent.checked && item.length == 0){
+      this.itemsSelection.push($event.data);
+      console.log("Item '" + $event.data.name +"' added to selection.");
+      if(this.itemsSelection.length == this.totalItemsCount()){
+        this.allSelected = true;
+      }
+    } else if(!$event.originalEvent.checked && item.length > 0) {
+      this.itemsSelection.splice(this.itemsSelection.indexOf(item[0]),1);
+      console.log("\"Item '" + $event.data.name + "' removed from selection.");
+      if(this.allSelected) {
+        this.allSelected = false;
+      }
+    }
+  }
+
+  updateCurrentPageItemsSelection(items: Item[]){
+    if(this.allSelected) {
+      this.itemsSelectionPerPage = items;
+    } else {
+      this.itemsSelectionPerPage = items.filter(i => this.itemsSelection.some(is => is.id == i.id));
+    }
+  }
+
 }

@@ -9,12 +9,17 @@
                  [immutable]=false
                  [value]="items | itemFilter: filterValue"
                  [rows]="rowsPerPage" [paginator]="false"
-                 [headerCheckboxToggleAllPages]="true"
                  [resizableColumns]="true"
-                 [(selection)]="itemsSelection"
+                 [totalRecords] = "totalItemsCount()"
+                 [(selection)]="itemsSelectionPerPage" [showHeaderCheckbox]=false
+                 (onRowSelect)="handleRowSelect($event)" (onRowUnselect)="handleRowSelect($event)"
                  (onSort)="changeSort($event)"
                  [loading]="dataService.loadingItems == 'loading'" loadingIcon="fa fa-spin fa-refresh fa-fw">
         <p-column selectionMode="multiple" [style]="{ 'width': '3%'}">
+            <ng-template pTemplate="header">
+                <p-checkbox [(ngModel)]="allSelected" binary="true" (onChange)="handleHeaderCheckboxToggle($event)">
+                </p-checkbox>
+            </ng-template>
         </p-column>
         <p-column field="name" header="Name"
                   [sortable]="true">
@@ -43,15 +48,15 @@
             </ng-template>
         </p-column>
         <p-footer>
-            <p-paginator [rows]="rowsPerPage" (onPageChange)="paginate($event)" [totalRecords]="countItems()"></p-paginator>
+            <p-paginator [rows]="rowsPerPage" (onPageChange)="paginate($event)" [totalRecords]="totalItemsCount()"></p-paginator>
         </p-footer>
     </p-dataTable>
     <div class="inline">
         <button pButton type="button" label="Add to cart" class="export-button" (click)="addToCart()"></button>
         <div class="item-count-container">
-            Items selected: <b>{{itemsSelection? itemsSelection.length : 0}}</b>.
-            Total results in table: <b>{{countItems()}}.</b>
-            Number of pages: <b>{{pageCount()}}.</b>
+            Items selected: <b>{{itemsSelection ? itemsSelection.length : 0}}</b>.
+            Total results in table: <b>{{totalItemsCount()}}.</b>
+            Number of pages: <b>{{pagesCount()}}.</b>
         </div>
     </div>
 </div>
