@@ -14,117 +14,62 @@
     <p-accordion [multiple]="true">
         <p-accordionTab header="Composing a query">
             General structure of the query is:
-            <br/><b>&lt; FIELD</b> <b>OPERATOR</b> <b>value(s) &gt;</b>,
+            <br/><var>field</var> <var>operator</var> <var>value</var>,
             <br/><br/>
-            where <b>FIELD</b> is a name of the property to which the condition is applied (see: <u>Supported fields</u>).
+            where <var>field</var> is a name of the property to which the condition is applied (see: <u>Supported fields</u>).
             <br/>
-            If <b>FIELD</b> is not specified, condition will be applied to all the supported fields.
+            If <var>field</var> is not specified, condition will be applied to all the supported fields.
             If condition is satisfied for at least one of the fields of an item, this item will be added to returned item list.
             <br/><br/>
-            Combination of multiple query criterion can be composed using <b>'AND'</b> and <b>'OR'</b> operators
+            Combination of multiple query criterion can be composed using <code>and</code>, <code>or</code>, and <code>not</code> operators
             (see: <u>Supported operators</u>).
         </p-accordionTab>
         <p-accordionTab header="Supported fields">
-            <table>
-                <tr>
-                    <td><b>'name'</b></td>
-                    <td>  Name of the item.</td>
-                </tr>
-                <tr>
-                    <td><b>'keywords'</b></td>
-                    <td> - Key words associated with concept.</td>
-                </tr>
-                <tr>
-                    <td><b>'label'</b></td>
-                    <td> - The short name of the variable in English associated with concept.</td>
-                </tr>
-                <tr>
-                    <td><b>'labelLong'</b></td>
-                    <td> - A textual description of the variable in English associated with concept.</td>
-                </tr>
-                <tr>
-                    <td><b>'labelNl'</b></td>
-                    <td> - The short name of the variable in Dutch associated with concept.</td>
-                </tr>
-                <tr>
-                    <td><b>'labelNlLong'</b></td>
-                    <td> - A textual description of the variable in Dutch associated with concept.</td>
-                </tr>
-                <tr>
-                    <td><b></b></td>
-                    <td></td>
-                </tr>
-            </table>
-            <br /><i>If any other field is used, an exception will be returned.</i>
+            <dl class="explanation long-title">
+                <dt><code>name</code></dt>
+                <dd>Name of the item.</dd>
+                <dt><code>keywords</code></dt>
+                <dd>Key words associated with concept.</dd>
+                <dt><code>label</code></dt>
+                <dd>The short name of the variable in English associated with concept.</dd>
+                <dt><code>labelLong</code></dt>
+                <dd>A textual description of the variable in English associated with concept.</dd>
+                <dt><code>labelNl</code></dt>
+                <dd>The short name of the variable in Dutch associated with concept.</dd>
+                <dt><code>labelNlLong</code></dt>
+                <dd>A textual description of the variable in Dutch associated with concept.</dd>
+            </dl>
         </p-accordionTab>
         <p-accordionTab header="Supported operators">
-            <table style="vertical-align: top">
-                <tr>
-                    <td><b>'='</b></td>
-                    <td> - equals,</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <i>e.g. name = "value1"</i>
-                    </td>
-                </tr>
-                <tr>
-                    <td><b>'!='</b></td>
-                    <td> - not equals,</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <i>e.g. labelEn != "value1"</i>
-                    </td>
-                </tr>
-                <tr>
-                    <td><b>'IN'</b></td>
-                    <td> - allows to specify multiple values. Values have to be placed between round brackets.</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <i>e.g. name IN ("value1", "value2")</i>
-                    </td>
-                </tr>
-                <tr>
-                    <td><b>'LIKE'  </b></td>
-                    <td> - like, search for a specified pattern. There are two wildcards used:</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <ul>
-                            <li>% - The percent sign represents zero, one, or multiple characters;</li>
-                            <li>_ - The underscore represents a single character;/n
-                                <i>e.g. labelNl LIKE "va_ue%"</i></li></ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td><b>'AND'</b></td>
-                    <td> - logical conjunction,</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <i>e.g. (name = "value1") AND (labelLong != "value2")</i>
-                    </td>
-                </tr>
-                <tr>
-                    <td><b>'OR'</b></td>
-                    <td> - logical disjunction,</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                        <i>e.g. (name = "value1") OR (name = "value2")</i>
-                    </td>
-                </tr>
-            </table>
+            <dl class="explanation short-title">
+                <dt><code>=</code></dt>
+                <dd>equals, <i>e.g.</i>, <code>name = "value1"</code>
+                </dd>
+                <dt><code>!=</code></dt>
+                <dd>not equals, <i>e.g.</i>, <code>labelEn != "value1"</code>
+                </dd>
+                <dt><code>like</code></dt>
+                <dd>like, search for a specified pattern. There are two wildcards used:
+                    <ul>
+                        <li><code>%</code> The percent sign represents zero, one, or multiple characters;</li>
+                        <li><code>_</code> The underscore represents a single character;
+                            <i>e.g.</i>, <code>labelNl like "va_ue%"</code></li></ul>
+                </dd>
+                <dt><code>AND</code></dt>
+                <dd>logical conjunction,
+                    <i>e.g.</i>, <code>(name = "value1") AND (labelLong != "value2")</code>
+                </dd>
+                <dt><code>OR</code></dt>
+                <dd>logical disjunction,
+                    <i>e.g.</i>, <code>(name = "value1") OR (name = "value2")</code>
+                </dd>
+                <dt><code>NOT</code></dt>
+                <dd>logical negation,
+                    <i>e.g.</i>, <code>NOT (name = "value1")</code>
+                </dd>
+            </dl>
             <br />All the combinations of junction operators are possible, when using round brackets.
-            <br /><i>e.g. ((name = "value1") OR (name = "value2")) AND (labelLong = "value3")</i>
+            <br /><i>e.g.</i>, <code>((name = "value1") OR (name = "value2")) AND (NOT labelLong = "value3")</code>
         </p-accordionTab>
     </p-accordion>
     <br/>
