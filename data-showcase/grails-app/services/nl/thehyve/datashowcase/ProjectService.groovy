@@ -20,6 +20,7 @@ import org.hibernate.criterion.Criterion
 import org.hibernate.criterion.Order
 import org.hibernate.criterion.Projections
 import org.hibernate.criterion.Restrictions
+import org.hibernate.sql.JoinType
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -60,7 +61,7 @@ class ProjectService {
         Criteria criteria = sessionFactory.currentSession.createCriteria(Project, "p")
                 .createAlias("p.items", "i")
                 .createAlias("i.concept", "c")
-                .createAlias("c.keywords", "k")
+                .createAlias("c.keywords", "k", JoinType.LEFT_OUTER_JOIN)
                 .setProjection(Projections.projectionList()
                 .add(Projections.distinct(Projections.property("p.name").as("name")))
                 .add(Projections.property("p.lineOfResearch").as("lineOfResearch")))
