@@ -147,6 +147,7 @@ class SearchCriteriaBuilder {
         switch (field) {
             case SearchField.NAME:
                 return ITEM_ALIAS + "." + SearchField.NAME.value
+            case SearchField.KEYWORD:
             case SearchField.KEYWORDS:
                 return KEYWORDS_ALIAS + "." + "keyword"
             case SearchField.LABEL:

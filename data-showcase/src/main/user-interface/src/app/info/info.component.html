@@ -14,7 +14,7 @@
     <p-accordion [multiple]="true">
         <p-accordionTab header="Composing a query">
             General structure of the query is:
-            <br/><var>field</var> <var>operator</var> <var>value</var>,
+            <br/>&lang;<var>field</var>&rang; &lang;<var>operator</var>&rang; &lang;<var>value</var>&rang;,
             <br/><br/>
             where <var>field</var> is a name of the property to which the condition is applied (see: <u>Supported fields</u>).
             <br/>
@@ -38,6 +38,8 @@
                 <dd>The short name of the variable in Dutch associated with concept.</dd>
                 <dt><code>labelNlLong</code></dt>
                 <dd>A textual description of the variable in Dutch associated with concept.</dd>
+                <dt><code>*</code></dt>
+                <dd>Any of these fields.</dd>
             </dl>
         </p-accordionTab>
         <p-accordionTab header="Supported operators">

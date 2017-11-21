@@ -18,6 +18,10 @@ enum SearchField {
      */
     KEYWORDS('keywords'),
     /**
+     * Key word associated with concept.
+     */
+    KEYWORD('keyword'),
+    /**
      * The short name of the variable in English associated with concept.
      */
     LABEL('label'),
