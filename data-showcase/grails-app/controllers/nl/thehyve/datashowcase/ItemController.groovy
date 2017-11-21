@@ -23,18 +23,19 @@ class ItemController {
      */
     def index() {
         try {
-
             def args = request.JSON as Map
-            int firstResult = args.firstResult
-            int maxResults = args.maxResults
+            int firstResult = args.firstResult ?: 0
+            def maxResults = args.maxResults as Integer
             String order = args.order
             String propertyName = args.propertyName
 
             response.status = 200
             response.contentType = 'application/json'
             response.characterEncoding = 'utf-8'
-            def data = [items: itemService.getItems(firstResult, maxResults, order, propertyName)]
-            log.info "Writing ${data.items.size()} items ..."
+            def items = itemService.getItems(firstResult, maxResults, order, propertyName)
+            def count = itemService.getItemsCount()
+            int page = maxResults ? (firstResult/maxResults + 1) : 1
+            def data = [totalCount: count, page: page, items: items]
             new ObjectMapper().writeValue(response.outputStream, data)
         } catch (Exception e) {
             response.status = 400
@@ -54,8 +55,8 @@ class ItemController {
             def args = request.JSON as Map
             Set concepts = args.conceptCodes as Set
             Set projects =  args.projects as Set
-            int firstResult = args.firstResult
-            int maxResults = args.maxResults
+            int firstResult = args.firstResult ?: 0
+            def maxResults = args.maxResults as Integer
             String order = args.order
             String propertyName = args.propertyName
             log.info "Query input: ${args.searchQuery}"
@@ -72,8 +73,8 @@ class ItemController {
             def items = itemService.getItems(
                     firstResult, maxResults, order, propertyName, concepts, projects, searchQuery)
             def count = itemService.getItemsCount(concepts, projects, searchQuery)
-            int page = (firstResult/maxResults + 1)
-            def data = [ totalCount: count, page: page, items: items]
+            int page = maxResults ? (firstResult/maxResults + 1) : 1
+            def data = [totalCount: count, page: page, items: items]
             new ObjectMapper().writeValue(response.outputStream, data)
 
         } catch (Exception e) {

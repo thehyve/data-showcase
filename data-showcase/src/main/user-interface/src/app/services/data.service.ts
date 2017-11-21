@@ -269,12 +269,11 @@ export class DataService {
   selectAllItems(selectAll: boolean){
     if(selectAll){
       let firstResult = 0;
-      let maxResult = 9999999;
       let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
       let codes = Array.from(selectedConceptCodes);
       let projects = this.getProjectsForSelectedResearchLines();
 
-      this.resourceService.getItems(firstResult, maxResult, null, null,
+      this.resourceService.getItems(firstResult, null, null, null,
         codes, projects, this.searchQuery).subscribe(
         (response: ItemResponse) => {
           this.itemsSelectionSource.next(response.items);
