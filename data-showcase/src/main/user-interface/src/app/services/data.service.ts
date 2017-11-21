@@ -311,7 +311,6 @@ export class DataService {
   }
 
   updateItemTable() {
-    this.clearItemsSelection();
     this.clearAllFilters();
   }
 
@@ -319,6 +318,7 @@ export class DataService {
     this.projects.length = 0;
     this.selectedResearchLines = selectedResearchLines;
     this.clearItemsSelection();
+    this.resetTableToTheFirstPage();
     this.fetchItems();
     this.getUniqueProjects();
   }
@@ -327,6 +327,7 @@ export class DataService {
     this.linesOfResearch.length = 0;
     this.selectedProjects = selectedProjects;
     this.clearItemsSelection();
+    this.resetTableToTheFirstPage();
     this.fetchItems();
     this.getUniqueLinesOfResearch();
   }
@@ -347,6 +348,7 @@ export class DataService {
 
   clearAllFilters() {
     this.clearCheckboxFilterSelection();
+    this.resetTableToTheFirstPage()
     this.setTextFilterInput('');
     this.clearItemsSelection();
     this.rerenderCheckboxFiltersSource.next(true);
@@ -369,6 +371,10 @@ export class DataService {
     this.itemsSelectionSource.next([]);
   }
 
+  resetTableToTheFirstPage() {
+    this.itemsFirstResult = 0;
+  }
+
   setTextFilterInput(text: string) {
     this.textFilterInputSource.next(text);
   }
@@ -376,6 +382,7 @@ export class DataService {
   setSearchQuery(query: Object) {
     this.searchQuery = query;
     this.clearItemsSelection();
+    this.resetTableToTheFirstPage();
     this.fetchItems();
     this.fetchFilters();
   }

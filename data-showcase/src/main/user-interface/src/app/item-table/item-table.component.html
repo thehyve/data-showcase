@@ -48,7 +48,8 @@
             </ng-template>
         </p-column>
         <p-footer>
-            <p-paginator [rows]="rowsPerPage" (onPageChange)="paginate($event)" [totalRecords]="totalItemsCount()"></p-paginator>
+            <p-paginator [rows]="rowsPerPage" (onPageChange)="paginate($event)" [totalRecords]="totalItemsCount()"
+                         [(first)]="dataService.itemsFirstResult"></p-paginator>
         </p-footer>
     </p-dataTable>
     <div class="inline">
