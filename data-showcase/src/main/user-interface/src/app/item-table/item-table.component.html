@@ -17,7 +17,7 @@
                  [loading]="dataService.loadingItems == 'loading'" loadingIcon="fa fa-spin fa-refresh fa-fw">
         <p-column selectionMode="multiple" [style]="{ 'width': '3%'}">
             <ng-template pTemplate="header">
-                <p-checkbox [(ngModel)]="allSelected" binary="true" (onChange)="handleHeaderCheckboxToggle($event)">
+                <p-checkbox [(ngModel)]="dataService.allItemsSelected" binary="true" (onChange)="handleHeaderCheckboxToggle($event)">
                 </p-checkbox>
             </ng-template>
         </p-column>

@@ -49,12 +49,14 @@ export class ItemTableComponent implements OnInit {
   itemsSelection: Item[];
   itemsSelectionPerPage: Item[];
   rowsPerPage: number;
-  allSelected: boolean;
 
   constructor(public dataService: DataService) {
     this.dataService.itemsSelection$.subscribe(
       selection => {
         this.itemsSelection = selection;
+        if(selection.length === 0){
+          this.itemsSelectionPerPage = [];
+        }
       }
     );
     this.dataService.filteredItems$.subscribe(
@@ -74,7 +76,6 @@ export class ItemTableComponent implements OnInit {
 
   ngOnInit() {
     this.rowsPerPage = 8;
-    this.allSelected = false;
     this.itemsSelection = [];
     this.itemsSelectionPerPage = [];
   }
@@ -113,12 +114,12 @@ export class ItemTableComponent implements OnInit {
     if (event) {
       this.dataService.selectAllItems(true);
       this.itemsSelectionPerPage = this.items;
-      this.allSelected = true;
+      this.dataService.allItemsSelected = true;
       console.log("All items selected");
     } else {
       this.dataService.selectAllItems(false);
       this.itemsSelectionPerPage = [];
-      this.allSelected = false;
+      this.dataService.allItemsSelected = false;
       console.log("All items deselected");
     }
   }
@@ -129,19 +130,19 @@ export class ItemTableComponent implements OnInit {
       this.itemsSelection.push($event.data);
       console.log("Item '" + $event.data.name +"' added to selection.");
       if(this.itemsSelection.length == this.totalItemsCount()){
-        this.allSelected = true;
+        this.dataService.allItemsSelected = true;
       }
     } else if(!$event.originalEvent.checked && item.length > 0) {
       this.itemsSelection.splice(this.itemsSelection.indexOf(item[0]),1);
       console.log("\"Item '" + $event.data.name + "' removed from selection.");
-      if(this.allSelected) {
-        this.allSelected = false;
+      if(this.dataService.allItemsSelected) {
+        this.dataService.allItemsSelected = false;
       }
     }
   }
 
   updateCurrentPageItemsSelection(items: Item[]){
-    if(this.allSelected) {
+    if(this.dataService.allItemsSelected) {
       this.itemsSelectionPerPage = items;
     } else {
       this.itemsSelectionPerPage = items.filter(i => this.itemsSelection.some(is => is.id == i.id));

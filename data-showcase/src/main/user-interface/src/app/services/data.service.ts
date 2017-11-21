@@ -37,6 +37,8 @@ export class DataService {
   // items added to the shopping cart
   public shoppingCartItems = new BehaviorSubject<Item[]>([]);
   public totalItemsCount: number = 0;
+  // if the select-all-items checkbox is selected
+  public allItemsSelected: boolean = false;
 
   // text filter input
   private textFilterInputSource = new Subject<string>();
@@ -346,6 +348,7 @@ export class DataService {
   clearAllFilters() {
     this.clearCheckboxFilterSelection();
     this.setTextFilterInput('');
+    this.clearItemsSelection();
     this.rerenderCheckboxFiltersSource.next(true);
   }
 
@@ -362,6 +365,7 @@ export class DataService {
   }
 
   clearItemsSelection() {
+    this.allItemsSelected = false;
     this.itemsSelectionSource.next([]);
   }
 
@@ -371,6 +375,7 @@ export class DataService {
 
   setSearchQuery(query: Object) {
     this.searchQuery = query;
+    this.clearItemsSelection();
     this.fetchItems();
     this.fetchFilters();
   }
