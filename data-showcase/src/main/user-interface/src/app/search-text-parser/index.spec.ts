@@ -77,14 +77,32 @@ describe('Search text parser', () => {
 
         expect(tree).not.toBeNull();
 
-        console.log('Tree', JSON.stringify(tree, null, '  '));
-
         let result = parser.flatten(tree);
         let expected = {type: 'or', values: [
             {type: 'contains', value: '*', values: [
                 {type: 'string', value: 'corn'}
             ]},
             {type: '=', value: '*', values: [
+                {type: 'string', value: 'rice'}
+            ]}
+        ]} as SearchQuery;
+
+        expect(JSON.stringify(result)).toEqual(JSON.stringify(expected));
+    });
+
+    it('wildcard comparison', () => {
+        let line = '* contains corn or keyword = rice';
+        let parser = new SearchTextParser();
+        let tree = parser.parse(line);
+
+        expect(tree).not.toBeNull();
+
+        let result = parser.flatten(tree);
+        let expected = {type: 'or', values: [
+            {type: 'contains', value: '*', values: [
+                {type: 'string', value: 'corn'}
+            ]},
+            {type: '=', value: 'keyword', values: [
                 {type: 'string', value: 'rice'}
             ]}
         ]} as SearchQuery;

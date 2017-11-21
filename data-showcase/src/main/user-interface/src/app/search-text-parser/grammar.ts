@@ -51,6 +51,8 @@ export var ParserRules:NearleyRule[] = [
     {"name": "field", "symbols": [{"literal":"labelNl"}], "postprocess": buildToken},
     {"name": "field", "symbols": [{"literal":"labelNlLong"}], "postprocess": buildToken},
     {"name": "field", "symbols": [{"literal":"keywords"}], "postprocess": buildToken},
+    {"name": "field", "symbols": [{"literal":"keyword"}], "postprocess": buildToken},
+    {"name": "field", "symbols": [{"literal":"*"}], "postprocess": buildToken},
     {"name": "comparator", "symbols": [{"literal":"="}], "postprocess": buildLowercaseToken},
     {"name": "comparator", "symbols": [{"literal":"!="}], "postprocess": buildLowercaseToken},
     {"name": "comparator", "symbols": [{"literal":"contains"}], "postprocess": buildLowercaseToken},

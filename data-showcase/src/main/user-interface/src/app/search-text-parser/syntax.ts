@@ -26,7 +26,9 @@ export const syntax = compile({
             'labelNl': 'labelNl',
             'labelLong': 'labelLong',
             'labelNlLong': 'labelNlLong',
-            'keywords': 'keywords'
+            'keywords': 'keywords',
+            'keyword': 'keyword',
+            '*': '*'
         }
     },
     '(': '(',

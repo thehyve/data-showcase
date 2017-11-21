@@ -49,6 +49,8 @@ field ->
    | "labelNl" {% buildToken %}
    | "labelNlLong" {% buildToken %}
    | "keywords" {% buildToken %}
+   | "keyword" {% buildToken %}
+   | "*" {% buildToken %}
 
 comparator ->
     "=" {% buildLowercaseToken %}
