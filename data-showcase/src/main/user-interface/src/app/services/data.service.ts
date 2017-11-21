@@ -29,13 +29,16 @@ export class DataService {
   // the flag indicating if Items are still being loaded
   public loadingItems: LoadingState = 'complete';
   // filtered list of items based on selected node and selected checkbox filters
-  public filteredItems: Item[] = [];
+  private filteredItemsSource = new Subject<Item[]>();
+  public filteredItems$ = this.filteredItemsSource.asObservable();
   // items selected in the itemTable
   private itemsSelectionSource = new Subject<Item[]>();
   public itemsSelection$ = this.itemsSelectionSource.asObservable();
   // items added to the shopping cart
   public shoppingCartItems = new BehaviorSubject<Item[]>([]);
   public totalItemsCount: number = 0;
+  // if the select-all-items checkbox is selected
+  public allItemsSelected: boolean = false;
 
   // text filter input
   private textFilterInputSource = new Subject<string>();
@@ -224,7 +227,7 @@ export class DataService {
     let t1 = new Date();
     console.debug(`Fetching items ...`);
     this.loadingItems = 'loading';
-    this.filteredItems.length = 0;
+    this.filteredItemsSource.next([]);
     this.clearErrorSearchMessage();
 
     let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
@@ -241,11 +244,11 @@ export class DataService {
           if (this.allProjects && this.allProjects.length > 0) {
             item.lineOfResearch = this.projectToResearchLine(item.project);
           }
-          this.filteredItems.push(item);
         }
+        this.filteredItemsSource.next(response.items);
         this.loadingItems = "complete";
         let t2 = new Date();
-        console.info(`Found ${this.filteredItems.length} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);
+        console.info(`Found ${response.totalCount} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);
       },
       err => {
         if (err != String(undefined)) {
@@ -263,6 +266,30 @@ export class DataService {
 
   clearErrorSearchMessage(){
     this.searchErrorMessageSource.next('');
+  }
+
+  selectAllItems(selectAll: boolean){
+    if(selectAll){
+      let firstResult = 0;
+      let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
+      let codes = Array.from(selectedConceptCodes);
+      let projects = this.getProjectsForSelectedResearchLines();
+
+      this.resourceService.getItems(firstResult, null, null, null,
+        codes, projects, this.searchQuery).subscribe(
+        (response: ItemResponse) => {
+          this.itemsSelectionSource.next(response.items);
+        },
+        err => {
+          if (err != String(undefined)) {
+            this.searchErrorMessageSource.next(err);
+          }
+          console.error(err);
+        }
+      );
+    } else {
+      this.clearItemsSelection();
+    }
   }
 
   static treeConceptCodes(treeNode: TreeNode): Set<string> {
@@ -321,6 +348,7 @@ export class DataService {
   clearAllFilters() {
     this.clearCheckboxFilterSelection();
     this.setTextFilterInput('');
+    this.clearItemsSelection();
     this.rerenderCheckboxFiltersSource.next(true);
   }
 
@@ -337,7 +365,8 @@ export class DataService {
   }
 
   clearItemsSelection() {
-    this.itemsSelectionSource.next(null);
+    this.allItemsSelected = false;
+    this.itemsSelectionSource.next([]);
   }
 
   setTextFilterInput(text: string) {
@@ -346,6 +375,7 @@ export class DataService {
 
   setSearchQuery(query: Object) {
     this.searchQuery = query;
+    this.clearItemsSelection();
     this.fetchItems();
     this.fetchFilters();
   }

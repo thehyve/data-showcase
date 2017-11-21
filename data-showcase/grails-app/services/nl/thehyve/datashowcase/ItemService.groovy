@@ -71,13 +71,13 @@ class ItemService {
 
     @Cacheable('items')
     @Transactional(readOnly = true)
-    List<ItemRepresentation> getItems(int firstResult, int maxResults, String order, String propertyName) {
+    List<ItemRepresentation> getItems(int firstResult, Integer maxResults, String order, String propertyName) {
         def property = propertyNameFromRepresentationName(propertyName)
 
         def stopWatch = new StopWatch('Fetch items')
         stopWatch.start('Retrieve from database')
         def session = sessionFactory.openStatelessSession()
-        def items = session.createQuery(
+        def query = session.createQuery(
                 """
                 select
                     i.id as id,
@@ -99,10 +99,15 @@ class ItemService {
                         'desc' : 'asc' 
                 }                
             """
-        ).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
-                .setFirstResult(firstResult)
-                .setMaxResults(maxResults)
-                .list() as List<Map>
+        )
+        query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
+        if (firstResult > 0) {
+            query.setFirstResult(firstResult)
+        }
+        if (maxResults) {
+            query.setMaxResults(maxResults)
+        }
+        def items = query.list() as List<Map>
         stopWatch.stop()
         stopWatch.start('Map to representations')
         def result = items.collect { Map itemData ->
@@ -114,7 +119,15 @@ class ItemService {
     }
 
     @Transactional(readOnly = true)
-    List<ItemRepresentation> getItems(int firstResult, int maxResults, String order, String propertyName,
+    Long getItemsCount() {
+        def session = sessionFactory.currentSession
+        session.createCriteria(Item, "i")
+            .setProjection(Projections.rowCount())
+            .uniqueResult() as Long
+    }
+
+    @Transactional(readOnly = true)
+    List<ItemRepresentation> getItems(int firstResult, Integer maxResults, String order, String propertyName,
                                       Set concepts, Set projects, SearchQueryRepresentation searchQuery) {
 
         def property = propertyNameFromRepresentationName(propertyName)
@@ -137,21 +150,26 @@ class ItemService {
                 .add(Projections.property("c.labelLong").as("labelLong"))
                 .add(Projections.property("c.variableType").as("variableType"))
                 .add(Projections.property("p.name").as("projectName")))
-        if(concepts) {
-            criteria.add( Restrictions.in('c.conceptCode', concepts))
+        if (concepts) {
+            criteria.add(Restrictions.in('c.conceptCode', concepts))
         }
-        if(projects) {
-            criteria.add( Restrictions.in('p.name', projects))
+        if (projects) {
+            criteria.add(Restrictions.in('p.name', projects))
         }
-        if(!dataShowcaseEnvironment.internalInstance) {
-            criteria.add( Restrictions.eq('i.publicItem',true))
+        if (!dataShowcaseEnvironment.internalInstance) {
+            criteria.add(Restrictions.eq('i.publicItem', true))
         }
-        if(searchQueryCriterion) {
+        if (searchQueryCriterion) {
             criteria.add(searchQueryCriterion)
         }
         criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
-                .setFirstResult(firstResult)
-                .setMaxResults(maxResults)
+        if (firstResult > 0) {
+            criteria.setFirstResult(firstResult)
+        }
+        if (maxResults) {
+            criteria.setMaxResults(maxResults)
+        }
+
         if (order == "desc") {
             criteria.addOrder(Order.desc(property))
         } else {
