@@ -13,3 +13,24 @@
 .info-bar {
     height: 200px;
 }
+
+dl.explanation {
+    display: table;
+}
+.explanation dt, .explanation dd {
+    float: left;
+    display: inline-block;
+}
+
+.explanation dt {
+    clear: left;
+    padding-right: 1em;
+}
+
+.short-title dt {
+    min-width: 5em;
+}
+
+.long-title dt {
+    min-width: 8em;
+}

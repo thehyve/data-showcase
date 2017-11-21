@@ -25,7 +25,6 @@ export class TextFilterComponent implements OnInit {
   delay: number;
 
   constructor(public dataService: DataService,
-              public searchParserService: SearchParserService,
               private element: ElementRef) {
     this.dataService.searchErrorMessage$.subscribe(
       message => {
