@@ -22,7 +22,8 @@ class UrlMappings {
         "/api/projects"(controller: 'project') {
             action = [GET: 'index', POST: 'search']
         }
-        "/api/keywords"(controller: 'keyword', includes: ['index'])
+        "/api/keywords/$conceptCode"(controller: 'keyword', action: 'show')
+        "/api/keywords"(controller: 'keyword', action: 'index')
         "/api/concepts"(controller: 'concept', includes: ['index'])
         "/api/lines_of_research"(controller: 'researchLine', includes: ['index'])
         "/api/tree_nodes"(controller: 'tree', includes: ['index'])

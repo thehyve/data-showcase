@@ -70,6 +70,9 @@ export class DataService {
   // list of all projects
   private allProjects: Project[] = [];
 
+  // keywords for a conceptCode
+  public keywordsForConcept: string[] = [];
+
   // NTR logo
   private ntrLogoUrlSummary = new Subject<string>();
   public ntrLogoUrl$ = this.ntrLogoUrlSummary.asObservable();
@@ -196,6 +199,17 @@ export class DataService {
     } else {
       return null;
     }
+  }
+
+  fetchKeywords(conceptCode: string) {
+    this.keywordsForConcept = [];
+    this.resourceService.getKeywords(conceptCode)
+      .subscribe(
+        (keywords: string[]) => {
+          this.keywordsForConcept = keywords;
+        },
+        err => console.error(err)
+      );
   }
 
   fetchFilters() {

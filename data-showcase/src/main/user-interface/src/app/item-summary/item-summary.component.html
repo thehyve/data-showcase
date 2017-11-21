@@ -4,9 +4,9 @@
   ~  (see accompanying file LICENSE).
   -->
 
-<p-dialog header="Item summary" [(visible)]="display" [modal]="true" [width]="700" [responsive]="true"
-          [closable]="true" [draggable]="false" [resizable]="false">
-    <table>
+<p-dialog header="Item summary" [(visible)]="display" [modal]="true" [width]="900" [responsive]="true"
+          [closable]="true" [draggable]="false" [resizable]="false" [style]="{ height: '800px', 'overflow-y': 'auto'}">
+    <table style="max-width: 850px">
         <tr>
             <td>Name:</td>
             <td>{{item?.name}}</td>
@@ -38,6 +38,10 @@
         <tr>
             <td>Type of variable:</td>
             <td>{{item?.type}}</td>
+        </tr>
+        <tr>
+            <td>Keywords:</td>
+            <td>{{dataService.keywordsForConcept.length > 0 ? dataService.keywordsForConcept.join(', ') : '-'}}</td>
         </tr>
     </table>
     <br/>

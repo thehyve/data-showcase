@@ -18,11 +18,14 @@ export class ItemSummaryComponent implements OnInit {
   display: boolean = false;
   item: Item = null;
 
-  constructor(private dataService: DataService) {
+  constructor(public dataService: DataService) {
     dataService.itemSummaryVisible$.subscribe(
       visibleItem => {
         this.display = true;
         this.item = visibleItem;
+        if(visibleItem.concept) {
+          dataService.fetchKeywords(visibleItem.concept);
+        }
       });
   }
 
