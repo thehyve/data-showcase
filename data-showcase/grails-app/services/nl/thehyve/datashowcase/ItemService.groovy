@@ -25,6 +25,7 @@ import org.hibernate.criterion.Criterion
 import org.hibernate.criterion.Order
 import org.hibernate.criterion.Projections
 import org.hibernate.criterion.Restrictions
+import org.hibernate.sql.JoinType
 import org.hibernate.transform.Transformers
 import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -125,7 +126,7 @@ class ItemService {
         Criteria criteria = session.createCriteria(Item, "i")
             .createAlias("i.concept", "c")
             .createAlias("i.project", "p")
-            .createAlias("c.keywords", "k")
+            .createAlias("c.keywords", "k", JoinType.LEFT_OUTER_JOIN)
             .setProjection(Projections.projectionList()
                 .add(Projections.distinct(Projections.property("i.id").as("id")))
                 .add(Projections.property("i.name").as("name"))
@@ -180,7 +181,7 @@ class ItemService {
         Criteria criteria = session.createCriteria(Item, "i")
                 .createAlias("i.concept", "c")
                 .createAlias("i.project", "p")
-                .createAlias("c.keywords", "k")
+                .createAlias("c.keywords", "k", JoinType.LEFT_OUTER_JOIN)
         if(concepts) {
             criteria.add( Restrictions.in('c.conceptCode', concepts))
         }
@@ -194,7 +195,7 @@ class ItemService {
             criteria.add(searchQueryCriterion)
         }
         criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP)
-                .setProjection(Projections.rowCount())
+                .setProjection(Projections.countDistinct('i.id'))
         Long totalItemsCount = (Long)criteria.uniqueResult()
 
         stopWatch.stop()
