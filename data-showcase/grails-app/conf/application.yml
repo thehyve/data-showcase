@@ -27,6 +27,8 @@ grails:
             mapping:
                 version: false
                 autoTimestamp: false
+    databinding:
+        convertEmptyStringsToNull: false
 
 info:
     app:
