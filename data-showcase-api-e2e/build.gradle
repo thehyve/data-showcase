@@ -23,6 +23,7 @@ dependencies {
 
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
     testCompile 'io.github.http-builder-ng:http-builder-ng-apache:0.17.0'
+    testCompile 'io.github.http-builder-ng:http-builder-ng-okhttp:0.17.0'
 }
 
 tasks.withType(Test) { systemProperties = System.getProperties() }
