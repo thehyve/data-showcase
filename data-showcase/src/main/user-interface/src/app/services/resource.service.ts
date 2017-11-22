@@ -14,8 +14,8 @@ import {Endpoint} from "../models/endpoint";
 import {AppConfig} from "../config/app.config";
 import {
   PATH_CONCEPTS,
-  PATH_ENVIRONMENT, PATH_ITEMS, PATH_KEYWORDS, PATH_LOGOS, PATH_PROJECTS,
-  PATH_TREE_NODES
+  PATH_ENVIRONMENT, PATH_ITEMS, PATH_LOGOS, PATH_PROJECTS,
+  PATH_TREE_NODES,  PATH_KEYWORDS_BY_CONCEPT
 } from "../constants/endpoints.constants";
 import {Item} from "../models/item";
 import {Project} from "../models/project";
@@ -135,7 +135,7 @@ export class ResourceService {
 
   getKeywords(conceptCode: string): Observable<string[]>  {
     let headers = new Headers();
-    let url = this.endpoint.apiUrl + PATH_KEYWORDS + "/" + conceptCode;
+    let url = this.endpoint.apiUrl + PATH_KEYWORDS_BY_CONCEPT + "/" + conceptCode;
 
     return this.http.get(url, {
       headers: headers
