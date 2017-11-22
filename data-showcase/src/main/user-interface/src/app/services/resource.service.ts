@@ -13,9 +13,9 @@ import {Http, Response, Headers, ResponseContentType, RequestOptions} from '@ang
 import {Endpoint} from "../models/endpoint";
 import {AppConfig} from "../config/app.config";
 import {
-    PATH_CONCEPTS,
-    PATH_ENVIRONMENT, PATH_ITEMS, PATH_LOGOS, PATH_PROJECTS,
-    PATH_TREE_NODES
+  PATH_CONCEPTS,
+  PATH_ENVIRONMENT, PATH_ITEMS, PATH_LOGOS, PATH_PROJECTS,
+  PATH_TREE_NODES,  PATH_KEYWORDS_BY_CONCEPT
 } from "../constants/endpoints.constants";
 import {Item} from "../models/item";
 import {Project} from "../models/project";
@@ -112,7 +112,6 @@ export class ResourceService {
       .catch(this.handleError.bind(this));
   }
 
-
   getProjects(conceptCodes?: string[], jsonSearchQuery?: Object): Observable<Project[]> {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
@@ -131,6 +130,17 @@ export class ResourceService {
     // use POST because of url length limits in some of the browsers (limit of characters)
     return this.http.post(url, body, options)
       .map((res: Response) => res.json().projects as Project[])
+      .catch(this.handleError.bind(this));
+  }
+
+  getKeywords(conceptCode: string): Observable<string[]>  {
+    let headers = new Headers();
+    let url = this.endpoint.apiUrl + PATH_KEYWORDS_BY_CONCEPT + "/" + conceptCode;
+
+    return this.http.get(url, {
+      headers: headers
+    })
+      .map((response: Response) => response.json().keywords as string[])
       .catch(this.handleError.bind(this));
   }
 

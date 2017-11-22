@@ -19,4 +19,8 @@ class KeywordController {
         respond keywords: keywordService.keywords
     }
 
+    def show(String conceptCode) {
+        respond keywords: keywordService.getKeywordsForConcept(conceptCode)
+    }
+
 }
