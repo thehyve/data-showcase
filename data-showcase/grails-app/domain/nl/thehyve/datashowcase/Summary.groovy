@@ -18,7 +18,7 @@ class Summary {
     Long observationCount
 
     /**
-     * The number of patients for whom there are observations associated with the variable.
+     * The number of patients (subjects) for whom there are observations associated with the variable.
      */
     Long patientCount
 
