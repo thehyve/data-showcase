@@ -46,7 +46,7 @@ class DataImportSpec extends RESTSpec {
         get([path: '/api/test/clearDatabase'])
 
         when:
-        def requestToken = null
+        def requestToken = ""
         def file = new File(getClass().getResource("/test.json").toURI())
         def request = [
                 path       : '/api/data_import/upload',
@@ -61,6 +61,22 @@ class DataImportSpec extends RESTSpec {
 
         then:
         assert response.error == 'requestToken is required to upload the data'
+
+        when:
+        requestToken = "invalid"
+        request = [
+                path       : '/api/data_import/upload',
+                contentType: 'multipart/form-data',
+                body       : multipart {
+                    field 'requestToken', requestToken
+                    part 'file', 'test.json', 'text/plain', file
+                },
+                statusCode : 401
+        ]
+        response = post(request)
+
+        then:
+        assert response.error == "requestToken: $requestToken is invalid"
     }
 
     def "upload invalid data"() {
@@ -88,7 +104,7 @@ class DataImportSpec extends RESTSpec {
 
         then:
         assert response.status == 400
-        assert response.error == "Bad request"
+        assert response.error == "Bad Request"
     }
 
     def "upload empty file"() {
@@ -114,7 +130,7 @@ class DataImportSpec extends RESTSpec {
 
         then:
         assert response.status == 400
-        assert response.error == "Bad request"
+        assert response.error == "Bad Request"
     }
 
 }
