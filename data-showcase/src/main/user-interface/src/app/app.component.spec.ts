@@ -9,7 +9,7 @@ import { TestBed, async } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import {TreeNodesComponent} from "./tree-nodes/tree-nodes.component";
 import {
-  AutoCompleteModule, DataTableModule, DialogModule, FieldsetModule, PaginatorModule, PanelModule,
+  AutoCompleteModule, CheckboxModule, DataTableModule, DialogModule, FieldsetModule, PaginatorModule, PanelModule,
   TreeModule
 } from "primeng/primeng";
 import {FormsModule} from "@angular/forms";
@@ -58,7 +58,8 @@ describe('AppComponent', () => {
         DialogModule,
         HttpModule,
         InfoModule,
-        PaginatorModule
+        PaginatorModule,
+        CheckboxModule
       ],
       providers: [
         DataService,
