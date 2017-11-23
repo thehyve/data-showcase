@@ -59,8 +59,10 @@ describe('Search text parser', () => {
 
         let result = parser.flatten(tree);
         let expected = {type: 'and', values: [
-            {type: 'string', value :'moo'},
-            {type: 'string', value: 'cow'},
+            {type: 'or', values: [
+              {type: 'string', value: 'moo'},
+              {type: 'string', value: 'cow'}
+            ]},
             {type: 'or', values: [
                 {type: 'string', value: 'bla'},
                 {type: 'string', value: 'this'}
@@ -131,10 +133,11 @@ describe('Search text parser', () => {
 
         let result = parser.flatten(tree);
         let expected = {type: 'and', values: [
-            {type: 'string', value: 'cow'},
-            {type: 'string', value: 'goose'},
-            {type: 'string', value: 'sheep'}
-        ]} as SearchQuery;
+            {type: 'or', values :[
+                {type: 'string', value: 'cow'},
+                {type: 'string', value: 'goose'},
+                {type: 'string', value: 'sheep'}
+        ]}]} as SearchQuery;
 
         expect(JSON.stringify(result)).toEqual(JSON.stringify(expected));
     });
@@ -147,7 +150,7 @@ describe('Search text parser', () => {
         expect(tree).not.toBeNull();
 
         let result = parser.flatten(tree);
-        let expected = {type: 'and', values: [
+        let expected = {type: 'or', values: [
             {type: 'string', value: 'cow'},
             {type: '!=', value: 'label', values: [
                 {type: 'string', value: 'goose'}

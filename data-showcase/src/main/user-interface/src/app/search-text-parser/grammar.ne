@@ -8,7 +8,7 @@
 
 import { syntax } from './syntax';
 
-const defaultOperator = 'and';
+const defaultOperator = 'or';
 
 function stripQuotes(word) {
     return word.value.replace(/^"|"$/g, '');
