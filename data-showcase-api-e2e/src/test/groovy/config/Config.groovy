@@ -39,4 +39,6 @@ class Config {
     //settings
     public static final boolean AUTH_NEEDED = false
     public static final String DEFAULT_USER = 'default'
+    public static final String TOKEN = 'TestToken123!'
+
 }
