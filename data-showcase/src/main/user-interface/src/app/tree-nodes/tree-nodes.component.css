@@ -4,3 +4,8 @@
  *  (see accompanying file LICENSE).
  */
 
+.tree-header {
+    color: #00889C;
+    font-weight: bold;
+    padding-top: 15px;
+}

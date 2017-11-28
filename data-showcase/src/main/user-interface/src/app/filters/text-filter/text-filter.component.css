@@ -6,11 +6,19 @@
 
 .text-filter-container {
     text-align: center;
-    height: 50px;
-    line-height: 50px;
+    height: 65px;
+    line-height: 40px;
     white-space: nowrap;
+    display: block;
+    padding-bottom: 5px;
+    border-bottom: 1px solid lightgray;
 }
 .text-filter-container:focus {outline:none;}
+
+.search-label{
+    line-height: 20px;
+    color: #00889C;
+}
 
 .search-error-message {
     color: red;
