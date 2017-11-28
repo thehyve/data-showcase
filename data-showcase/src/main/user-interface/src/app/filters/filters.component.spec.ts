@@ -12,6 +12,8 @@ import {ResourceService} from "../services/resource.service";
 import {AppConfig} from "../config/app.config";
 import {AppConfigMock} from "../config/app.config.mock";
 import {SearchParserService} from "../services/search-parser.service";
+import {DSMessageService} from "../services/ds-message.service";
+import {MessageService} from "primeng/components/common/messageservice";
 
 describe('FiltersComponent', () => {
   let component: FiltersComponent;
@@ -33,6 +35,8 @@ describe('FiltersComponent', () => {
       providers: [
         DataService,
         ResourceService,
+        DSMessageService,
+        MessageService,
         {
           provide: AppConfig,
           useClass: AppConfigMock

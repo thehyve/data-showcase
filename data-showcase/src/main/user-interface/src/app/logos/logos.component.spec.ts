@@ -12,6 +12,8 @@ import {ResourceService} from "../services/resource.service";
 import {AppConfig} from "../config/app.config";
 import {AppConfigMock} from "../config/app.config.mock";
 import {HttpModule} from "@angular/http";
+import {DSMessageService} from "../services/ds-message.service";
+import {MessageService} from "primeng/components/common/messageservice";
 
 describe('LogosComponent', () => {
   let component: LogosComponent;
@@ -24,6 +26,8 @@ describe('LogosComponent', () => {
       providers: [
         DataService,
         ResourceService,
+        DSMessageService,
+        MessageService,
         {
           provide: AppConfig,
           useClass: AppConfigMock

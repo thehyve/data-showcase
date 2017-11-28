@@ -9,11 +9,11 @@ import { TestBed, async } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import {TreeNodesComponent} from "./tree-nodes/tree-nodes.component";
 import {
-  AutoCompleteModule, CheckboxModule, DataTableModule, DialogModule, FieldsetModule, PaginatorModule, PanelModule,
+  AutoCompleteModule, CheckboxModule, DataTableModule, DialogModule, FieldsetModule, GrowlModule, PaginatorModule,
+  PanelModule,
   TreeModule
 } from "primeng/primeng";
 import {FormsModule} from "@angular/forms";
-import {CheckboxFilterComponent} from "./filters/checkbox-filter/checkbox-filter.component";
 import {ListboxModule} from "primeng/components/listbox/listbox";
 import {ItemFilter, ItemTableComponent} from "./item-table/item-table.component";
 import {DataService} from "./services/data.service";
@@ -30,6 +30,8 @@ import {PageRibbonComponent} from "./page-ribbon/page-ribbon.component";
 import {FiltersModule} from "./filters/filters.module";
 import {InfoModule} from "./info/info.module";
 import {SearchParserService} from "./services/search-parser.service";
+import {DSMessageService} from "./services/ds-message.service";
+import {MessageService} from "primeng/components/common/messageservice";
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -59,7 +61,8 @@ describe('AppComponent', () => {
         HttpModule,
         InfoModule,
         PaginatorModule,
-        CheckboxModule
+        CheckboxModule,
+        GrowlModule
       ],
       providers: [
         DataService,
@@ -68,7 +71,9 @@ describe('AppComponent', () => {
           useClass: AppConfigMock
         },
         ResourceService,
-        SearchParserService
+        SearchParserService,
+        DSMessageService,
+        MessageService
       ]
     }).compileComponents();
   }));

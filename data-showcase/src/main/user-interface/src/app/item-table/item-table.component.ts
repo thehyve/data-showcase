@@ -144,7 +144,7 @@ export class ItemTableComponent implements OnInit {
   updateCurrentPageItemsSelection(items: Item[]){
     if(this.dataService.allItemsSelected) {
       this.itemsSelectionPerPage = items;
-    } else {
+    } else if (this.itemsSelection) {
       this.itemsSelectionPerPage = items.filter(i => this.itemsSelection.some(is => is.id == i.id));
     }
   }

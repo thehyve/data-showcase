@@ -1,28 +1,22 @@
-/*
- * Copyright (c) 2017  The Hyve B.V.
- *  This file is distributed under the GNU Affero General Public License
- *  (see accompanying file LICENSE).
- */
+import {TestBed, inject} from '@angular/core/testing';
 
-import { TestBed, inject } from '@angular/core/testing';
-
-import { DataService } from './data.service';
-import {ResourceService} from "./resource.service";
+import {DSMessageService} from './ds-message.service';
 import {HttpModule} from "@angular/http";
+import {DataService} from "./data.service";
+import {ResourceService} from "./resource.service";
 import {AppConfig} from "../config/app.config";
 import {AppConfigMock} from "../config/app.config.mock";
-import {DSMessageService} from "./ds-message.service";
 import {MessageService} from "primeng/components/common/messageservice";
 
-describe('DataService', () => {
+describe('DSMessageService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpModule],
       providers: [
         DataService,
-        ResourceService,
         DSMessageService,
         MessageService,
+        ResourceService,
         {
           provide: AppConfig,
           useClass: AppConfigMock
@@ -31,7 +25,7 @@ describe('DataService', () => {
     });
   });
 
-  it('should be created', inject([DataService], (service: DataService) => {
+  it('should be created', inject([DSMessageService], (service: DSMessageService) => {
     expect(service).toBeTruthy();
   }));
 });

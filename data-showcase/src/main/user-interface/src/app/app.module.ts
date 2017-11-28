@@ -23,6 +23,8 @@ import {PageRibbonComponent} from './page-ribbon/page-ribbon.component';
 import {FiltersModule} from "./filters/filters.module";
 import {InfoModule} from "./info/info.module";
 import {SearchParserService} from "./services/search-parser.service";
+import {GrowlModule} from "primeng/primeng";
+import {DSMessageService} from "./services/ds-message.service";
 
 export function initConfig(config: AppConfig) {
   return () => config.load()
@@ -44,12 +46,14 @@ export function initConfig(config: AppConfig) {
     ItemTableModule,
     ShoppingCartModule,
     ItemSummaryModule,
-    InfoModule
+    InfoModule,
+    GrowlModule
   ],
   providers: [
     ResourceService,
     DataService,
     SearchParserService,
+    DSMessageService,
     AppConfig,
     {
       provide: APP_INITIALIZER,

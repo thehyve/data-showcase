@@ -12,6 +12,8 @@ import {AppConfig} from "../config/app.config";
 import {AppConfigMock} from "../config/app.config.mock";
 import {DataService} from "../services/data.service";
 import {HttpModule} from "@angular/http";
+import {MessageService} from "primeng/components/common/messageservice";
+import {DSMessageService} from "../services/ds-message.service";
 
 describe('PageRibbonComponent', () => {
   let component: PageRibbonComponent;
@@ -24,6 +26,8 @@ describe('PageRibbonComponent', () => {
       providers: [
         ResourceService,
         DataService,
+        DSMessageService,
+        MessageService,
         {
           provide: AppConfig,
           useClass: AppConfigMock
