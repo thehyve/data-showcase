@@ -25,6 +25,7 @@ import {InfoModule} from "./info/info.module";
 import {SearchParserService} from "./services/search-parser.service";
 import {GrowlModule} from "primeng/primeng";
 import {DSMessageService} from "./services/ds-message.service";
+import {MessageService} from "primeng/components/common/messageservice";
 
 export function initConfig(config: AppConfig) {
   return () => config.load()
@@ -54,6 +55,7 @@ export function initConfig(config: AppConfig) {
     DataService,
     SearchParserService,
     DSMessageService,
+    MessageService,
     AppConfig,
     {
       provide: APP_INITIALIZER,
