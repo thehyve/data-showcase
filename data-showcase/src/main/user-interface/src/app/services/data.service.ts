@@ -266,6 +266,11 @@ export class DataService {
       this.resourceService.getItems(firstResult, null, null, null,
         codes, projects, this.searchQuery).subscribe(
         (response: ItemResponse) => {
+          for (let item of response.items) {
+            if (this.allProjects && this.allProjects.length > 0) {
+              item.lineOfResearch = this.projectToResearchLine(item.project);
+            }
+          }
           this.itemsSelectionSource.next(response.items);
         },
         err => {
