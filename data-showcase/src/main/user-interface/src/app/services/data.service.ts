@@ -97,8 +97,9 @@ export class DataService {
 
   constructor(private resourceService: ResourceService,
               private dsMessageService: DSMessageService) {
-    this.fetchAllProjectsAndItems();
-    this.fetchAllTreeNodes();
+    this.fetchFilters();
+    this.fetchItems();
+    this.fetchAllTreeNodes()
     this.setEnvironment();
   }
 
@@ -179,22 +180,6 @@ export class DataService {
   }
 
   // ------------------------- filters and item table -------------------------
-
-  fetchAllProjectsAndItems() {
-    this.resourceService.getAllProjects()
-      .subscribe(
-        (projects: Project[]) => {
-          this.allProjects = projects;
-          this.fetchItems();
-          for (let project of projects) {
-            this.projects.push({label: project.name, value: project.name});
-            DataService.collectUnique(project.lineOfResearch, this.linesOfResearch);
-          }
-          this.sortLinesOfResearch();
-        },
-        err => console.error(err)
-      );
-  }
 
   projectToResearchLine(projectName: string): string {
     if (this.allProjects) {
@@ -281,6 +266,11 @@ export class DataService {
       this.resourceService.getItems(firstResult, null, null, null,
         codes, projects, this.searchQuery).subscribe(
         (response: ItemResponse) => {
+          for (let item of response.items) {
+            if (this.allProjects && this.allProjects.length > 0) {
+              item.lineOfResearch = this.projectToResearchLine(item.project);
+            }
+          }
           this.itemsSelectionSource.next(response.items);
         },
         err => {

@@ -14,7 +14,9 @@
                      [immutable]=false
                      [value]="items"
                      [style]="table-content"
-                     [rows]="10" [paginator]="true">
+                     [rows]="rowsPerPage" [paginator]="true"
+                     (onSort)="changeSort($event)"
+                     [(first)]="firstOnPage">
 
             <p-column [style]="{ width: '50px'}" header="Del">
                 <ng-template let-item="rowData" pTemplate="body">
