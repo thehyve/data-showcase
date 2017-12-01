@@ -1,28 +1,18 @@
-import {Component, Injectable} from '@angular/core';
-import {Message} from 'primeng/components/common/api';
-import {MessageService} from 'primeng/components/common/messageservice';
+import {Injectable} from '@angular/core';
+import { Message } from 'primeng/primeng';
+import { Subject } from 'rxjs/Subject';
 
-@Component({
-  template: '<p-growl [(value)]="msgs"></p-growl>'
-})
+export type MessageType = 'success' | 'info' | 'warn' | 'error';
+
 @Injectable()
 export class DSMessageService {
 
-  constructor(private messageService: MessageService) {}
+  messages = new Subject<Message>();
 
-  addInfoMessage(type: string, infoMsg: string, detail: string) {
-    this.messageService.add({severity: type, summary:infoMsg, detail:detail});
-  }
-  addSingle() {
-    this.messageService.add({severity:'success', summary:'Service Message', detail:'Via MessageService'});
-  }
+  constructor() {}
 
-  addMultiple() {
-    this.messageService.addAll([{severity:'success', summary:'Service Message', detail:'Via MessageService'},
-      {severity:'info', summary:'Info Message', detail:'Via MessageService'}]);
+  addInfoMessage(type: MessageType, infoMsg: string, detail: string) {
+    this.messages.next({severity: type, summary: infoMsg, detail:detail});
   }
 
-  clear() {
-    this.messageService.clear();
-  }
 }
