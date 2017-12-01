@@ -18,6 +18,8 @@ import {ResourceService} from "../services/resource.service";
 import {HttpModule} from "@angular/http";
 import {AppConfig} from "../config/app.config";
 import {AppConfigMock} from "../config/app.config.mock";
+import {DSMessageService} from "../services/ds-message.service";
+import {MessageService} from "primeng/components/common/messageservice";
 
 describe('ItemTableComponent', () => {
   let component: ItemTableComponent;
@@ -42,6 +44,8 @@ describe('ItemTableComponent', () => {
       providers: [
         DataService,
         ResourceService,
+        DSMessageService,
+        MessageService,
         {
           provide: AppConfig,
           useClass: AppConfigMock

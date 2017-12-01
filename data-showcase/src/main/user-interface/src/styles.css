@@ -45,8 +45,7 @@ body .ds-tree-container {
  */
 .ds-tree-filter-input {
     border-bottom: 1px solid darkgray;
-    padding-top: 10px;
-    height: 50px;
+    height: 40px;
     font-size: small !important;
 }
 .ds-tree-filter-input > input{

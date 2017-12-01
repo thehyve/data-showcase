@@ -15,6 +15,8 @@ import {ResourceService} from "../services/resource.service";
 import {AppConfig} from "../config/app.config";
 import {AppConfigMock} from "../config/app.config.mock";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {DSMessageService} from "../services/ds-message.service";
+import {MessageService} from "primeng/components/common/messageservice";
 
 describe('ItemSummaryComponent', () => {
   let component: ItemSummaryComponent;
@@ -33,6 +35,8 @@ describe('ItemSummaryComponent', () => {
       providers: [
         DataService,
         ResourceService,
+        DSMessageService,
+        MessageService,
         {
           provide: AppConfig,
           useClass: AppConfigMock

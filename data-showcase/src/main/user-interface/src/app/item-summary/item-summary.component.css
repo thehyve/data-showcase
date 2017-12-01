@@ -28,3 +28,7 @@ th {
     font-weight: bold;
     background-color: #e7f3f1;
 }
+
+.export-button {
+    width: auto;
+}

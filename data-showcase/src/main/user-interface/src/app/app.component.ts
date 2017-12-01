@@ -5,11 +5,15 @@
  */
 
 import {Component, OnInit, ViewChild} from '@angular/core';
+import { Message } from 'primeng/primeng';
+import { MessageService } from 'primeng/components/common/messageservice';
+import { DSMessageService } from './services/ds-message.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [MessageService]
 })
 export class AppComponent implements OnInit {
 
@@ -22,7 +26,9 @@ export class AppComponent implements OnInit {
   private x_pos: number; // Stores x coordinate of the mouse pointer
   private x_gap: number; // Stores x gap (edge) between mouse and gutter
 
-  constructor() {
+  msgs: Message[] = [];
+
+  constructor(private messageService: MessageService, private dsMessageService: DSMessageService) {
   }
 
   ngOnInit() {
@@ -64,5 +70,9 @@ export class AppComponent implements OnInit {
     gutterElm.addEventListener('mousedown', onMouseDown.bind(this));
     parentContainerElm.addEventListener('mousemove', onMouseMove.bind(this));
     parentContainerElm.addEventListener('mouseup', onMouseUp.bind(this));
+
+    this.dsMessageService.messages.subscribe(message => {
+        this.messageService.add(message);
+    });
   }
 }

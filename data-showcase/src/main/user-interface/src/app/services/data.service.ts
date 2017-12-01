@@ -5,7 +5,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import { SelectItem, TreeNode as TreeNodeLib } from 'primeng/primeng';
+import {SelectItem, TreeNode as TreeNodeLib} from 'primeng/primeng';
 import {ResourceService} from './resource.service';
 import {TreeNode} from "../models/tree-node";
 import {Item} from "../models/item";
@@ -14,6 +14,7 @@ import {Subject} from "rxjs/Subject";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import {Environment} from "../models/environment";
 import {ItemResponse} from "../models/itemResponse";
+import {DSMessageService} from "./ds-message.service";
 
 type LoadingState = 'loading' | 'complete';
 type Order = 'asc' | 'desc';
@@ -34,11 +35,12 @@ export class DataService {
   // items selected in the itemTable
   private itemsSelectionSource = new Subject<Item[]>();
   public itemsSelection$ = this.itemsSelectionSource.asObservable();
-  // items added to the shopping cart
-  public shoppingCartItems = new BehaviorSubject<Item[]>([]);
+  //a number of items in the table
   public totalItemsCount: number = 0;
   // if the select-all-items checkbox is selected
   public allItemsSelected: boolean = false;
+  // items added to the shopping cart
+  public shoppingCartItems = new BehaviorSubject<Item[]>([]);
 
   // text filter input
   private textFilterInputSource = new Subject<string>();
@@ -93,7 +95,8 @@ export class DataService {
   private environmentSource = new Subject<Environment>();
   public environment$ = this.environmentSource.asObservable();
 
-  constructor(private resourceService: ResourceService) {
+  constructor(private resourceService: ResourceService,
+              private dsMessageService: DSMessageService) {
     this.fetchAllProjectsAndItems();
     this.fetchAllTreeNodes();
     this.setEnvironment();
@@ -348,7 +351,7 @@ export class DataService {
 
   clearAllFilters() {
     this.clearCheckboxFilterSelection();
-    this.resetTableToTheFirstPage()
+    this.resetTableToTheFirstPage();
     this.setTextFilterInput('');
     this.clearItemsSelection();
     this.rerenderCheckboxFiltersSource.next(true);
@@ -444,13 +447,23 @@ export class DataService {
 
   // ------------------------- shopping cart -------------------------
 
+
   addToShoppingCart(newItemSelection: Item[]) {
+    let count: number = 0;
     let newItems: Item[] = this.shoppingCartItems.getValue();
     let itemNames = newItems.map((item) => item.name);
     for (let item of newItemSelection) {
       if (!itemNames.includes(item.name)) {
         newItems.push(item);
+        count++;
       }
+    }
+    if(count > 0) {
+      this.dsMessageService.addInfoMessage("success", "Shopping cart updated!", count + " item(s) added to the cart.")
+    } else if(newItemSelection.length > 0) {
+      this.dsMessageService.addInfoMessage("info", "No item added", "Item(s) already in the shopping cart.")
+    } else {
+       this.dsMessageService.addInfoMessage("info", "No item selected", "Select item(s) you want to add to the cart.")
     }
     this.shoppingCartItems.next(newItems);
   }
@@ -458,6 +471,7 @@ export class DataService {
   setShoppingCartItems(items: Item[]) {
     this.shoppingCartItems.next(items);
   }
+
 
   // ------------------------- item summary -------------------------
 

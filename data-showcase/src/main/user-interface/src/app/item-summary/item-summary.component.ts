@@ -46,4 +46,12 @@ export class ItemSummaryComponent implements OnInit {
         err => console.error(err)
       );
   }
+
+  addToCart(){
+      this.dataService.addToShoppingCart([this.item]);
+  }
+
+  close() {
+    this.display = false;
+  }
 }

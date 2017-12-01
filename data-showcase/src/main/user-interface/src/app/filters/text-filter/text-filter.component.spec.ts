@@ -15,6 +15,8 @@ import {HttpModule} from "@angular/http";
 import {AppConfig} from "../../config/app.config";
 import {AppConfigMock} from "../../config/app.config.mock";
 import {SearchParserService} from "../../services/search-parser.service";
+import {DSMessageService} from "../../services/ds-message.service";
+import {MessageService} from "primeng/components/common/messageservice";
 
 describe('TextFilterComponent', () => {
   let component: TextFilterComponent;
@@ -31,6 +33,8 @@ describe('TextFilterComponent', () => {
       providers: [
         DataService,
         ResourceService,
+        DSMessageService,
+        MessageService,
         {
           provide: AppConfig,
           useClass: AppConfigMock
