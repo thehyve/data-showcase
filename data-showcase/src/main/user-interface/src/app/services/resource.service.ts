@@ -46,6 +46,10 @@ export class ResourceService {
       } else {
         errMsg = `Error: ${error.statusText}`;
       }
+      if (error.status in [0, 404]) {
+          console.error('Server not available.');
+          return Observable.never();
+      }
     } else {
       errMsg = error.message ? error.message : error.toString();
     }
