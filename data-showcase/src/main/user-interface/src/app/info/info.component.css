@@ -7,6 +7,10 @@
 
 .info-header {
     font-weight:normal;
+    margin-top: .7em;
+}
+
+.info-title {
     color: #00889C;
 }
 
