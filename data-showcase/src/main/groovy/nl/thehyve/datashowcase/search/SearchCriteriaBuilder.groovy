@@ -56,9 +56,9 @@ class SearchCriteriaBuilder {
             case Operator.CONTAINS:
                 return Restrictions.ilike(propertyName, value as String, MatchMode.ANYWHERE)
             case Operator.EQUALS:
-                return Restrictions.ilike(propertyName, value as String, MatchMode.EXACT)
+                return Restrictions.eq(propertyName, value as String).ignoreCase()
             case Operator.NOT_EQUALS:
-                return Restrictions.not(Restrictions.ilike(propertyName, value as String, MatchMode.EXACT))
+                return Restrictions.not(Restrictions.eq(propertyName, value as String).ignoreCase())
             case Operator.LIKE:
                 return Restrictions.ilike(propertyName, value as String)
             default:
