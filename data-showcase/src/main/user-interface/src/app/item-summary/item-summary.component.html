@@ -57,42 +57,44 @@
         </tr>
     </table>
     <br/>
-    <div *ngIf="item?.type == 'Numerical';then numerical_content;else cathegorical_content"></div>
-    <ng-template #numerical_content>
-        <table>
-            <tr>
-                <td>Average:</td>
-                <td>{{item?.summary.avgValue}}</td>
-            </tr>
-            <tr>
-                <td>Min:</td>
-                <td>{{item?.summary.minValue}}</td>
-            </tr>
-            <tr>
-                <td>Max:</td>
-                <td>{{item?.summary.maxValue}}</td>
-            </tr>
-            <tr>
-                <td>Standard deviation:</td>
-                <td>{{item?.summary.stdDevValue}}</td>
-            </tr>
-        </table>
-    </ng-template>
-    <ng-template #cathegorical_content>
-        <table>
-            <tr>
-                <th>Value:</th>
-                <th>Frequency:</th>
-                <th>Label:</th>
-            </tr>
-            <tr *ngFor="let value of item?.summary.values">
-                <td>{{value.value}}</td>
-                <td>{{value.frequency}}</td>
-                <td>{{value.label}}</td>
-            </tr>
-        </table>
-    </ng-template>
-    <br/>
+    <div *ngIf="isInternal()">
+        <div *ngIf="item?.type == 'Numerical';then numerical_content;else cathegorical_content"></div>
+        <ng-template #numerical_content>
+            <table>
+                <tr>
+                    <td>Average:</td>
+                    <td>{{item?.summary.avgValue}}</td>
+                </tr>
+                <tr>
+                    <td>Min:</td>
+                    <td>{{item?.summary.minValue}}</td>
+                </tr>
+                <tr>
+                    <td>Max:</td>
+                    <td>{{item?.summary.maxValue}}</td>
+                </tr>
+                <tr>
+                    <td>Standard deviation:</td>
+                    <td>{{item?.summary.stdDevValue}}</td>
+                </tr>
+            </table>
+        </ng-template>
+        <ng-template #cathegorical_content>
+            <table>
+                <tr>
+                    <th>Value:</th>
+                    <th>Frequency:</th>
+                    <th>Label:</th>
+                </tr>
+                <tr *ngFor="let value of item?.summary.values">
+                    <td>{{value.value}}</td>
+                    <td>{{value.frequency}}</td>
+                    <td>{{value.label}}</td>
+                </tr>
+            </table>
+        </ng-template>
+        <br/>
+    </div>
     <p-footer>
         <button pButton type="button" label="Add to cart" icon="fa-cart-plus" iconPos="left" (click)="addToCart()">
         </button>
