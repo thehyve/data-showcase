@@ -8,7 +8,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ShoppingCartComponent } from './shopping-cart.component';
 import {FormsModule} from "@angular/forms";
-import {DataTableModule, DialogModule, PanelModule} from "primeng/primeng";
+import {DataTableModule, DialogModule, GrowlModule, PanelModule} from "primeng/primeng";
 import {DataService} from "../services/data.service";
 import {ResourceService} from "../services/resource.service";
 import {AppConfig} from "../config/app.config";
@@ -17,6 +17,8 @@ import {initConfig} from "../app.module";
 import {HttpModule} from "@angular/http";
 import {AppConfigMock} from "../config/app.config.mock";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {DSMessageService} from "../services/ds-message.service";
+import {MessageService} from "primeng/components/common/messageservice";
 
 describe('ShoppingCartComponent', () => {
   let component: ShoppingCartComponent;
@@ -36,6 +38,8 @@ describe('ShoppingCartComponent', () => {
       providers: [
         DataService,
         ResourceService,
+        DSMessageService,
+        MessageService,
         {
           provide: AppConfig,
           useClass: AppConfigMock

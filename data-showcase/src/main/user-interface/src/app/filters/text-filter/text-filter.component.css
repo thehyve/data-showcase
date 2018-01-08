@@ -1,0 +1,32 @@
+/*
+ * Copyright (c) 2017  The Hyve B.V.
+ *  This file is distributed under the GNU Affero General Public License
+ *  (see accompanying file LICENSE).
+ */
+
+.text-filter-container {
+    text-align: center;
+    height: 65px;
+    line-height: 40px;
+    white-space: nowrap;
+    display: block;
+    padding-bottom: 5px;
+    border-bottom: 1px solid lightgray;
+}
+.text-filter-container:focus {outline:none;}
+
+.search-label{
+    line-height: 20px;
+    color: #00889C;
+}
+
+.search-error-message {
+    color: red;
+    text-align: center;
+}
+
+.active-search-filter {
+    opacity: .8;
+    background-color: #eee;
+    padding: 1px 5px;
+}

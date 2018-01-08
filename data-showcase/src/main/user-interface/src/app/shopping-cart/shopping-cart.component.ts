@@ -4,10 +4,11 @@
  *  (see accompanying file LICENSE).
  */
 
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {DataService} from "../services/data.service";
 import {Item} from "../models/item";
 import {saveAs} from "file-saver";
+import {DataTable} from "primeng/primeng";
 
 @Component({
   selector: 'app-shopping-cart',
@@ -16,11 +17,14 @@ import {saveAs} from "file-saver";
 })
 export class ShoppingCartComponent implements OnInit {
 
+  @ViewChild('itemTable') dataTable: DataTable;
   display: boolean = false;
   items: Item[] = [];
   pathSelection: string[] = [];
   fileName: string;
   disabled: boolean = true;
+  firstOnPage: number = 0;
+  rowsPerPage: number = 10;
 
   constructor(private dataService: DataService) {
     dataService.shoppingCartItems.subscribe(
@@ -38,6 +42,10 @@ export class ShoppingCartComponent implements OnInit {
 
   showDialog() {
     this.display = true;
+  }
+
+  changeSort(event) {
+    this.dataTable['first'] = this.firstOnPage ;
   }
 
   deleteItem(itemToDelete: Item) {

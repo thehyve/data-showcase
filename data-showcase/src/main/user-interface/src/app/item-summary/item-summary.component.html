@@ -4,9 +4,9 @@
   ~  (see accompanying file LICENSE).
   -->
 
-<p-dialog header="Item summary" [(visible)]="display" [modal]="true" [width]="700" [responsive]="true"
-          [closable]="true" [draggable]="false" [resizable]="false">
-    <table>
+<p-dialog header="Item summary" [(visible)]="display" [modal]="true" [width]="900" [responsive]="true"
+          [closable]="true" [draggable]="false" [resizable]="false" [style]="{ height: '800px', 'overflow-y': 'auto'}">
+    <table style="max-width: 850px">
         <tr>
             <td>Name:</td>
             <td>{{item?.name}}</td>
@@ -39,12 +39,16 @@
             <td>Type of variable:</td>
             <td>{{item?.type}}</td>
         </tr>
+        <tr>
+            <td>Keywords:</td>
+            <td>{{keywordsForConcept.length > 0 ? keywordsForConcept.join(', ') : '-'}}</td>
+        </tr>
     </table>
     <br/>
     <b>Summary statistics:</b>
     <table>
         <tr>
-            <td>Patient counts:</td>
+            <td>Subject counts:</td>
             <td>{{item?.summary.patientCount}}</td>
         </tr>
         <tr>
@@ -53,41 +57,48 @@
         </tr>
     </table>
     <br/>
-    <div *ngIf="item?.type == 'Numerical';then numerical_content;else cathegorical_content"></div>
-    <ng-template #numerical_content>
-        <table>
-            <tr>
-                <td>Average:</td>
-                <td>{{item?.summary.avgValue}}</td>
-            </tr>
-            <tr>
-                <td>Min:</td>
-                <td>{{item?.summary.minValue}}</td>
-            </tr>
-            <tr>
-                <td>Max:</td>
-                <td>{{item?.summary.maxValue}}</td>
-            </tr>
-            <tr>
-                <td>Standard deviation:</td>
-                <td>{{item?.summary.stdDevValue}}</td>
-            </tr>
-        </table>
-    </ng-template>
-    <ng-template #cathegorical_content>
-        <table>
-            <tr>
-                <th>Value:</th>
-                <th>Frequency:</th>
-                <th>Label:</th>
-            </tr>
-            <tr *ngFor="let value of item?.summary.values">
-                <td>{{value.value}}</td>
-                <td>{{value.frequency}}</td>
-                <td>{{value.label}}</td>
-            </tr>
-        </table>
-    </ng-template>
-
-    <br/>
+    <div *ngIf="isInternal()">
+        <div *ngIf="item?.type == 'Numerical';then numerical_content;else cathegorical_content"></div>
+        <ng-template #numerical_content>
+            <table>
+                <tr>
+                    <td>Average:</td>
+                    <td>{{item?.summary.avgValue}}</td>
+                </tr>
+                <tr>
+                    <td>Min:</td>
+                    <td>{{item?.summary.minValue}}</td>
+                </tr>
+                <tr>
+                    <td>Max:</td>
+                    <td>{{item?.summary.maxValue}}</td>
+                </tr>
+                <tr>
+                    <td>Standard deviation:</td>
+                    <td>{{item?.summary.stdDevValue}}</td>
+                </tr>
+            </table>
+        </ng-template>
+        <ng-template #cathegorical_content>
+            <table>
+                <tr>
+                    <th>Value:</th>
+                    <th>Frequency:</th>
+                    <th>Label:</th>
+                </tr>
+                <tr *ngFor="let value of item?.summary.values">
+                    <td>{{value.value}}</td>
+                    <td>{{value.frequency}}</td>
+                    <td>{{value.label}}</td>
+                </tr>
+            </table>
+        </ng-template>
+        <br/>
+    </div>
+    <p-footer>
+        <button pButton type="button" label="Add to cart" icon="fa-cart-plus" iconPos="left" (click)="addToCart()">
+        </button>
+        <button pButton type="button" label="Close" icon="fa-times" iconPos="left" (click)="close()">
+        </button>
+    </p-footer>
 </p-dialog>

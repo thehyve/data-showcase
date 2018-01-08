@@ -11,6 +11,8 @@ import {ResourceService} from "./resource.service";
 import {HttpModule} from "@angular/http";
 import {AppConfig} from "../config/app.config";
 import {AppConfigMock} from "../config/app.config.mock";
+import {DSMessageService} from "./ds-message.service";
+import {MessageService} from "primeng/components/common/messageservice";
 
 describe('DataService', () => {
   beforeEach(() => {
@@ -19,6 +21,8 @@ describe('DataService', () => {
       providers: [
         DataService,
         ResourceService,
+        DSMessageService,
+        MessageService,
         {
           provide: AppConfig,
           useClass: AppConfigMock

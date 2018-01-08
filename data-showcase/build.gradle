@@ -13,7 +13,7 @@ buildscript {
 }
 
 ext {
-    dataShowcaseVersion = '0.0.1-SNAPSHOT'
+    dataShowcaseVersion = '1.0.0'
     nodeVersion = '7.10.1'
     modelMapperVersion = '1.1.0'
 }
@@ -84,13 +84,18 @@ node {
     nodeModulesDir = file('src/main/user-interface')
 }
 
-task buildUserInterfaceOnce(type: NpmTask, dependsOn: 'npmInstall') {
+task buildUserInterfaceProd(type: NpmTask, dependsOn: 'npmInstall') {
     group = 'application'
     description = 'Builds the user interface assets'
-    args = ['run', 'buildOnce']
+    args = ['run', 'buildProd']
 }
-war.dependsOn(buildUserInterfaceOnce)
-bootRun.dependsOn(buildUserInterfaceOnce)
+war.dependsOn(buildUserInterfaceProd)
+task buildUserInterfaceDev(type: NpmTask, dependsOn: 'npmInstall') {
+    group = 'application'
+    description = 'Builds the user interface assets'
+    args = ['run', 'buildDev']
+}
+bootRun.dependsOn(buildUserInterfaceDev)
 
 task buildUserInterface(type: NpmTask, dependsOn: 'npmInstall') {
     group = 'application'
@@ -147,3 +152,6 @@ publishing {
 publishToMavenLocal.dependsOn 'executableWar'
 publish.dependsOn 'executableWar'
 
+bootRun {
+    jvmArgs = ['-Xmx4096m']
+}

@@ -13,7 +13,7 @@ exports.config = {
     'browserName': 'chrome',
     chromeOptions: {
       // Get rid of --ignore-certificate yellow warning
-      args: ['--no-sandbox', '--test-type=browser'],
+      args: ['--no-sandbox', '--test-type=browser', '--window-size=1400,1024'],
       // Set download path and avoid prompting for download even though
       // this is already the default on Chrome but for completeness
       prefs: {

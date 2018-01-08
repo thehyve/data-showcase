@@ -1,0 +1,189 @@
+{
+  "items": [
+    {
+      "publicItem": true,
+      "summary": {
+        "observationCount": 102,
+        "dataStability": "Committed",
+        "maxValue": null,
+        "patientCount": 100,
+        "minValue": null,
+        "avgValue": null,
+        "stdDevValue": null,
+        "values": [
+          {
+            "value": "<= 65",
+            "frequency": 35,
+            "label": "Young"
+          },
+          {
+            "value": "> 65",
+            "frequency": 65,
+            "label": "Old"
+          }
+        ]
+      },
+      "itemPath": "/Personal information/Basic information/Age",
+      "name": "ageA",
+      "projectName": "Project A"
+    },
+    {
+      "conceptCode": "height",
+      "publicItem": true,
+      "summary": {
+        "observationCount": 402,
+        "dataStability": "Committed",
+        "maxValue": null,
+        "patientCount": 200,
+        "minValue": null,
+        "avgValue": null,
+        "stdDevValue": null,
+        "values": [
+          {
+            "value": "<= 175",
+            "frequency": 36,
+            "label": "Short"
+          },
+          {
+            "value": "> 175",
+            "frequency": 64,
+            "label": "Tall"
+          }
+        ]
+      },
+      "itemPath": "/Personal information/Extended information/Height",
+      "name": "heightB",
+      "projectName": "Project B"
+    }
+  ],
+  "concepts": [
+    {
+      "labelNlLong": "Leeftijd van het onderwerp",
+      "labelNl": "Leeftijd",
+      "conceptCode": "age",
+      "variableType": "Categorical",
+      "labelLong": "Age at time of survey",
+      "label": "Age",
+      "keywords": [
+        "Personal information"
+      ]
+    },
+    {
+      "labelNlLong": "Hoogte van het onderwerp",
+      "labelNl": "Hoogte",
+      "conceptCode": "height",
+      "variableType": "Categorical",
+      "labelLong": "Height at time of survey",
+      "label": "Height",
+      "keywords": [
+        "Personal information",
+        "Family related",
+        "Body characteristics"
+      ]
+    },
+    {
+      "labelNlLong": "Gewicht (kg)",
+      "labelNl": "Gewicht",
+      "conceptCode": "weight",
+      "variableType": "Numerical",
+      "labelLong": "Weight (kg)",
+      "label": "Weight",
+      "keywords": [
+        "Personal information",
+        "Family related",
+        "Body characteristics"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Project A",
+      "description": "First test project",
+      "lineOfResearch": "Research line 1"
+    },
+    {
+      "name": "Project A",
+      "description": "Second test project",
+      "lineOfResearch": "Research line 2"
+    }
+  ],
+  "tree_nodes": [
+    {
+      "conceptCode": null,
+      "path": "/Personal information",
+      "nodeType": "Domain",
+      "label": "Personal information",
+      "children": [
+        {
+          "conceptCode": null,
+          "path": "/Personal information/Basic information",
+          "nodeType": "Domain",
+          "label": "Basic information",
+          "children": [
+            {
+              "conceptCode": "age",
+              "path": "/Personal information/Basic information/Age",
+              "nodeType": "Concept",
+              "label": "Age",
+              "children": [
+
+              ]
+            },
+            {
+              "conceptCode": "weight",
+              "path": "/Personal information/Basic information/Weight",
+              "nodeType": "Concept",
+              "label": "Weight",
+              "children": [
+
+              ]
+            }
+          ]
+        },
+        {
+          "conceptCode": null,
+          "path": "/Personal information/Extended information",
+          "nodeType": "Domain",
+          "label": "Extended information",
+          "children": [
+            {
+              "conceptCode": "height",
+              "path": "/Personal information/Extended information/Height",
+              "nodeType": "Concept",
+              "label": "Height",
+              "children": [
+
+              ]
+            },
+            {
+              "conceptCode": null,
+              "path": "/Personal information/Extended information/Some details",
+              "nodeType": "Domain",
+              "label": "Some details",
+              "children": [
+
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "conceptCode": null,
+      "path": "/Other information",
+      "nodeType": "Domain",
+      "label": "Other information",
+      "children": [
+        {
+          "conceptCode": null,
+          "path": "/Other information/Some information",
+          "nodeType": "Domain",
+          "label": "Some information",
+          "children": [
+
+          ]
+        }
+      ]
+    }
+  ]
+}

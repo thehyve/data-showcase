@@ -15,9 +15,16 @@ class UrlMappings {
         "/"(uri: '/index.html')
 
         "/api/environment"(controller: 'environment', includes: ['index'])
-        "/api/items"(resources: 'item', includes: ['index', 'show'])
-        "/api/keywords"(controller: 'keyword', includes: ['index'])
-        "/api/projects"(controller: 'project', includes: ['index'])
+        "/api/items/$id"(method: 'GET', controller: 'item', action: 'show')
+        "/api/items"(controller: 'item') {
+            action = [GET: 'index', POST: 'search']
+        }
+        "/api/projects"(controller: 'project') {
+            action = [GET: 'index', POST: 'search']
+        }
+        "/api/keywords/by_concept/$conceptCode"(controller: 'keyword', action: 'show')
+        "/api/keywords"(controller: 'keyword', action: 'index')
+        "/api/concepts"(controller: 'concept', includes: ['index'])
         "/api/lines_of_research"(controller: 'researchLine', includes: ['index'])
         "/api/tree_nodes"(controller: 'tree', includes: ['index'])
         "/api/file/logo/${type}"(controller: 'file', includes: ['getLogo'])

@@ -6,7 +6,6 @@
 
 package nl.thehyve.datashowcase
 
-import grails.databinding.BindUsing
 import nl.thehyve.datashowcase.enumeration.VariableType
 
 /**
@@ -45,19 +44,12 @@ class Concept {
      */
     VariableType variableType
 
-    /**
-     * Associated key words.
-     */
-    @BindUsing({ obj, source ->
-        def keywords = source['keywords'].collect {
-            if (it) {
-                Keyword existingKeyword = Keyword.findByKeyword(it)
-                existingKeyword ?: new Keyword(keyword: it).save(flush: true)
-            }
-        }
-        keywords
-    })
-    List<Keyword> keywords
+    static hasMany = [
+        /**
+         * Associated key words.
+         */
+        keywords: Keyword
+    ]
 
     @Override
     String toString() {
@@ -66,6 +58,8 @@ class Concept {
 
     static mapping = {
         version false
+
+        keywords batchSize: 1000
     }
 
     static constraints = {

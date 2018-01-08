@@ -6,7 +6,7 @@
 
 package nl.thehyve.datashowcase
 
-import grails.databinding.BindUsing
+import nl.thehyve.datashowcase.enumeration.VariableType
 
 /**
  * An item represents a variable in a study or survey.
@@ -35,10 +35,6 @@ class Item {
     /**
      * The concept that the item represents in a project.
      */
-    @BindUsing({ obj, source ->
-        String conceptCode = source['concept']
-        Concept.findByConceptCode(conceptCode)
-    })
     Concept concept
 
     /**
@@ -46,20 +42,12 @@ class Item {
      */
     static belongsTo = [project: Project]
 
-    /**
-     * Summary data for the variable: aggregate values and value frequencies.
-     */
-    @BindUsing({ obj, source ->
-        def s = source['summary']
-        def summary = s instanceof Summary ? s : new Summary(s)
-        if (s.values) {
-            s.values.each {
-                summary.addToValues(it)
-            }
-        }
-        summary
-    })
-    Summary summary
+    static hasOne = [
+        /**
+         * Summary data for the variable: aggregate values and value frequencies.
+         */
+        summary: Summary
+    ]
 
     String getLabel() {
         concept.label
@@ -77,21 +65,22 @@ class Item {
         concept.labelNlLong
     }
 
-    List<Keyword> getKeywords() {
-        concept.keywords
-    }
-
-    String getType() {
+    VariableType getType() {
         concept.variableType
     }
 
     static mapping = {
         version false
+
+        summary lazy: true
+        concept fetch: 'join'
+        project fetch: 'join'
     }
 
     static constraints = {
         name unique: true
         itemPath maxSize: 700
+        summary nullable: true
     }
 
 }

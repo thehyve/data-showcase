@@ -9,7 +9,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import {ItemFilter, ItemTableComponent} from './item-table.component';
 import {FormsModule} from "@angular/forms";
 import {
-  AutoCompleteModule, DataListModule, DataTableModule, FieldsetModule, ListboxModule,
+  AutoCompleteModule, CheckboxModule, DataListModule, DataTableModule, FieldsetModule, ListboxModule, PaginatorModule,
   PanelModule
 } from "primeng/primeng";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
@@ -18,6 +18,8 @@ import {ResourceService} from "../services/resource.service";
 import {HttpModule} from "@angular/http";
 import {AppConfig} from "../config/app.config";
 import {AppConfigMock} from "../config/app.config.mock";
+import {DSMessageService} from "../services/ds-message.service";
+import {MessageService} from "primeng/components/common/messageservice";
 
 describe('ItemTableComponent', () => {
   let component: ItemTableComponent;
@@ -35,11 +37,15 @@ describe('ItemTableComponent', () => {
         ListboxModule,
         BrowserAnimationsModule,
         DataTableModule,
-        HttpModule
+        HttpModule,
+        PaginatorModule,
+        CheckboxModule
       ],
       providers: [
         DataService,
         ResourceService,
+        DSMessageService,
+        MessageService,
         {
           provide: AppConfig,
           useClass: AppConfigMock

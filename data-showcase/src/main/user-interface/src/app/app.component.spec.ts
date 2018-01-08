@@ -8,13 +8,12 @@ import { TestBed, async } from '@angular/core/testing';
 
 import { AppComponent } from './app.component';
 import {TreeNodesComponent} from "./tree-nodes/tree-nodes.component";
-import {TextFilterComponent} from "./text-filter/text-filter.component";
 import {
-  AutoCompleteModule, DataTableModule, DialogModule, FieldsetModule, PanelModule,
+  AutoCompleteModule, CheckboxModule, DataTableModule, DialogModule, FieldsetModule, GrowlModule, PaginatorModule,
+  PanelModule,
   TreeModule
 } from "primeng/primeng";
 import {FormsModule} from "@angular/forms";
-import {CheckboxFilterComponent} from "./checkbox-filter/checkbox-filter.component";
 import {ListboxModule} from "primeng/components/listbox/listbox";
 import {ItemFilter, ItemTableComponent} from "./item-table/item-table.component";
 import {DataService} from "./services/data.service";
@@ -28,6 +27,11 @@ import {AppConfigMock} from "./config/app.config.mock";
 import {ItemSummaryComponent} from "./item-summary/item-summary.component";
 import {LogosComponent} from "./logos/logos.component";
 import {PageRibbonComponent} from "./page-ribbon/page-ribbon.component";
+import {FiltersModule} from "./filters/filters.module";
+import {InfoModule} from "./info/info.module";
+import {SearchParserService} from "./services/search-parser.service";
+import {DSMessageService} from "./services/ds-message.service";
+import {MessageService} from "primeng/components/common/messageservice";
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -35,8 +39,6 @@ describe('AppComponent', () => {
       declarations: [
         PageRibbonComponent,
         TreeNodesComponent,
-        TextFilterComponent,
-        CheckboxFilterComponent,
         ItemTableComponent,
         ItemFilter,
         ShoppingCartComponent,
@@ -50,12 +52,17 @@ describe('AppComponent', () => {
         PanelModule,
         ListboxModule,
         TreeModule,
+        FiltersModule,
         FieldsetModule,
         DataTableModule,
         BrowserModule,
         BrowserAnimationsModule,
         DialogModule,
-        HttpModule
+        HttpModule,
+        InfoModule,
+        PaginatorModule,
+        CheckboxModule,
+        GrowlModule
       ],
       providers: [
         DataService,
@@ -63,7 +70,10 @@ describe('AppComponent', () => {
           provide: AppConfig,
           useClass: AppConfigMock
         },
-        ResourceService
+        ResourceService,
+        SearchParserService,
+        DSMessageService,
+        MessageService
       ]
     }).compileComponents();
   }));

@@ -5,7 +5,7 @@
  */
 
 import { Promise } from 'es6-promise';
-import { $, $$, by } from 'protractor';
+import { $, $$, by, browser, promise } from 'protractor';
 import { checkTextElement, countIs, promiseTrue } from './support/util';
 
 let { defineSupportCode } = require('cucumber');
@@ -20,7 +20,9 @@ defineSupportCode(({ Given, When, Then }) => {
   });
 
   Given('I open all tree nodes', function (): Promise<any> {
-    return toggleNode()
+    return browser.driver.wait(function () {
+      return openNodes()
+    }, 5000000)
   });
 
   Then(/^I see the following nodes in the tree: '(.*)'$/, function (nodeText: string): Promise<any> {
@@ -46,21 +48,23 @@ defineSupportCode(({ Given, When, Then }) => {
   Then('the data table contains', function (string): Promise<any> {
     let tableRows: [string] = JSON.parse(string);
 
-    return countIs($$(".ui-datatable-data > tr"), tableRows.length).then(() => {
-      return $$(".ui-datatable-data > tr").map((row, rowIndex) => { // get all data rows
-        return row.$$('.ui-cell-data').map((cell, cellIndex) => {
-          return checkTextElement(cell, tableRows[rowIndex][cellIndex])
+    return browser.driver.wait(function () {
+        return countIs($$(".ui-datatable-data > tr"), tableRows.length).then(() => {
+            return $$(".ui-datatable-data > tr").map((row, rowIndex) => { // get all data rows
+                return row.$$('.ui-cell-data').map((cell, cellIndex) => {
+                    return checkTextElement(cell, tableRows[rowIndex][cellIndex])
+                })
+            })
         })
-      })
-    })
+    }, 30000)
   });
 
   When('I select all data in the data table', function (): Promise<any> {
     return $('.ui-datatable-thead').$$('.ui-chkbox').click();
   });
 
-  Then('I see the counters Items selected \'{int}\' and total \'{int}\'', function (int, int2) {
-    let counts = [int, int2];
+  Then('I see the counters Items selected \'{int}\', total \'{int}\' and number of pages \'{int}\'', function (int, int2, int3) {
+    let counts = [int, int2, int3];
     return $$('.item-count-container > b').map((counter, index) => {
       return checkTextElement(counter, counts[index]);
     })
@@ -68,8 +72,22 @@ defineSupportCode(({ Given, When, Then }) => {
 
 });
 
-export function toggleNode() {
-  return $$(".fa-caret-right").click().then(() => {
-    return $$(".fa-caret-right").click()
-  })
+export function openNodes(): Promise<boolean> {
+  return new Promise(function(resolve, reject) {
+      let elements = $$('.fa-caret-right').filter((element) => element.isDisplayed());
+      elements.count().then((n) => {
+          if (n > 0) {
+              return elements.reduce((res, el) => {
+                  el.click();
+                  return ++res;
+              }, 0).then((res) => {
+                  openNodes()
+                      .then(() => resolve(true))
+                      .catch((err) => reject(err))
+              })
+          } else {
+              resolve(false);
+          }
+      });
+  });
 }

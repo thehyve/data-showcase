@@ -1,0 +1,40 @@
+.info-button {
+    font-size:20px;
+    padding: 0;
+    cursor:pointer;
+    box-shadow: none;
+}
+
+.info-header {
+    font-weight:normal;
+    margin-top: .7em;
+}
+
+.info-title {
+    color: #00889C;
+}
+
+.info-bar {
+    height: 200px;
+}
+
+dl.explanation {
+    display: table;
+}
+.explanation dt, .explanation dd {
+    float: left;
+    display: inline-block;
+}
+
+.explanation dt {
+    clear: left;
+    padding-right: 1em;
+}
+
+.short-title dt {
+    min-width: 5em;
+}
+
+.long-title dt {
+    min-width: 8em;
+}

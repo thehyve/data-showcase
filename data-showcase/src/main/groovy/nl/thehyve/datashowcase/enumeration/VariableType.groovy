@@ -13,5 +13,6 @@ enum VariableType {
     Numerical,
     Categorical,
     Text,
+    Date,
     None
 }

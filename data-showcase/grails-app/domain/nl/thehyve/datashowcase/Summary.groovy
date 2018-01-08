@@ -18,7 +18,7 @@ class Summary {
     Long observationCount
 
     /**
-     * The number of patients for whom there are observations associated with the variable.
+     * The number of patients (subjects) for whom there are observations associated with the variable.
      */
     Long patientCount
 
@@ -48,7 +48,12 @@ class Summary {
      */
     Double stdDevValue
 
-    static belongsTo = [item: Item]
+    static belongsTo = [
+            /**
+             * The item this summary belongs to.
+             */
+            item: Item
+    ]
 
     static hasMany = [
             /**
@@ -59,12 +64,14 @@ class Summary {
 
     static mapping = {
         version false
+
+        values batchSize: 1000, sort: 'frequency', order:'desc'
     }
 
     static constraints = {
         observationCount    nullable: false
         patientCount        nullable: false
-        dataStability       nullable: false
+        dataStability       nullable: true
         minValue            nullable: true
         maxValue            nullable: true
         avgValue            nullable: true

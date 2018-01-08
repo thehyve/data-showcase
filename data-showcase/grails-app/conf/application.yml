@@ -27,6 +27,8 @@ grails:
             mapping:
                 version: false
                 autoTimestamp: false
+    databinding:
+        convertEmptyStringsToNull: false
 
 info:
     app:
@@ -103,6 +105,14 @@ environments:
         grails:
             cors:
                 enabled: true
+    test:
+        grails:
+            cors:
+                enabled: true
+    testInternal:
+        grails:
+            cors:
+                enabled: true
 
 ---
 grails:
@@ -164,6 +174,8 @@ environments:
             username: sa
             password: ''
     production:
+        hibernate:
+            show_sql: false
         dataSource:
             dbCreate: update
             url: jdbc:postgresql://localhost:5432/data_showcase

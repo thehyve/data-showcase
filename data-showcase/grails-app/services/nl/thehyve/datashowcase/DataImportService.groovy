@@ -9,10 +9,14 @@ package nl.thehyve.datashowcase
 import grails.gorm.transactions.Transactional
 import grails.validation.ValidationException
 import nl.thehyve.datashowcase.exception.InvalidDataException
+import org.grails.core.util.StopWatch
 import org.grails.datastore.gorm.GormEntity
 import org.grails.web.json.JSONArray
 import org.grails.web.json.JSONObject
 import org.springframework.beans.factory.annotation.Autowired
+import org.hibernate.Transaction
+import org.hibernate.SessionFactory
+import org.hibernate.StatelessSession
 
 @Transactional
 class DataImportService {
@@ -23,31 +27,90 @@ class DataImportService {
     @Autowired
     DataService dataService
 
-    def upload(JSONObject json) {
-        try {
-            // clear database
-            dataService.clearDatabase()
+    SessionFactory sessionFactory
 
-            // save concepts and related keywords
-            def concepts = json.concepts?.collect { new Concept(it) }
+    def upload(JSONObject json) {
+        def stopWatch = new StopWatch('Upload data')
+        // clear database
+        log.info('Clearing database...')
+        stopWatch.start('Clear database')
+        dataService.clearDatabase()
+        stopWatch.stop()
+        StatelessSession statelessSession = null
+        Transaction tx = null
+        try {
+            statelessSession = sessionFactory.openStatelessSession()
+            tx = statelessSession.beginTransaction()
+
+            // save keywords
+            def keywords = json.concepts?.keywords?.flatten().unique().collect {
+                if (it?.trim()) new Keyword(keyword: it)
+            } as List<Keyword>
+            keywords.removeAll([null])
+            validate(keywords)
+            log.info('Saving keywords...')
+            stopWatch.start('Save keywords')
+            keywords*.save()
+            stopWatch.stop()
+            def keywordMap = keywords.collectEntries { [(it.keyword): it] } as Map<String, Keyword>
+
+            // save concepts
+            def concepts = json.concepts?.collect {
+                def conceptKeywords = it.remove('keywords')
+                def concept = new Concept(it as JSONObject)
+                conceptKeywords.each {
+                    def keyword = keywordMap[it?.trim() as String]
+                    if (keyword) {
+                        concept.addToKeywords(keyword)
+                    }
+                }
+                concept
+            } as List<Concept>
             validate(concepts)
             log.info('Saving concepts...')
-            concepts*.save(flush: true, failOnError: true)
+            stopWatch.start('Save concepts')
+            concepts*.save()
+            stopWatch.stop()
+            def conceptMap = concepts.collectEntries { [(it.conceptCode): it] } as Map<String, Concept>
+            statelessSession.managedFlush()
 
             // save tree_nodes
-            def tree_nodes = json.tree_nodes?.collect { JSONObject it ->
-                copyConceptCode(it)
-                new TreeNode(it)
-            }
+            def tree_nodes = flatten(buildTree(json.tree_nodes as JSONArray, conceptMap))
             validate(tree_nodes)
             log.info('Saving tree nodes...')
-            tree_nodes*.save(flush: true, failOnError: true)
+            stopWatch.start('Save tree nodes')
+            tree_nodes*.save()
+            stopWatch.stop()
+            statelessSession.managedFlush()
 
-            // save projects and related research_lines
-            def projects = json.projects?.collect { new Project(it) }
+            // save research_lines
+            def linesOfResearch = json.projects?.lineOfResearch.unique().findAll {it != null}.collect {
+                if (it) new LineOfResearch(name: it)
+            } as List<LineOfResearch>
+            validate(linesOfResearch)
+            log.info("Saving lines of research...")
+            stopWatch.start('Save lines of research')
+            linesOfResearch*.save()
+            stopWatch.stop()
+            def lineOfResearchMap = linesOfResearch.collectEntries { [(it.name): it]} as Map<String, LineOfResearch>
+
+            // save projects
+            def projects = json.projects?.collect { JSONObject it ->
+                def lineOfResearch = it.remove('lineOfResearch') as String
+                def project = new Project(it)
+                project.lineOfResearch = lineOfResearchMap[lineOfResearch]
+                if (!project.lineOfResearch) {
+                    throw new InvalidDataException("No valid line of research set for project ${project.name}.")
+                }
+                project
+            } as List<Project>
             validate(projects)
-            log.info('Saving projects and research lines...')
-            projects*.save(flush: true, failOnError: true)
+            log.info("Saving projects...")
+            stopWatch.start('Save projects')
+            projects*.save()
+            stopWatch.stop()
+            def projectMap = projects.collectEntries { [(it.name): it] } as Map<String, Project>
+            statelessSession.managedFlush()
 
             // save items, related summaries and values
             if (!dataShowcaseEnvironment.internalInstance && !allItemsArePublic((JSONArray) json.items)) {
@@ -55,22 +118,58 @@ class DataImportService {
                 throw new InvalidDataException("Data validation exception. " +
                         "Non public item cannot be loaded to a public environment")
             }
+            def summaryMap = [:] as Map<String, Summary>
             def items = json.items?.collect { JSONObject it ->
-                it.concept = it.conceptCode
+                def summaryData = it.remove('summary') as JSONObject
                 def item = new Item(it)
-                item.project = Project.findByName(it.projectName as String)
+                summaryMap[item.name] = new Summary(summaryData)
+                item.concept = conceptMap[it.conceptCode as String]
+                if (!item.concept) {
+                    throw new InvalidDataException("No valid concept code set for item ${item.name}.")
+                }
+                item.project = projectMap[it.projectName as String]
+                if (!item.project) {
+                    throw new InvalidDataException("No valid project name set for item ${item.name}.")
+                }
                 item
-            }
+            } as List<Item>
             validate(items)
-            log.info('Saving items, summaries, values...')
-            items*.save(flush: true, failOnError: true)
+            log.info"Saving ${items.size()} items ..."
+            stopWatch.start('Save items')
+            def count = 0
+            def countWidth = items.size().toString().size()
+            items.collate(500).each{ sublist ->
+                sublist*.save()
+                count += sublist.size()
+                log.info "  [${count.toString().padLeft(countWidth)} / ${items.size()}] items saved"
+                sublist.each {
+                    it.setSummary(summaryMap[it.name])
+                    it.summary?.item = it
+                }
+                log.info "  [${count.toString().padLeft(countWidth)} / ${items.size()}] summaries saved"
+                sublist*.summary*.save()
+                statelessSession.managedFlush()
+            }
+            stopWatch.stop()
+            log.info "All items saved."
+
+            stopWatch.start('Commit transaction')
+            tx.commit()
+            statelessSession.close()
+            stopWatch.stop()
+
+            log.info "Upload completed.\n${stopWatch.prettyPrint()}"
+
+            dataService.clearCaches()
 
         } catch (ValidationException e) {
-            log.error e.message
-            throw new InvalidDataException(e.message)
+            log.error "Invalid data uploaded", e
+            tx?.rollback()
+            throw new InvalidDataException("An error occured when uploading the data: ${e.message}")
         } catch (Exception e) {
-            log.error e.message
-            throw new InvalidDataException("An error occured when uploading the data: $e.message")
+            log.error "Error while saving data", e
+            tx?.rollback()
+            throw new InvalidDataException("An error occured when uploading the data: ${e.message}")
         }
     }
 
@@ -87,12 +186,33 @@ class DataImportService {
         return items.every { it.publicItem == true }
     }
 
-    private static void copyConceptCode(JSONObject obj) {
-        obj.concept = obj.conceptCode
-        if (obj.children) {
-            (obj.children as JSONArray).each {
-                copyConceptCode(it as JSONObject)
+    private static List<TreeNode> flatten(Collection<TreeNode> nodes) {
+        if (nodes == null) {
+            return []
+        }
+        nodes.collectMany { node ->
+            [node] + flatten(node.children)
+        }
+    }
+
+    private static List<TreeNode> buildTree(JSONArray nodes, final Map<String, Concept> conceptMap) {
+        if (nodes == null) {
+            return null
+        }
+        nodes.collect { JSONObject nodeData ->
+            def childrenData = nodeData.remove('children') as JSONArray
+            def node = new TreeNode(nodeData)
+            if (nodeData.conceptCode) {
+                node.concept = conceptMap[nodeData.conceptCode as String]
+                if (!node.concept) {
+                    throw new InvalidDataException("Invalid concept code set for tree node ${node.path}.")
+                }
             }
+            node.children = buildTree(childrenData, conceptMap)
+            node.children?.each {
+                it.parent = node
+            }
+            node
         }
     }
 }

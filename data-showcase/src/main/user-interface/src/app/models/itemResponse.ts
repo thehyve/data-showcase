@@ -4,9 +4,10 @@
  *  (see accompanying file LICENSE).
  */
 
-.text-filter-container {
-    margin-left: 10px;
-    height: 100px;
-    line-height: 100px;
-    white-space: nowrap;
+import {Item} from "./item";
+
+export class ItemResponse {
+  items: Item[];
+  totalCount: number;
+  page: number;
 }

@@ -66,13 +66,6 @@
     color: #00889C;
 }
 
-.ds-text-filter {
-    padding-right: 10px;
-    padding-left: 10px;
-    border-left: 2px solid darkgrey;
-    float: right;
-}
-
 .ds-shopping-cart {
     padding-right: 20px;
     padding-left: 20px;
@@ -81,9 +74,16 @@
     float: right;
 }
 
+.ds-info {
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-top: 25px;
+    float: right;
+}
+
+.ds-info,
 .ds-logos,
-.ds-shopping-cart,
-.ds-text-filter{
+.ds-shopping-cart{
     height: 100px;
     display:inline-block;
 }

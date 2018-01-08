@@ -1,0 +1,25 @@
+<!--
+  ~ Copyright (c) 2017  The Hyve B.V.
+  ~  This file is distributed under the GNU Affero General Public License
+  ~  (see accompanying fdataService.loadingTreeNodesile LICENSE).
+  -->
+<div style="text-align: center">
+    <i class="fa fa-spin fa-refresh fa-fw ds-spinner"
+       [class.loading]="spinner"></i>
+</div>
+<div class="ui-g" *ngIf="!rerender">
+    <div class="ui-g-6">
+        <p-fieldset legend="Filter by research lines">
+            <p-listbox [options]="researchLines" [(ngModel)]="selectedResearchLines" [filter]=true [multiple]=true
+                       [checkbox]="researchLines.length > 0" [disabled]="researchLines.length < 1"
+                       [metaKeySelection]=false (onChange)="onResearchLineSelect()"></p-listbox>
+        </p-fieldset>
+    </div>
+    <div class="ui-g-6">
+        <p-fieldset legend="Filter by projects">
+            <p-listbox [options]="projects" [(ngModel)]="selectedProjects" [filter]=true [multiple]=true
+                       [checkbox]="projects.length > 0" [disabled]="projects.length < 1"
+                       [metaKeySelection]=false (onChange)="onProjectSelect()"></p-listbox>
+        </p-fieldset>
+    </div>
+</div>

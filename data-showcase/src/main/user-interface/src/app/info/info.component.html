@@ -1,0 +1,95 @@
+<!--
+  ~ Copyright (c) 2017  The Hyve B.V.
+  ~  This file is distributed under the GNU Affero General Public License
+  ~  (see accompanying file LICENSE).
+  -->
+
+<p-sidebar [(visible)]="display" position="bottom" [blockScroll]="false"
+           [style]="{ height: '500px', 'overflow-y': 'auto'}">
+    <h1 class="info-header info-title">Help information</h1>
+    <h2 class="info-header">General</h2>
+    <p>
+    General information about the application.
+    </p>
+
+    <h2 class="info-header">Search</h2>
+    <p-accordion [multiple]="true">
+        <p-accordionTab header="Composing a query">
+            General structure of the query is:
+            <br/>&lang;<var>field</var>&rang; &lang;<var>operator</var>&rang; &lang;<var>value</var>&rang;,
+            <br/><br/>
+            where <var>field</var> is a name of the property to which the condition is applied (see: <u>Supported fields</u>).
+            <br/>
+            If <var>field</var> is not specified, condition will be applied to all the supported fields.
+            If condition is satisfied for at least one of the fields of an item, this item will be added to returned item list.
+            <br/><br/>
+            Combination of multiple query criterion can be composed using <code>and</code>, <code>or</code>, and <code>not</code> operators
+            (see: <u>Supported operators</u>).
+        </p-accordionTab>
+        <p-accordionTab header="Supported fields">
+            <dl class="explanation long-title">
+                <dt><code>name</code></dt>
+                <dd>Name of the item.</dd>
+                <dt><code>keywords</code></dt>
+                <dd>Key words associated with concept.</dd>
+                <dt><code>label</code></dt>
+                <dd>The short name of the variable in English associated with concept.</dd>
+                <dt><code>labelLong</code></dt>
+                <dd>A textual description of the variable in English associated with concept.</dd>
+                <dt><code>labelNl</code></dt>
+                <dd>The short name of the variable in Dutch associated with concept.</dd>
+                <dt><code>labelNlLong</code></dt>
+                <dd>A textual description of the variable in Dutch associated with concept.</dd>
+                <dt><code>*</code></dt>
+                <dd>Any of these fields.</dd>
+            </dl>
+        </p-accordionTab>
+        <p-accordionTab header="Supported operators">
+            <dl class="explanation short-title">
+                <dt><code>=</code></dt>
+                <dd>equals, <i>e.g.</i>, <code>name = "value1"</code>
+                </dd>
+                <dt><code>!=</code></dt>
+                <dd>not equals, <i>e.g.</i>, <code>labelEn != "value1"</code>
+                </dd>
+                <dt><code>like</code></dt>
+                <dd>like, search for a specified pattern. There are two wildcards used:
+                    <ul>
+                        <li><code>%</code> The percent sign represents zero, one, or multiple characters;</li>
+                        <li><code>_</code> The underscore represents a single character;
+                            <i>e.g.</i>, <code>labelNl like "va_ue%"</code></li></ul>
+                </dd>
+                <dt><code>AND</code></dt>
+                <dd>logical conjunction,
+                    <i>e.g.</i>, <code>(name = "value1") AND (labelLong != "value2")</code>
+                </dd>
+                <dt><code>OR</code></dt>
+                <dd>logical disjunction,
+                    <i>e.g.</i>, <code>(name = "value1") OR (name = "value2")</code>
+                </dd>
+                <dt><code>NOT</code></dt>
+                <dd>logical negation,
+                    <i>e.g.</i>, <code>NOT (name = "value1")</code>
+                </dd>
+            </dl>
+            <br />All the combinations of junction operators are possible, when using round brackets.
+            <br /><i>e.g.</i>, <code>((name = "value1") OR (name = "value2")) AND (NOT labelLong = "value3")</code>
+        </p-accordionTab>
+    </p-accordion>
+
+    <h2 class="info-header">About</h2>
+    <p>
+        This application is <a href="https://opensource.org/osd">open source software</a>.
+        The <a href="https://github.com/thehyve/data-showcase">source code</a> is available
+        under the terms of the <a href="https://opensource.org/licenses/AGPL-3.0">GNU Affero General Public License</a>.
+    </p>
+</p-sidebar>
+
+<!--TODO Option2: to be discussed which one is better-->
+<!--<p-dialog header="Help information" [(visible)]="display" [modal]="true" [width]="600" [height]="600" [responsive]="true"-->
+<!--[closable]="true" [draggable]="false" [resizable]="false">-->
+<!--This box will contain filtering instructions and other necessary information.-->
+<!--</p-dialog>-->
+<button class="btn btn-default btn-lg btn-link info-button" (click)="showInfoDialog()">
+    <i class="fa fa-info-circle fa-2x" aria-hidden="true"></i>
+</button>

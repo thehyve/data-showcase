@@ -39,8 +39,10 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
   expansionStatus: any;
   // the search term in the text input box to filter the tree
   searchTerm: string;
-
+  // currently selected node
   selectedNode: Object;
+  // the delay before triggering updating methods
+  delay: number;
 
   constructor(private element: ElementRef,
               public dataService: DataService) {
@@ -50,6 +52,7 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
       treeNode: null
     };
     this.treeNodes = dataService.treeNodes;
+    this.delay = 500;
   }
 
   ngOnInit() {
@@ -77,7 +80,7 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
 
   selectNode(event) {
     if (event.node) {
-      this.dataService.updateItemTable(event.node)
+      this.dataService.selectTreeNode(event.node)
     }
   }
 
@@ -87,7 +90,7 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
     // https://github.com/primefaces/primeng/issues/2882
     this.autocompleteCharge.inputEL.nativeElement.value = '';
     this.searchTerm = '';
-    this.dataService.updateItemTable(null);
+    this.dataService.selectTreeNode(null);
     this.onFiltering(event);
   }
 
@@ -137,6 +140,7 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
       this.treeNodes = this.filterTreeNodes(this.dataService.treeNodes, 'label', filterWord).matchingTreeNodes;
       console.log('found tree nodes: ', this.treeNodes);
     }
+    this.removePrimeNgAutocompleteLoader();
   }
 
   update() {
@@ -170,4 +174,16 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
     }
   }
 
+  /*
+  PrimeNG library is attaching a spinner (.ui-autocomplete-loader) which is not automatically
+  removed after search is finished.
+ */
+  removePrimeNgAutocompleteLoader() {
+    window.setTimeout((function () {
+      let loaderIcon = this.element.nativeElement.querySelector('.ui-autocomplete-loader');
+      if (loaderIcon) {
+        loaderIcon.remove();
+      }
+    }).bind(this), this.delay);
+  }
 }

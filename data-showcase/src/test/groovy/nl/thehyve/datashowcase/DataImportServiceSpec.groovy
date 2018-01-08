@@ -8,19 +8,20 @@ package nl.thehyve.datashowcase
 
 import grails.converters.JSON
 import grails.testing.mixin.integration.Integration
+import grails.transaction.Rollback
 import groovy.util.logging.Slf4j
 import nl.thehyve.datashowcase.enumeration.NodeType
 import nl.thehyve.datashowcase.enumeration.VariableType
 import nl.thehyve.datashowcase.exception.InvalidDataException
 import org.grails.web.json.JSONObject
+import org.hibernate.SessionFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.transaction.annotation.Transactional
 import spock.lang.Requires
 import spock.lang.Specification
 
 @Slf4j
 @Integration
-@Transactional
+@Rollback
 class DataImportServiceSpec extends Specification {
 
     @Autowired
@@ -29,18 +30,22 @@ class DataImportServiceSpec extends Specification {
     @Autowired
     DataService dataService
 
+    SessionFactory sessionFactory
+
     URL jsonUrl = getClass().getClassLoader().getResource('test.json')
     File file = new File(jsonUrl.path)
 
     def setupData() {
         log.info "Clear database ..."
         dataService.clearDatabase()
+        sessionFactory.currentSession.flush()
     }
 
     def loadValidData() {
         log.info "Upload test data set ..."
         JSONObject json = (JSONObject)JSON.parse(file.text)
         dataImportService.upload(json)
+        sessionFactory.currentSession.flush()
     }
 
     def loadInvalidData() {
@@ -49,6 +54,7 @@ class DataImportServiceSpec extends Specification {
         JSONObject json = (JSONObject)JSON.parse(file.text)
         log.info "Upload test data set ..."
         dataImportService.upload(json)
+        sessionFactory.currentSession.flush()
     }
 
     @Requires({ -> Environment.grailsEnvironmentIn(Constants.PUBLIC_ENVIRONMENTS) })
@@ -76,7 +82,7 @@ class DataImportServiceSpec extends Specification {
                             '/Personal information/Extended information/Height']
         items.every { it.publicItem == true }
         items*.summary == summaries
-        items*.summary*.values?.flatten() == values
+        items*.summary*.values?.flatten() as Set == values as Set
         items*.concept.every { concepts.indexOf(it) != -1 }
         items*.project.every { projects.indexOf(it) != -1 }
 
@@ -104,7 +110,7 @@ class DataImportServiceSpec extends Specification {
         summaries*.patientCount == [100, 200]
         summaries*.observationCount == [102, 402]
         summaries*.dataStability == ['Committed', 'Committed']
-        summaries*.values.flatten() == values
+        summaries*.values.flatten() as Set == values as Set
 
         treeNodes.size() == 9
         treeNodes*.label.sort() == ['Personal information', 'Basic information', 'Age', 'Weight', 'Extended information',
@@ -125,10 +131,10 @@ class DataImportServiceSpec extends Specification {
                                    '/Other information',
                                    '/Other information/Some information'].sort()
 
-        values.size() == 8
-        values*.value.every { v -> v in ['<= 65', '> 65', '<= 175', '> 175'] }
-        values*.label.every { l -> l in ['Young', 'Old', 'Short', 'Tall'] }
-        values*.frequency.every { f -> (int)f in [35, 65, 36, 64] }
+        values.size() == 4
+        values*.value as Set == ['<= 65', '> 65', '<= 175', '> 175'] as Set
+        values*.label as Set == ['Young', 'Old', 'Short', 'Tall'] as Set
+        values*.frequency as Set == [35, 65, 36, 64] as Set
     }
 
     @Requires({ -> Environment.grailsEnvironmentIn(Constants.PUBLIC_ENVIRONMENTS) })
@@ -157,7 +163,7 @@ class DataImportServiceSpec extends Specification {
                             '/Personal information/Extended information/Height']
         items.every { it.publicItem == true }
         items*.summary == summaries
-        items*.summary*.values?.flatten() == values
+        items*.summary*.values?.flatten() as Set == values as Set
         items*.concept.every { concepts.indexOf(it) != -1 }
         items*.project.every { projects.indexOf(it) != -1 }
 
@@ -185,7 +191,7 @@ class DataImportServiceSpec extends Specification {
         summaries*.patientCount == [100, 200]
         summaries*.observationCount == [102, 402]
         summaries*.dataStability == ['Committed', 'Committed']
-        summaries*.values.flatten() == values
+        summaries*.values.flatten() as Set == values as Set
 
         treeNodes.size() == 9
         treeNodes*.label.sort() == ['Personal information', 'Basic information', 'Age', 'Weight', 'Extended information',
@@ -206,7 +212,7 @@ class DataImportServiceSpec extends Specification {
                                    '/Other information',
                                    '/Other information/Some information'].sort()
 
-        values.size() == 8
+        values.size() == 4
         values*.value.every { v -> v in ['<= 65', '> 65', '<= 175', '> 175'] }
         values*.label.every { l -> l in ['Young', 'Old', 'Short', 'Tall'] }
         values*.frequency.every { f -> (int)f in [35, 65, 36, 64] }

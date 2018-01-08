@@ -4,16 +4,16 @@
  *  (see accompanying file LICENSE).
  */
 
-import {Concept} from "./concept";
+import { VariableType } from './concept';
 
-type NodeType = 'Domain' | 'Concept';
+export type NodeType = 'Domain' | 'Concept';
 
 export class TreeNode {
   label: string;
   accumulativeItemCount: number;
   itemCount: number;
-  path: string;
-  concept: Concept;
+  concept: string;
+  variableType: VariableType;
   nodeType: NodeType;
   children: TreeNode[];
 }

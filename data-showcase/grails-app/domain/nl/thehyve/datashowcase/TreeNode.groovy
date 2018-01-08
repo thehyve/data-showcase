@@ -6,7 +6,6 @@
 
 package nl.thehyve.datashowcase
 
-import grails.databinding.BindUsing
 import nl.thehyve.datashowcase.enumeration.NodeType
 import nl.thehyve.datashowcase.exception.InvalidDataException
 
@@ -38,10 +37,6 @@ class TreeNode {
      * The concept the node is associated with, if it is a concept node.
      * A concept node always is a leaf node.
      */
-    @BindUsing({ obj, source ->
-        String conceptCode = source['concept']
-        Concept.findByConceptCode(conceptCode)
-    })
     Concept concept
 
     /**
@@ -84,6 +79,10 @@ class TreeNode {
 
     static mapping = {
         version false
+
+        concept fetch: 'join'
+        parent fetch: 'join'
+        children batchSize: 1000
     }
 
     static constraints = {

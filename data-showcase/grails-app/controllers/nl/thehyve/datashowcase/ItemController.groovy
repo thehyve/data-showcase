@@ -6,6 +6,8 @@
 
 package nl.thehyve.datashowcase
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import nl.thehyve.datashowcase.representation.SearchQueryRepresentation
 import org.springframework.beans.factory.annotation.Autowired
 
 class ItemController {
@@ -17,11 +19,69 @@ class ItemController {
 
     /**
      * Fetches all items.
-     *
      * @return the list of items as JSON.
      */
     def index() {
-        respond items: itemService.items
+        try {
+            def args = request.JSON as Map
+            int firstResult = args.firstResult ?: 0
+            def maxResults = args.maxResults as Integer
+            String order = args.order
+            String propertyName = args.propertyName
+
+            response.status = 200
+            response.contentType = 'application/json'
+            response.characterEncoding = 'utf-8'
+            def items = itemService.getItems(firstResult, maxResults, order, propertyName)
+            def count = itemService.getItemsCount()
+            int page = maxResults ? (firstResult/maxResults + 1) : 1
+            def data = [totalCount: count, page: page, items: items]
+            new ObjectMapper().writeValue(response.outputStream, data)
+        } catch (Exception e) {
+            response.status = 400
+            log.error 'An error occurred when fetching items.', e
+            respond error: "An error occurred when fetching items. Error: $e.message"
+        }
+    }
+
+    /**
+     * Fetches all items with filter criteria.
+     * Supported criteria: conceptCodes, projects, free text search query.
+     * @return the list of items, total count and page number as JSON .
+     */
+    def search() {
+        try {
+
+            def args = request.JSON as Map
+            Set concepts = args.conceptCodes as Set
+            Set projects =  args.projects as Set
+            int firstResult = args.firstResult ?: 0
+            def maxResults = args.maxResults as Integer
+            String order = args.order
+            String propertyName = args.propertyName
+            log.info "Query input: ${args.searchQuery}"
+            def searchQuery = null
+            if (args.searchQuery) {
+                searchQuery = new SearchQueryRepresentation()
+                bindData(searchQuery, args.searchQuery)
+            }
+
+            response.status = 200
+            response.contentType = 'application/json'
+            response.characterEncoding = 'utf-8'
+
+            def items = itemService.getItems(
+                    firstResult, maxResults, order, propertyName, concepts, projects, searchQuery)
+            def count = itemService.getItemsCount(concepts, projects, searchQuery)
+            int page = maxResults ? (firstResult/maxResults + 1) : 1
+            def data = [totalCount: count, page: page, items: items]
+            new ObjectMapper().writeValue(response.outputStream, data)
+
+        } catch (Exception e) {
+            response.status = 400
+            log.error 'An error occurred when fetching items.', e
+            respond error: "An error occurred when fetching items. Error: $e.message"
+        }
     }
 
     /**

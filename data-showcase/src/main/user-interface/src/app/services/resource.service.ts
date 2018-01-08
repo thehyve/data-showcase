@@ -9,16 +9,19 @@ import {Observable} from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import {TreeNode} from "../models/tree-node";
-import {Http, Response, Headers, ResponseContentType} from '@angular/http';
+import {Http, Response, Headers, ResponseContentType, RequestOptions} from '@angular/http';
 import {Endpoint} from "../models/endpoint";
 import {AppConfig} from "../config/app.config";
 import {
+  PATH_CONCEPTS,
   PATH_ENVIRONMENT, PATH_ITEMS, PATH_LOGOS, PATH_PROJECTS,
-  PATH_TREE_NODES
+  PATH_TREE_NODES,  PATH_KEYWORDS_BY_CONCEPT
 } from "../constants/endpoints.constants";
 import {Item} from "../models/item";
 import {Project} from "../models/project";
 import {Environment} from "../models/environment";
+import { Concept } from '../models/concept';
+import {ItemResponse} from "../models/itemResponse";
 
 
 @Injectable()
@@ -36,9 +39,17 @@ export class ResourceService {
   private handleError(error: Response | any) {
     let errMsg: string;
     if (error instanceof Response) {
-      const body = error.json() || '';
-      const err = body.error || JSON.stringify(body);
-      errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+      let contentType = error.headers.get('Content-Type') || '';
+      if (contentType == 'application/json') {
+          const body = error.json() || '';
+          errMsg = body.error || JSON.stringify(body);
+      } else {
+        errMsg = `Error: ${error.statusText}`;
+      }
+      if (error.status in [0, 404]) {
+          console.error('Server not available.');
+          return Observable.never();
+      }
     } else {
       errMsg = error.message ? error.message : error.toString();
     }
@@ -57,18 +68,44 @@ export class ResourceService {
       .catch(this.handleError.bind(this));
   }
 
-  getItems(): Observable<Item[]> {
+  getItem(id: number): Observable<Item> {
     let headers = new Headers();
-    let url = this.endpoint.apiUrl + PATH_ITEMS;
+    let url = `${this.endpoint.apiUrl}${PATH_ITEMS}/${id}`;
 
     return this.http.get(url, {
       headers: headers
     })
-      .map((response: Response) => response.json().items as Item[])
+    .map((response: Response) => response.json() as Item)
+    .catch(this.handleError.bind(this));
+  }
+
+
+  getItems(firstResult: number, maxResults: number, order?: string,propertyName?: string,
+           conceptCodes?: string[], projects?: string[], jsonSearchQuery?: Object): Observable<ItemResponse> {
+
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+
+    const options = new RequestOptions({headers: headers});
+    const url = this.endpoint.apiUrl + PATH_ITEMS;
+
+    let body = {
+        conceptCodes: conceptCodes,
+        projects: projects,
+        searchQuery: jsonSearchQuery,
+        firstResult: firstResult,
+        maxResults: maxResults,
+        order: order,
+        propertyName: propertyName
+      };
+
+    // use POST because of url length limits in some of the browsers (limit of characters)
+    return this.http.post(url, body, options)
+      .map((res: Response) => res.json() as ItemResponse)
       .catch(this.handleError.bind(this));
   }
 
-  getProjects(): Observable<Project[]> {
+  getAllProjects(): Observable<Project[]> {
     let headers = new Headers();
     let url = this.endpoint.apiUrl + PATH_PROJECTS;
 
@@ -76,6 +113,49 @@ export class ResourceService {
       headers: headers
     })
       .map((response: Response) => response.json().projects as Project[])
+      .catch(this.handleError.bind(this));
+  }
+
+  getProjects(conceptCodes?: string[], jsonSearchQuery?: Object): Observable<Project[]> {
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+
+    const options = new RequestOptions({headers: headers});
+    const url = this.endpoint.apiUrl + PATH_PROJECTS;
+    let body = null;
+
+    if(conceptCodes || jsonSearchQuery) {
+      body = {
+        conceptCodes: conceptCodes,
+        searchQuery: jsonSearchQuery
+      }
+    }
+
+    // use POST because of url length limits in some of the browsers (limit of characters)
+    return this.http.post(url, body, options)
+      .map((res: Response) => res.json().projects as Project[])
+      .catch(this.handleError.bind(this));
+  }
+
+  getKeywords(conceptCode: string): Observable<string[]>  {
+    let headers = new Headers();
+    let url = this.endpoint.apiUrl + PATH_KEYWORDS_BY_CONCEPT + "/" + conceptCode;
+
+    return this.http.get(url, {
+      headers: headers
+    })
+      .map((response: Response) => response.json().keywords as string[])
+      .catch(this.handleError.bind(this));
+  }
+
+  getConcepts(): Observable<Concept[]> {
+    let headers = new Headers();
+    let url = this.endpoint.apiUrl + PATH_CONCEPTS;
+
+    return this.http.get(url, {
+      headers: headers
+    })
+      .map((response: Response) => response.json().concepts as Concept[])
       .catch(this.handleError.bind(this));
   }
 

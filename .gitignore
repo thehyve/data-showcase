@@ -6,7 +6,8 @@ gradle/wrapper
 out
 
 # IDEs and editors
-/.idea
+.idea
+*/.idea
 *.iml
 /lib
 .project

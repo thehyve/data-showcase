@@ -4,16 +4,22 @@
   ~  (see accompanying file LICENSE).
   -->
 
-<div class="item-table-container">
+<div class="item-table-container" [@notifyState]="dataService.loadingItems">
     <p-dataTable #dt
                  [immutable]=false
                  [value]="items | itemFilter: filterValue"
-                 [rows]="8" [paginator]="true"
-                 [headerCheckboxToggleAllPages]="true"
+                 [rows]="rowsPerPage" [paginator]="false"
                  [resizableColumns]="true"
-                 [(selection)]="itemsSelection"
-                 [loading]="dataService.loadingItems" loadingIcon="fa fa-spin fa-refresh fa-fw">
-        <p-column selectionMode="multiple" [style]="{ width: '45px'}">
+                 [totalRecords] = "totalItemsCount()"
+                 [(selection)]="itemsSelectionPerPage" [showHeaderCheckbox]=false
+                 (onRowSelect)="handleRowSelect($event)" (onRowUnselect)="handleRowSelect($event)"
+                 (onSort)="changeSort($event)"
+                 [loading]="dataService.loadingItems == 'loading'" loadingIcon="fa fa-spin fa-refresh fa-fw">
+        <p-column selectionMode="multiple" [style]="{ 'width': '3%'}">
+            <ng-template pTemplate="header">
+                <p-checkbox [(ngModel)]="dataService.allItemsSelected" binary="true" (onChange)="handleHeaderCheckboxToggle($event)">
+                </p-checkbox>
+            </ng-template>
         </p-column>
         <p-column field="name" header="Name"
                   [sortable]="true">
@@ -27,7 +33,7 @@
                   [sortable]="true">
         </p-column>
 
-        <p-column field="researchLine" header="Research Line"
+        <p-column field="lineOfResearch" header="Research line"
                   [sortable]="true">
         </p-column>
 
@@ -35,17 +41,24 @@
                   [sortable]="true">
         </p-column>
 
-        <p-column [style]="{ width: '50px'}">
+        <p-column [style]="{ 'width': '5%'}">
             <ng-template let-item="rowData" pTemplate="body">
                 <button pButton type="button" class="btn btn-default btn-circle btn-lg" (click)="showSummary(item)"
                         icon="fa fa-question-circle"></button>
             </ng-template>
         </p-column>
+        <p-footer>
+            <p-paginator [rows]="rowsPerPage" (onPageChange)="paginate($event)" [totalRecords]="totalItemsCount()"
+                         [(first)]="dataService.itemsFirstResult"></p-paginator>
+        </p-footer>
     </p-dataTable>
     <div class="inline">
-        <button pButton type="button" label="Add to cart" class="export-button" (click)="addToCart()"></button>
+        <button pButton type="button" label="Add to cart" class="export-button" icon="fa-cart-plus" iconPos="left"
+                (click)="addToCart()"></button>
         <div class="item-count-container">
-            Items selected: <b>{{itemsSelection? itemsSelection.length : 0}}</b>. Total: <b>{{items? items.length : 0}}</b>
+            Items selected: <b>{{itemsSelection ? itemsSelection.length : 0}}</b>.
+            Total results in table: <b>{{totalItemsCount()}}.</b>
+            Number of pages: <b>{{pagesCount()}}.</b>
         </div>
     </div>
 </div>

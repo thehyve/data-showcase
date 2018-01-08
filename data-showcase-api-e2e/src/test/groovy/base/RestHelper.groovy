@@ -8,6 +8,7 @@ package base
 
 import groovyx.net.http.FromServer
 import groovyx.net.http.HttpBuilder
+import groovyx.net.http.OkHttpEncoders
 
 import static config.Config.AUTH_NEEDED
 import static config.Config.DEFAULT_USER
@@ -80,6 +81,10 @@ class RestHelper {
             request.accept = requestMap.acceptType ?: ContentTypeFor.JSON
             request.contentType = requestMap.contentType ?: ContentTypeFor.JSON
             request.body = requestMap.body
+
+            if(requestMap.contentType == 'multipart/form-data') {
+                request.encoder 'multipart/form-data', OkHttpEncoders.&multipart
+            }
 
             if (!requestMap.skipOauth && AUTH_NEEDED) {
                 testContext.getAuthAdapter().authenticate(getRequest(), (requestMap.user ?: DEFAULT_USER))

@@ -8,12 +8,12 @@ import {ItemSummary} from "./item-summary";
 import {Concept} from "./concept";
 
 export class Item {
+  id: number;
   name: string;
   itemPath: string;
   type: string;
   project: string;
-  keywords: string[];
-  researchLine: string;
+  lineOfResearch: string;
   concept: string;
   summary: ItemSummary;
   label: string;

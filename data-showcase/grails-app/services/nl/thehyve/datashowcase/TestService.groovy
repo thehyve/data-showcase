@@ -143,18 +143,25 @@ class TestService {
         Summary[] weightSummaries = createSummary(9, 55, 230)
         Item[] weightItems = createItems(9, "weight", projectC, nodes[3],
                 weightSummaries,
-                true)
+                false)
 
-        createRandomData()
         concepts*.save(flush: true)
         nodes*.save(flush: true)
 
-        nodes.each { node ->
-            log.info "Created node ${node.label}, parent: ${node.parent?.path}, path: ${node.path}"
-        }
         ageItems*.save(flush: true)
         heightItems*.save(flush: true)
         weightItems*.save(flush: true)
+    }
+
+    /**
+     * Creates and stores test objects for the internal environment (including
+     * non-public items and extensive summary data).
+     */
+    def createRandomInternalTestData() {
+        checkGrailsEnvironment(Constants.INTERNAL_ENVIRONMENTS)
+
+        createInternalTestData()
+        createRandomData()
     }
 
     /**
@@ -219,10 +226,10 @@ class TestService {
         testLineOfResearch = new LineOfResearch(name: 'Test research line')
         testLineOfResearch.save(flush: true)
         testProject = new Project(name: 'Project', description: 'Test project', lineOfResearch: testLineOfResearch)
-        [testProject, testKeyword]*.save()
+        [testProject, testKeyword]*.save(flush: true)
 
         int[] domainPerLevel = [10, 2, 3, 2]
-        TreeNode parent = null;
+        TreeNode parent = null
         createRandomDomain(parent, domainPerLevel)
     }
 
@@ -242,15 +249,18 @@ class TestService {
 
     def createRandomConceptNodeWithItems(TreeNode domain) {
 
+        def keyword = Keyword.findByKeyword('Test keyword')
         def concept = new Concept(
                 conceptCode: "ConceptFor$domain.label",
                 label: "ConceptFor$domain.label", labelLong: "ConceptFor$domain.label long description",
                 labelNl: "NederlandsConceptVoor$domain.label", labelNlLong: "NederlandsConceptVoor$domain.label lange beschrijving",
                 variableType: VariableType.Categorical,
-                keywords: ["keyword: 'Test keyword'"])
+                keywords: [keyword])
         concepts.add(concept)
         def conceptNode = new TreeNode(domain, concept)
         nodes.add(conceptNode)
+
+        [concept, conceptNode]*.save(flush: true)
 
         Summary[] summaries = createSummary(8, 12, 99)
         Item[] items = createItems(3, concept.label + "Item", testProject, conceptNode,
