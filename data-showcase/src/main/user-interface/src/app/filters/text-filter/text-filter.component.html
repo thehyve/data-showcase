@@ -5,18 +5,27 @@
   -->
 
 <div class="text-filter-container">
-    <div class="search-label">
-        Search by keywords, item name, item labels:
-    </div>
-    <i class="fa fa-search" style="font-size:24px"></i>
-    <p-autoComplete [(ngModel)]="textFilter"
-                    placeholder="Enter search term"
-                    class="text-filter"
-                    (onClear)="onFiltering($event)"
-                    (completeMethod)="removePrimeNgAutocompleteLoader()"
-                    (onKeyUp)="onKeyUp($event)">
-    </p-autoComplete>
-    <button pButton type="button" label="Search" class="export-button" (click)="onFiltering($event);"></button>
+    <table>
+        <tr>
+            <td style="width: 300px; padding-left:100px; padding-right: 20px;">
+                <div class="search-label">
+                    Search by keywords, item name, <br/>item labels:
+                </div>
+            </td>
+            <td>
+                <i class="fa fa-search" style="font-size:24px"></i>
+                <p-autoComplete [(ngModel)]="textFilter"
+                                placeholder="Enter search term"
+                                class="text-filter"
+                                (onClear)="onFiltering($event)"
+                                (completeMethod)="removePrimeNgAutocompleteLoader()"
+                                (onKeyUp)="onKeyUp($event)">
+                </p-autoComplete>
+                <button pButton type="button" label="Search" class="export-button"
+                        (click)="onFiltering($event);"></button>
+            </td>
+        </tr>
+    </table>
 </div>
 <div *ngIf="searchQueryHtml.length > 0" class="search-query" role="alert">
     <span pTooltip="Active search filter" tooltipPosition="bottom">
