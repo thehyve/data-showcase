@@ -5,7 +5,7 @@
   -->
 
 <p-dialog header="Shopping Cart" [(visible)]="display" [modal]="true" [width]="1300" [responsive]="true"
-          [closable]="true" [draggable]="false" [resizable]="false">
+          [closable]="true" [draggable]="false" [resizable]="false" (onHide)="onHide()">
     <div *ngIf="items.length==0; else item_table_content">
         Shopping Cart is empty.
     </div>
@@ -45,6 +45,13 @@
                       [sortable]="true">
             </p-column>
 
+            <p-column [style]="{ 'width': '5%'}">
+                <ng-template let-item="rowData" pTemplate="body">
+                    <button pButton type="button" class="btn btn-default btn-circle btn-lg" (click)="showSummary(item)"
+                            icon="fa fa-question-circle"></button>
+                </ng-template>
+            </p-column>
+
         </p-dataTable>
     </ng-template>
 
@@ -55,7 +62,8 @@
             <input type="text" size="30" pInputText  placeholder="File name (optional)" [(ngModel)]="fileName"
                    [disabled]="disabled">
             <span class="ui-inputgroup-addon">.json</span>&nbsp;
-            <button type="button" pButton icon="fa-external-link-square" (click)="exportItems(); display=false;"
+            <button type="button" pButton icon="fa-external-link-square" (click)="exportItems();
+            dataService.shoppingCartVisible = false; display=false;"
                 label="Export" [disabled]="disabled"></button>
         </div>
     </p-footer>

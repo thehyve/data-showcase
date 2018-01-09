@@ -87,6 +87,9 @@ export class DataService {
   private itemSummaryVisibleSource = new Subject<Item>();
   public itemSummaryVisible$ = this.itemSummaryVisibleSource.asObservable();
 
+  // shopping cart popup visibility
+  public shoppingCartVisible = false;
+
   // search error message
   private searchErrorMessageSource = new Subject<string>();
   public searchErrorMessage$ = this.searchErrorMessageSource.asObservable();
