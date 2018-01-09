@@ -53,7 +53,7 @@ export class DataService {
   // the first result to retrieve, numbered from '0'
   public itemsFirstResult: number = 0;
   // the maximum number of results
-  public itemsMaxResults: number = 8;
+  public itemsMaxResults: number = 10;
   // ascending/descending order
   public itemsOrder: number = 1;
   // the property to order on
