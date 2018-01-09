@@ -66,7 +66,7 @@ export class DataService {
   private selectedTreeNode: TreeNode = null;
   // selected checkboxes for projects filter
   private selectedProjects: string[] = [];
-  // selected checkboxes for research lines filter
+  // selected checkboxes for research types filter
   private selectedResearchLines: string[] = [];
   // list of project names available for current item list
   public projects: SelectItem[] = [];

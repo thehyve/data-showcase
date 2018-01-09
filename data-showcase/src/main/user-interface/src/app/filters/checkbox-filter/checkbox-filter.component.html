@@ -9,7 +9,7 @@
 </div>
 <div class="ui-g" *ngIf="!rerender">
     <div class="ui-g-6">
-        <p-fieldset legend="Filter by research lines">
+        <p-fieldset legend="Filter by research types">
             <p-listbox [options]="researchLines" [(ngModel)]="selectedResearchLines" [filter]=true [multiple]=true
                        [checkbox]="researchLines.length > 0" [disabled]="researchLines.length < 1"
                        [metaKeySelection]=false (onChange)="onResearchLineSelect()"></p-listbox>
