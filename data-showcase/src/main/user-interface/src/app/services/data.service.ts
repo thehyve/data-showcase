@@ -63,7 +63,7 @@ export class DataService {
   private rerenderCheckboxFiltersSource = new Subject<boolean>();
   public rerenderCheckboxFilters$ = this.rerenderCheckboxFiltersSource.asObservable();
   // currently selected tree node
-  private selectedTreeNode: TreeNode = null;
+  public selectedTreeNode: TreeNode = null;
   // selected checkboxes for projects filter
   private selectedProjects: string[] = [];
   // selected checkboxes for research lines filter
@@ -95,11 +95,22 @@ export class DataService {
   private environmentSource = new Subject<Environment>();
   public environment$ = this.environmentSource.asObservable();
 
+  // tree nodes with a root element
+  public nodesWithRoot: TreeNode[] = [{
+    label: 'root',
+    accumulativeItemCount: this.totalItemsCount,
+    itemCount: null,
+    concept: null,
+    variableType: null,
+    nodeType: 'Domain',
+    children: null
+  }];
+
   constructor(private resourceService: ResourceService,
               private dsMessageService: DSMessageService) {
     this.fetchFilters();
     this.fetchItems();
-    this.fetchAllTreeNodes()
+    this.fetchAllTreeNodes();
     this.setEnvironment();
   }
 
@@ -112,7 +123,7 @@ export class DataService {
     let treeNodes: TreeNodeLib[] = [];
     for (let node of nodes) {
       // filter out empty domains
-      if (!(node.accumulativeItemCount == 0 && node.nodeType == 'Domain')) {
+      if (!(node.accumulativeItemCount == 0 && node.label != this.nodesWithRoot[0].label && node.nodeType == 'Domain')) {
         let newNode = this.processTreeNode(node);
         treeNodes.push(newNode);
       }
@@ -128,7 +139,12 @@ export class DataService {
     let newNode: TreeNodeLib = node;
 
     let count = node.accumulativeItemCount ? node.accumulativeItemCount : 0;
-    newNode.label = `${node.label} (${count})`;
+    if(node.label == this.nodesWithRoot[0].label){
+      newNode.label = `${node.label}`;
+      newNode.expanded = true;
+    } else {
+      newNode.label = `${node.label} (${count})`;
+    }
 
     // If this node has children, drill down
     if (node.children) {
@@ -165,7 +181,9 @@ export class DataService {
       .subscribe(
         (nodes: TreeNode[]) => {
           this.loadingTreeNodes = 'complete';
-          let treeNodes = this.processTreeNodes(nodes);
+          this.nodesWithRoot[0].children = nodes;
+          this.selectedTreeNode = this.nodesWithRoot[0];
+          let treeNodes = this.processTreeNodes(this.nodesWithRoot);
           treeNodes.forEach((function (node) {
             this.treeNodes.push(node); // to ensure the treeNodes pointer remains unchanged
           }).bind(this));
@@ -175,6 +193,9 @@ export class DataService {
   }
 
   selectTreeNode(treeNode: TreeNode) {
+    if(treeNode == null){
+      treeNode = this.nodesWithRoot[0];
+    }
     this.selectedTreeNode = treeNode;
     this.updateItemTable();
   }
@@ -228,6 +249,9 @@ export class DataService {
       codes, projects, this.searchQuery).subscribe(
       (response: ItemResponse) => {
         this.totalItemsCount = response.totalCount;
+        if(this.nodesWithRoot[0].label == "root"){
+          this.nodesWithRoot[0].label += ` (${response.totalCount})`;
+        }
         for (let item of response.items) {
           if (this.allProjects && this.allProjects.length > 0) {
             item.lineOfResearch = this.projectToResearchLine(item.project);

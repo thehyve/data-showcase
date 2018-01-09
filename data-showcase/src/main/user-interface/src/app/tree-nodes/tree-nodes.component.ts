@@ -38,9 +38,7 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
   // a utility variable storing temporary information on the node that is being expanded
   expansionStatus: any;
   // the search term in the text input box to filter the tree
-  searchTerm: string;
-  // currently selected node
-  selectedNode: Object;
+  searchTerm: string = '';
   // the delay before triggering updating methods
   delay: number;
 
@@ -85,13 +83,14 @@ export class TreeNodesComponent implements OnInit, AfterViewInit {
   }
 
   clear(event){
-    this.selectedNode = null;
-    // primeng autocomplete issue workaround
-    // https://github.com/primefaces/primeng/issues/2882
-    this.autocompleteCharge.inputEL.nativeElement.value = '';
-    this.searchTerm = '';
-    this.dataService.selectTreeNode(null);
-    this.onFiltering(event);
+    if(this.searchTerm != '') {
+      this.dataService.selectTreeNode(null);
+      // primeng autocomplete issue workaround
+      // https://github.com/primefaces/primeng/issues/2882
+      this.autocompleteCharge.inputEL.nativeElement.value = '';
+      this.searchTerm = '';
+      this.onFiltering(event);
+    }
   }
 
   /**
