@@ -155,7 +155,7 @@ body .ui-g-6 {
  * Add scrollbar to listbox-list
  */
 .ui-listbox-list {
-    max-height: 130px;
+    max-height: 135px;
     overflow-x: auto;
 }
 
