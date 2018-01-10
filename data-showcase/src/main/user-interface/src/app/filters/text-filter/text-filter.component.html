@@ -7,12 +7,12 @@
 <div class="text-filter-container">
     <table>
         <tr>
-            <td style="width: 300px; padding-left:100px; padding-right: 20px;">
+            <td width="20%" style="text-align: right; padding-right: 10px">
                 <div class="search-label">
                     Search by keywords, item name, <br/>item labels:
                 </div>
             </td>
-            <td>
+            <td width="70%">
                 <i class="fa fa-search" style="font-size:24px"></i>
                 <p-autoComplete [(ngModel)]="textFilter"
                                 placeholder="Enter search term"
@@ -24,7 +24,7 @@
                 <button pButton type="button" label="Search" class="export-button"
                         (click)="onFiltering($event);"></button>
             </td>
-            <td class="info">
+            <td width="10%" style="text-align: left">
                 <app-info></app-info>
             </td>
         </tr>
