@@ -14,13 +14,13 @@
                         (onClear)="onFiltering($event)"
                         (completeMethod)="onFiltering($event)"></p-autoComplete>
         <button pButton type="button" class="btn btn-default btn-circle btn-lg" (click)="clear($event)"
-                icon="fa fa-times"></button>
+                icon="" label="Clear"></button>
     </div>
     <!-- the tree itself -->
     <p-tree [value]="treeNodes"
             selectionMode="single"
             (onNodeExpand)="expandNode($event)"
-            [(selection)]="selectedNode"
+            [(selection)]="dataService.selectedTreeNode"
             (onNodeSelect)="selectNode($event)"
             styleClass="ds-tree-container"></p-tree>
 
