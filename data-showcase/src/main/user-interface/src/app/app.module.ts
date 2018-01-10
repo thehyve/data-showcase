@@ -21,11 +21,11 @@ import {ItemSummaryModule} from "./item-summary/item-summary.module";
 import {LogosComponent} from './logos/logos.component';
 import {PageRibbonComponent} from './page-ribbon/page-ribbon.component';
 import {FiltersModule} from "./filters/filters.module";
-import {InfoModule} from "./info/info.module";
 import {SearchParserService} from "./services/search-parser.service";
 import {GrowlModule} from "primeng/primeng";
 import {DSMessageService} from "./services/ds-message.service";
 import {MessageService} from "primeng/components/common/messageservice";
+import { FooterComponent } from './footer/footer.component';
 
 export function initConfig(config: AppConfig) {
   return () => config.load()
@@ -35,7 +35,8 @@ export function initConfig(config: AppConfig) {
   declarations: [
     AppComponent,
     LogosComponent,
-    PageRibbonComponent
+    PageRibbonComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,
@@ -47,7 +48,6 @@ export function initConfig(config: AppConfig) {
     ItemTableModule,
     ShoppingCartModule,
     ItemSummaryModule,
-    InfoModule,
     GrowlModule
   ],
   providers: [

@@ -53,7 +53,7 @@ export class DataService {
   // the first result to retrieve, numbered from '0'
   public itemsFirstResult: number = 0;
   // the maximum number of results
-  public itemsMaxResults: number = 8;
+  public itemsMaxResults: number = 10;
   // ascending/descending order
   public itemsOrder: number = 1;
   // the property to order on
@@ -66,7 +66,7 @@ export class DataService {
   private selectedTreeNode: TreeNode = null;
   // selected checkboxes for projects filter
   private selectedProjects: string[] = [];
-  // selected checkboxes for research lines filter
+  // selected checkboxes for research types filter
   private selectedResearchLines: string[] = [];
   // list of project names available for current item list
   public projects: SelectItem[] = [];
@@ -86,6 +86,9 @@ export class DataService {
   // item summary popup visibility
   private itemSummaryVisibleSource = new Subject<Item>();
   public itemSummaryVisible$ = this.itemSummaryVisibleSource.asObservable();
+
+  // shopping cart popup visibility
+  public shoppingCartVisible = false;
 
   // search error message
   private searchErrorMessageSource = new Subject<string>();

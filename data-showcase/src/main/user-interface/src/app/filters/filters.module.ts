@@ -1,11 +1,16 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {FormsModule} from "@angular/forms";
-import {AutoCompleteModule, ButtonModule, FieldsetModule, ListboxModule, PanelModule, TooltipModule} from "primeng/primeng";
+import {
+  AccordionModule,
+  AutoCompleteModule, ButtonModule, FieldsetModule, ListboxModule, PanelModule, SidebarModule,
+  TooltipModule
+} from "primeng/primeng";
 import {FiltersComponent} from "./filters.component";
 import {CheckboxFilterComponent} from "./checkbox-filter/checkbox-filter.component";
 import {TextFilterComponent} from "./text-filter/text-filter.component";
 import {SearchParserService} from "../services/search-parser.service";
+import {InfoComponent} from "./text-filter/info/info.component";
 
 @NgModule({
   imports: [
@@ -16,9 +21,11 @@ import {SearchParserService} from "../services/search-parser.service";
     FormsModule,
     ListboxModule,
     PanelModule,
-    TooltipModule
+    TooltipModule,
+    SidebarModule,
+    AccordionModule
   ],
-  declarations: [FiltersComponent, TextFilterComponent, CheckboxFilterComponent],
+  declarations: [FiltersComponent, TextFilterComponent, CheckboxFilterComponent, InfoComponent],
   exports: [FiltersComponent],
   providers: [SearchParserService]
 })

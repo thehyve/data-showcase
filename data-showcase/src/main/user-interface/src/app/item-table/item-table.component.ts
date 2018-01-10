@@ -75,7 +75,7 @@ export class ItemTableComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.rowsPerPage = 8;
+    this.rowsPerPage = 10;
     this.itemsSelection = [];
     this.itemsSelectionPerPage = [];
   }

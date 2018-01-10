@@ -27,7 +27,7 @@
 }
 
 .ds-body {
-    padding: 20px;
+    padding-top: 10px;
 }
 
 .gutter {
@@ -74,14 +74,10 @@
     float: right;
 }
 
-.ds-info {
-    padding-right: 20px;
-    padding-left: 20px;
-    padding-top: 25px;
-    float: right;
+.ds-footer {
+    text-align: center;
 }
 
-.ds-info,
 .ds-logos,
 .ds-shopping-cart{
     height: 100px;

@@ -7,7 +7,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TextFilterComponent } from './text-filter.component';
-import {AutoCompleteModule} from "primeng/primeng";
+import {AccordionModule, AutoCompleteModule, SidebarModule} from "primeng/primeng";
 import {FormsModule} from "@angular/forms";
 import {ResourceService} from "../../services/resource.service";
 import {DataService} from "../../services/data.service";
@@ -17,6 +17,8 @@ import {AppConfigMock} from "../../config/app.config.mock";
 import {SearchParserService} from "../../services/search-parser.service";
 import {DSMessageService} from "../../services/ds-message.service";
 import {MessageService} from "primeng/components/common/messageservice";
+import {InfoComponent} from "./info/info.component";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 describe('TextFilterComponent', () => {
   let component: TextFilterComponent;
@@ -24,11 +26,14 @@ describe('TextFilterComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TextFilterComponent ],
+      declarations: [ TextFilterComponent, InfoComponent ],
       imports: [
         FormsModule,
         AutoCompleteModule,
-        HttpModule
+        HttpModule,
+        SidebarModule,
+        AccordionModule,
+        BrowserAnimationsModule
       ],
       providers: [
         DataService,
