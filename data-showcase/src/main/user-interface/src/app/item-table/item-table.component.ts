@@ -98,6 +98,7 @@ export class ItemTableComponent implements OnInit {
 
   changeSort(event) {
     console.log("Sort: " + event.field + ", " + event.order);
+    this.dataService.resetTableToTheFirstPage();
     this.dataService.itemsOrder = event.order;
     this.dataService.itemsPropertyName = event.field;
     this.dataService.fetchItems();

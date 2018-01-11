@@ -49,10 +49,6 @@ export class ShoppingCartComponent implements OnInit {
     this.dataService.shoppingCartVisible = true;
   }
 
-  changeSort(event) {
-    this.dataTable['first'] = this.firstOnPage ;
-  }
-
   deleteItem(itemToDelete: Item) {
     this.items = this.items.filter(item => item !== itemToDelete);
     this.dataService.setShoppingCartItems(this.items);
