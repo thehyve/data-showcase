@@ -20,8 +20,8 @@
 }
 
 .ds-header {
-    height: 120px;
-    padding-top: 10px;
+    height: 110px;
+    padding-top: 5px;
     box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14),0 1px 10px 0 rgba(0,0,0,0.12),0 2px 4px -1px rgba(0,0,0,0.2);
     min-width: 1150px;
 }
@@ -67,7 +67,7 @@
 }
 
 .ds-shopping-cart {
-    padding-right: 20px;
+    padding-right: 30px;
     padding-left: 20px;
     padding-top: 5px;
     border-left: 2px solid darkgrey;
