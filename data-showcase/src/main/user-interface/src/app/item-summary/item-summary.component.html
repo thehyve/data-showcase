@@ -96,7 +96,8 @@
         <br/>
     </div>
     <p-footer>
-        <button pButton type="button" label="Add to cart" icon="fa-cart-plus" iconPos="left" (click)="addToCart()">
+        <button *ngIf="!dataService.shoppingCartVisible" pButton type="button" label="Add to cart"
+                icon="fa-cart-plus" iconPos="left" (click)="addToCart()">
         </button>
         <button pButton type="button" label="Close" icon="fa-times" iconPos="left" (click)="close()">
         </button>

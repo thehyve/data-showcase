@@ -5,14 +5,8 @@
   -->
 
 <p-sidebar [(visible)]="display" position="bottom" [blockScroll]="false"
-           [style]="{ height: '500px', 'overflow-y': 'auto'}">
-    <h1 class="info-header info-title">Help information</h1>
-    <h2 class="info-header">General</h2>
-    <p>
-    General information about the application.
-    </p>
-
-    <h2 class="info-header">Search</h2>
+           [style]="{ height: '500px', 'overflow-y': 'auto', 'text-align': 'left'}">
+    <h1 class="info-header info-title">Search information</h1>
     <p-accordion [multiple]="true">
         <p-accordionTab header="Composing a query">
             General structure of the query is:
@@ -76,13 +70,6 @@
             <br /><i>e.g.</i>, <code>((name = "value1") OR (name = "value2")) AND (NOT labelLong = "value3")</code>
         </p-accordionTab>
     </p-accordion>
-
-    <h2 class="info-header">About</h2>
-    <p>
-        This application is <a href="https://opensource.org/osd">open source software</a>.
-        The <a href="https://github.com/thehyve/data-showcase">source code</a> is available
-        under the terms of the <a href="https://opensource.org/licenses/AGPL-3.0">GNU Affero General Public License</a>.
-    </p>
 </p-sidebar>
 
 <!--TODO Option2: to be discussed which one is better-->

@@ -26,11 +26,11 @@ export class ShoppingCartComponent implements OnInit {
   firstOnPage: number = 0;
   rowsPerPage: number = 10;
 
-  constructor(private dataService: DataService) {
+  constructor(public dataService: DataService) {
     dataService.shoppingCartItems.subscribe(
       items => {
         this.items = items;
-        this.disabled = items.length== 0;
+        this.disabled = items.length == 0;
         this.pathSelection = items.map(function(item) {
           return item['itemPath'];
         });
@@ -40,12 +40,13 @@ export class ShoppingCartComponent implements OnInit {
   ngOnInit() {
   }
 
-  showDialog() {
-    this.display = true;
+  onHide() {
+    this.dataService.shoppingCartVisible = false;
   }
 
-  changeSort(event) {
-    this.dataTable['first'] = this.firstOnPage ;
+  showDialog() {
+    this.display = true;
+    this.dataService.shoppingCartVisible = true;
   }
 
   deleteItem(itemToDelete: Item) {
@@ -63,5 +64,9 @@ export class ShoppingCartComponent implements OnInit {
     let file = new Blob([JSON.stringify(exportObject)], { type: 'text/json;charset=utf-8' });
     let filename = this.fileName && this.fileName.trim() != "" ? this.fileName.trim() + '.json' :'dsc_selection.json';
     saveAs(file, filename);
+  }
+
+  showSummary(item: Item) {
+    this.dataService.displayPopup(item);
   }
 }

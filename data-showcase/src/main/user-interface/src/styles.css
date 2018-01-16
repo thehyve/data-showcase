@@ -131,18 +131,31 @@ body .ui-listbox .ui-listbox-header .ui-listbox-filter-container {
     height: 30px;
     margin-bottom: 0;
 }
+body .ui-listbox .ui-listbox-header {
+    padding-top: 0;
+}
 body .ui-listbox-filter-container {
     padding-left: 25px;
+}
+body .ui-fieldset {
+    padding-bottom: 0;
 }
 body .ui-fieldset .ui-fieldset-legend {
     background-color: #e7f3f1;
     margin-bottom: 0;
 }
+body .ui-fieldset .ui-fieldset-content {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+body .ui-g-6 {
+    padding-bottom: 1px;
+}
 /*
  * Add scrollbar to listbox-list
  */
 .ui-listbox-list {
-    max-height: 130px;
+    max-height: 135px;
     overflow-x: auto;
 }
 
@@ -296,4 +309,9 @@ body .ui-inputgroup .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
     word-wrap: break-word;
     word-break: break-all;
     white-space: normal;
+}
+
+/* The application pop-up message alignment */
+.ui-growl {
+    right: 160px;
 }

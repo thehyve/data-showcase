@@ -5,7 +5,7 @@
   -->
 
 <p-dialog header="Shopping Cart" [(visible)]="display" [modal]="true" [width]="1300" [responsive]="true"
-          [closable]="true" [draggable]="false" [resizable]="false">
+          [closable]="true" [draggable]="false" [resizable]="false" (onHide)="onHide()">
     <div *ngIf="items.length==0; else item_table_content">
         Shopping Cart is empty.
     </div>
@@ -15,34 +15,40 @@
                      [value]="items"
                      [style]="table-content"
                      [rows]="rowsPerPage" [paginator]="true"
-                     (onSort)="changeSort($event)"
                      [(first)]="firstOnPage">
 
-            <p-column [style]="{ width: '50px'}" header="Del">
+            <p-column [style]="{ width: '4%'}" header="Del">
                 <ng-template let-item="rowData" pTemplate="body">
                     <button pButton type="button" (click)="deleteItem(item)" icon="fa-close"
                             class="ui-button-danger"></button>
                 </ng-template>
             </p-column>
 
-            <p-column field="name" header="Name"
+            <p-column field="name" header="Name" [style]="{ width: '15%'}"
                       [sortable]="true">
             </p-column>
 
-            <p-column field="label" header="Description"
+            <p-column field="label" header="Description" [style]="{ width: '32%'}"
                       [sortable]="true">
             </p-column>
 
-            <p-column field="project" header="Project"
+            <p-column field="project" header="Project" [style]="{ width: '17%'}"
                       [sortable]="true">
             </p-column>
 
-            <p-column field="lineOfResearch" header="Research line"
+            <p-column field="lineOfResearch" header="Research type" [style]="{ width: '12%'}"
                       [sortable]="true">
             </p-column>
 
-            <p-column field="concept" header="Concept"
+            <p-column field="concept" header="Concept" [style]="{ width: '16%'}"
                       [sortable]="true">
+            </p-column>
+
+            <p-column [style]="{ 'width': '4%'}">
+                <ng-template let-item="rowData" pTemplate="body">
+                    <button pButton type="button" class="btn btn-default btn-circle btn-lg" (click)="showSummary(item)"
+                            icon="fa fa-question-circle"></button>
+                </ng-template>
             </p-column>
 
         </p-dataTable>
@@ -55,7 +61,8 @@
             <input type="text" size="30" pInputText  placeholder="File name (optional)" [(ngModel)]="fileName"
                    [disabled]="disabled">
             <span class="ui-inputgroup-addon">.json</span>&nbsp;
-            <button type="button" pButton icon="fa-external-link-square" (click)="exportItems(); display=false;"
+            <button type="button" pButton icon="fa-external-link-square" (click)="exportItems();
+            dataService.shoppingCartVisible = false; display=false;"
                 label="Export" [disabled]="disabled"></button>
         </div>
     </p-footer>
