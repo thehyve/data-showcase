@@ -310,3 +310,8 @@ body .ui-inputgroup .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
     word-break: break-all;
     white-space: normal;
 }
+
+/* The application pop-up message alignment */
+.ui-growl {
+    right: 160px;
+}
