@@ -3,7 +3,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FiltersComponent } from './filters.component';
 import {HttpModule} from "@angular/http";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {AutoCompleteModule, DataListModule, FieldsetModule, ListboxModule, PanelModule} from "primeng/primeng";
+import {
+  AccordionModule, AutoCompleteModule, DataListModule, FieldsetModule, ListboxModule,
+  PanelModule, SidebarModule
+} from "primeng/primeng";
 import {FormsModule} from "@angular/forms";
 import {TextFilterComponent} from "./text-filter/text-filter.component";
 import {CheckboxFilterComponent} from "./checkbox-filter/checkbox-filter.component";
@@ -14,6 +17,7 @@ import {AppConfigMock} from "../config/app.config.mock";
 import {SearchParserService} from "../services/search-parser.service";
 import {DSMessageService} from "../services/ds-message.service";
 import {MessageService} from "primeng/components/common/messageservice";
+import {InfoComponent} from "./text-filter/info/info.component";
 
 describe('FiltersComponent', () => {
   let component: FiltersComponent;
@@ -21,7 +25,7 @@ describe('FiltersComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FiltersComponent, TextFilterComponent, CheckboxFilterComponent ],
+      declarations: [ FiltersComponent, TextFilterComponent, CheckboxFilterComponent, InfoComponent ],
       imports: [
         FormsModule,
         PanelModule,
@@ -30,7 +34,9 @@ describe('FiltersComponent', () => {
         DataListModule,
         ListboxModule,
         BrowserAnimationsModule,
-        HttpModule
+        HttpModule,
+        SidebarModule,
+        AccordionModule
       ],
       providers: [
         DataService,

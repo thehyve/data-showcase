@@ -75,7 +75,7 @@ export class ItemTableComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.rowsPerPage = 8;
+    this.rowsPerPage = 10;
     this.itemsSelection = [];
     this.itemsSelectionPerPage = [];
   }
@@ -98,6 +98,7 @@ export class ItemTableComponent implements OnInit {
 
   changeSort(event) {
     console.log("Sort: " + event.field + ", " + event.order);
+    this.dataService.resetTableToTheFirstPage();
     this.dataService.itemsOrder = event.order;
     this.dataService.itemsPropertyName = event.field;
     this.dataService.fetchItems();

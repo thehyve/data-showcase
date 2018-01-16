@@ -22,7 +22,7 @@ export class ItemSummaryComponent implements OnInit {
   keywordsForConcept: string[] = [];
   environment: Environment;
 
-  constructor(private dataService: DataService,
+  constructor(public dataService: DataService,
               private resourceService: ResourceService) {
     dataService.environment$.subscribe(
       environment => {

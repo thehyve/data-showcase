@@ -28,10 +28,10 @@ import {ItemSummaryComponent} from "./item-summary/item-summary.component";
 import {LogosComponent} from "./logos/logos.component";
 import {PageRibbonComponent} from "./page-ribbon/page-ribbon.component";
 import {FiltersModule} from "./filters/filters.module";
-import {InfoModule} from "./info/info.module";
 import {SearchParserService} from "./services/search-parser.service";
 import {DSMessageService} from "./services/ds-message.service";
 import {MessageService} from "primeng/components/common/messageservice";
+import {FooterComponent} from "./footer/footer.component";
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -44,6 +44,7 @@ describe('AppComponent', () => {
         ShoppingCartComponent,
         ItemSummaryComponent,
         LogosComponent,
+        FooterComponent,
         AppComponent
       ],
       imports: [
@@ -59,7 +60,6 @@ describe('AppComponent', () => {
         BrowserAnimationsModule,
         DialogModule,
         HttpModule,
-        InfoModule,
         PaginatorModule,
         CheckboxModule,
         GrowlModule
