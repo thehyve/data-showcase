@@ -15,33 +15,33 @@
                  (onRowSelect)="handleRowSelect($event)" (onRowUnselect)="handleRowSelect($event)"
                  (onSort)="changeSort($event)"
                  [loading]="dataService.loadingItems == 'loading'" loadingIcon="fa fa-spin fa-refresh fa-fw">
-        <p-column selectionMode="multiple" [style]="{ 'width': '3%'}">
+        <p-column selectionMode="multiple" [style]="{ 'width': '2.4%'}">
             <ng-template pTemplate="header">
                 <p-checkbox [(ngModel)]="dataService.allItemsSelected" binary="true" (onChange)="handleHeaderCheckboxToggle($event)">
                 </p-checkbox>
             </ng-template>
         </p-column>
-        <p-column field="name" header="Name" [style]="{ 'width': '16%'}"
+        <p-column field="name" header="Name" [style]="{ 'width': '10%'}"
                   [sortable]="true">
         </p-column>
 
-        <p-column field="labelLong" header="Description" [style]="{ 'width': '34%'}"
+        <p-column field="labelLong" header="Description" [style]="{ 'width': '53%'}"
                   [sortable]="true">
         </p-column>
 
-        <p-column field="project" header="Project" [style]="{ 'width': '17%'}"
+        <p-column field="project" header="Project" [style]="{ 'width': '11%'}"
                   [sortable]="true">
         </p-column>
 
-        <p-column field="lineOfResearch" header="Research type" [style]="{ 'width': '10%'}"
+        <p-column field="lineOfResearch" header="Research type" [style]="{ 'width': '11%'}"
                   [sortable]="true">
         </p-column>
 
-        <p-column field="concept" header="Concept" [style]="{ 'width': '16%'}"
+        <p-column field="concept" header="Concept" [style]="{ 'width': '9%'}"
                   [sortable]="true">
         </p-column>
 
-        <p-column [style]="{ 'width': '4%'}">
+        <p-column [style]="{ 'width': '3.6%'}">
             <ng-template let-item="rowData" pTemplate="body">
                 <button pButton type="button" class="btn btn-default btn-circle btn-lg" (click)="showSummary(item)"
                         icon="fa fa-question-circle"></button>
