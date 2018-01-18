@@ -69,8 +69,7 @@ class Summary {
 
     static mapping = {
         version false
-
-        values batchSize: 1000, sort: 'frequency', order:'desc'
+        values batchSize: 1000, sort([value:'asc', frequency:'desc'])
     }
 
     static constraints = {
