@@ -48,12 +48,12 @@
     <b>Summary statistics:</b>
     <table>
         <tr>
-            <td>Subject counts:</td>
+            <td>Subject count:</td>
             <td>{{item?.summary.patientCount}}</td>
         </tr>
-        <tr>
-            <td>Observation counts:</td>
-            <td>{{item?.summary.observationCount}}</td>
+        <tr *ngIf="item?.summary.patientsWithMissingCount">
+            <td>Missing count:</td>
+            <td>{{item?.summary.patientsWithMissingCount}}</td>
         </tr>
     </table>
     <br/>

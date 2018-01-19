@@ -22,6 +22,11 @@ abstract class SummaryRepresentation {
     Long patientCount
 
     /**
+     * The number of patients (subjects) for whom there are missing observations associated with the variable.
+     */
+    Long patientsWithMissingCount
+
+    /**
      * A description of the stability (status) of the data.
      */
     String dataStability
