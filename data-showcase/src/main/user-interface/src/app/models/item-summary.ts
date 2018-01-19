@@ -15,5 +15,6 @@ export class ItemSummary {
 
   observationCount: number;
   patientCount: number;
+  patientsWithMissingCount: number;
   dataStability: string;
 }

@@ -68,7 +68,7 @@ class ProjectService {
         if (concepts) {
             criteria.add(Restrictions.in('c.conceptCode', concepts))
         }
-        if (dataShowcaseEnvironment.internalInstance) {
+        if (!dataShowcaseEnvironment.internalInstance) {
             criteria.add(Restrictions.eq('i.publicItem', true))
         }
         if (searchQueryCriterion) {
