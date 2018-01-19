@@ -22,7 +22,7 @@ abstract class SummaryRepresentation {
     Long patientCount
 
     /**
-     * A description of the stability of the data.
+     * A description of the stability (status) of the data.
      */
     String dataStability
 
