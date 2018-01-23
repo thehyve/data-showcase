@@ -20,7 +20,7 @@ export class ShoppingCartComponent implements OnInit {
   @ViewChild('itemTable') dataTable: DataTable;
   display: boolean = false;
   items: Item[] = [];
-  pathSelection: string[] = [];
+  nameSelection: string[] = [];
   fileName: string;
   disabled: boolean = true;
   firstOnPage: number = 0;
@@ -31,8 +31,8 @@ export class ShoppingCartComponent implements OnInit {
       items => {
         this.items = items;
         this.disabled = items.length == 0;
-        this.pathSelection = items.map(function(item) {
-          return item['itemPath'];
+        this.nameSelection = items.map(function(item) {
+          return item['name'];
         });
       });
   }
@@ -60,7 +60,7 @@ export class ShoppingCartComponent implements OnInit {
   }
 
   exportItems(){
-    let exportObject = {paths: this.pathSelection};
+    let exportObject = {names: this.nameSelection};
     let file = new Blob([JSON.stringify(exportObject)], { type: 'text/json;charset=utf-8' });
     let filename = this.fileName && this.fileName.trim() != "" ? this.fileName.trim() + '.json' :'dsc_selection.json';
     saveAs(file, filename);
