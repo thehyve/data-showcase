@@ -24,7 +24,7 @@ import {HttpModule} from "@angular/http";
 import {AppConfig} from "./config/app.config";
 import {ShoppingCartComponent} from "./shopping-cart/shopping-cart.component";
 import {AppConfigMock} from "./config/app.config.mock";
-import {ItemSummaryComponent} from "./item-summary/item-summary.component";
+import {ItemSummaryComponent, ValueFilter} from "./item-summary/item-summary.component";
 import {LogosComponent} from "./logos/logos.component";
 import {PageRibbonComponent} from "./page-ribbon/page-ribbon.component";
 import {FiltersModule} from "./filters/filters.module";
@@ -41,6 +41,7 @@ describe('AppComponent', () => {
         TreeNodesComponent,
         ItemTableComponent,
         ItemFilter,
+        ValueFilter,
         ShoppingCartComponent,
         ItemSummaryComponent,
         LogosComponent,

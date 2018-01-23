@@ -86,7 +86,7 @@
                     <th>Frequency:</th>
                     <th>Label:</th>
                 </tr>
-                <tr *ngFor="let value of item?.summary.values">
+                <tr *ngFor="let value of item?.summary.values | orderBy : ['value', 'frequency']">
                     <td>{{value.value}}</td>
                     <td>{{value.frequency}}</td>
                     <td>{{value.label}}</td>
