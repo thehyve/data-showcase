@@ -6,7 +6,7 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {ItemSummaryComponent} from "./item-summary.component";
+import {ItemSummaryComponent, ValueFilter} from "./item-summary.component";
 import {FormsModule} from "@angular/forms";
 import {ButtonModule, DataTableModule, DialogModule} from "primeng/primeng";
 
@@ -18,7 +18,7 @@ import {ButtonModule, DataTableModule, DialogModule} from "primeng/primeng";
     ButtonModule,
     DataTableModule
   ],
-  declarations: [ItemSummaryComponent],
-  exports: [ItemSummaryComponent]
+  declarations: [ItemSummaryComponent, ValueFilter],
+  exports: [ItemSummaryComponent, ValueFilter]
 })
 export class ItemSummaryModule { }

@@ -6,7 +6,7 @@
 
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ItemSummaryComponent } from './item-summary.component';
+import {ItemSummaryComponent, ValueFilter} from './item-summary.component';
 import {FormsModule} from "@angular/forms";
 import {DataTableModule, DialogModule} from "primeng/primeng";
 import {HttpModule} from "@angular/http";
@@ -24,7 +24,7 @@ describe('ItemSummaryComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ItemSummaryComponent ],
+      declarations: [ ItemSummaryComponent, ValueFilter ],
       imports: [
         FormsModule,
         DialogModule,
