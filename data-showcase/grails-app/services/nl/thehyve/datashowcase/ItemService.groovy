@@ -64,7 +64,7 @@ class ItemService {
             case "project": return "projectName"
             case "concept": return "conceptCode"
             case "label": return "label"
-            case "lineofresearch": return "p.lineOfResearch"
+            case "lineOfResearch": return "p.lineOfResearch"
             default: return "i.name"
         }
     }
