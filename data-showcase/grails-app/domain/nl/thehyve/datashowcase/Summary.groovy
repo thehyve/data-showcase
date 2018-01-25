@@ -23,7 +23,12 @@ class Summary {
     Long patientCount
 
     /**
-     * A description of the stability of the data.
+     * The number of patients (subjects) for whom there are missing observations associated with the variable.
+     */
+    Long patientsWithMissingCount
+
+    /**
+     * A description of the stability (status) of the data.
      */
     String dataStability
 
@@ -64,18 +69,18 @@ class Summary {
 
     static mapping = {
         version false
-
-        values batchSize: 1000, sort: 'frequency', order:'desc'
+        values batchSize: 1000
     }
 
     static constraints = {
-        observationCount    nullable: false
-        patientCount        nullable: false
-        dataStability       nullable: true
-        minValue            nullable: true
-        maxValue            nullable: true
-        avgValue            nullable: true
-        stdDevValue         nullable: true
+        observationCount            nullable: false
+        patientCount                nullable: false
+        patientsWithMissingCount    nullable: true
+        dataStability               nullable: true
+        minValue                    nullable: true
+        maxValue                    nullable: true
+        avgValue                    nullable: true
+        stdDevValue                 nullable: true
     }
 
 }

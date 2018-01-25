@@ -9,14 +9,14 @@
 </div>
 <div class="ui-g" *ngIf="!rerender">
     <div class="ui-g-6">
-        <p-fieldset legend="Filter by research types">
+        <p-fieldset legend="Filter by research type">
             <p-listbox [options]="researchLines" [(ngModel)]="selectedResearchLines" [filter]=true [multiple]=true
                        [checkbox]="researchLines.length > 0" [disabled]="researchLines.length < 1"
                        [metaKeySelection]=false (onChange)="onResearchLineSelect()"></p-listbox>
         </p-fieldset>
     </div>
     <div class="ui-g-6">
-        <p-fieldset legend="Filter by projects">
+        <p-fieldset legend="Filter by project">
             <p-listbox [options]="projects" [(ngModel)]="selectedProjects" [filter]=true [multiple]=true
                        [checkbox]="projects.length > 0" [disabled]="projects.length < 1"
                        [metaKeySelection]=false (onChange)="onProjectSelect()"></p-listbox>

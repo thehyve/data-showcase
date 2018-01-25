@@ -32,7 +32,7 @@
             <td>{{item?.labelNlLong}}</td>
         </tr>
         <tr>
-            <td>Data stability:</td>
+            <td>Status:</td>
             <td>{{item?.summary.dataStability}}</td>
         </tr>
         <tr>
@@ -48,12 +48,12 @@
     <b>Summary statistics:</b>
     <table>
         <tr>
-            <td>Subject counts:</td>
+            <td>Subject count:</td>
             <td>{{item?.summary.patientCount}}</td>
         </tr>
-        <tr>
-            <td>Observation counts:</td>
-            <td>{{item?.summary.observationCount}}</td>
+        <tr *ngIf="item?.summary.patientsWithMissingCount">
+            <td>Missing count:</td>
+            <td>{{item?.summary.patientsWithMissingCount}}</td>
         </tr>
     </table>
     <br/>
@@ -86,7 +86,7 @@
                     <th>Frequency:</th>
                     <th>Label:</th>
                 </tr>
-                <tr *ngFor="let value of item?.summary.values">
+                <tr *ngFor="let value of item?.summary.values | orderBy : ['value', 'frequency']">
                     <td>{{value.value}}</td>
                     <td>{{value.frequency}}</td>
                     <td>{{value.label}}</td>

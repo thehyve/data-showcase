@@ -4,7 +4,7 @@
   ~  (see accompanying file LICENSE).
   -->
 
-<p-dialog header="Shopping Cart" [(visible)]="display" [modal]="true" [width]="1300" [responsive]="true"
+<p-dialog header="Shopping Cart" [(visible)]="display" [modal]="true" [width]="1500" [responsive]="true"
           [closable]="true" [draggable]="false" [resizable]="false" (onHide)="onHide()">
     <div *ngIf="items.length==0; else item_table_content">
         Shopping Cart is empty.
@@ -17,34 +17,34 @@
                      [rows]="rowsPerPage" [paginator]="true"
                      [(first)]="firstOnPage">
 
-            <p-column [style]="{ width: '4%'}" header="Del">
+            <p-column [style]="{ width: '3.5%'}" header="Del">
                 <ng-template let-item="rowData" pTemplate="body">
                     <button pButton type="button" (click)="deleteItem(item)" icon="fa-close"
                             class="ui-button-danger"></button>
                 </ng-template>
             </p-column>
 
-            <p-column field="name" header="Name" [style]="{ width: '15%'}"
+            <p-column field="name" header="Name" [style]="{ width: '12%'}"
                       [sortable]="true">
             </p-column>
 
-            <p-column field="label" header="Description" [style]="{ width: '32%'}"
+            <p-column field="label" header="Description" [style]="{ width: '48%'}"
                       [sortable]="true">
             </p-column>
 
-            <p-column field="project" header="Project" [style]="{ width: '17%'}"
+            <p-column field="project" header="Project" [style]="{ width: '11%'}"
                       [sortable]="true">
             </p-column>
 
-            <p-column field="lineOfResearch" header="Research type" [style]="{ width: '12%'}"
+            <p-column field="lineOfResearch" header="Research type" [style]="{ width: '11%'}"
                       [sortable]="true">
             </p-column>
 
-            <p-column field="concept" header="Concept" [style]="{ width: '16%'}"
+            <p-column field="concept" header="Concept" [style]="{ width: '11%'}"
                       [sortable]="true">
             </p-column>
 
-            <p-column [style]="{ 'width': '4%'}">
+            <p-column [style]="{ 'width': '3.5%'}">
                 <ng-template let-item="rowData" pTemplate="body">
                     <button pButton type="button" class="btn btn-default btn-circle btn-lg" (click)="showSummary(item)"
                             icon="fa fa-question-circle"></button>

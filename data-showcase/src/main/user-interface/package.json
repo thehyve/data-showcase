@@ -1,6 +1,6 @@
 {
   "name": "data-showcase",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "AGPL-3.0-only",
   "scripts": {
     "grammar": "./node_modules/nearley/bin/nearleyc.js ./src/app/search-text-parser/grammar.ne -o ./src/app/search-text-parser/grammar.ts",

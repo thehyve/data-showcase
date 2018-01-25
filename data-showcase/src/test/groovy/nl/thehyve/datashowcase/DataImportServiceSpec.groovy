@@ -108,6 +108,7 @@ class DataImportServiceSpec extends Specification {
 
         summaries.size() == 2
         summaries*.patientCount == [100, 200]
+        summaries*.patientsWithMissingCount == [25, 40]
         summaries*.observationCount == [102, 402]
         summaries*.dataStability == ['Committed', 'Committed']
         summaries*.values.flatten() as Set == values as Set

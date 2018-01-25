@@ -310,6 +310,13 @@ body .ui-inputgroup .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
     word-break: break-all;
     white-space: normal;
 }
+/* Table column row paddings - overwrite PrimeNG styling*/
+body .ui-datatable .ui-datatable-data > tr > td {
+    padding: 0 0.7em 0 0.7em;
+}
+body .ui-datatable .ui-datatable-footer {
+    padding: 0;
+}
 
 /* The application pop-up message alignment */
 .ui-growl {

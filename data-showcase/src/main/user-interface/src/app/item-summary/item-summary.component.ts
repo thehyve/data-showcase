@@ -4,11 +4,42 @@
  *  (see accompanying file LICENSE).
  */
 
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, Pipe, PipeTransform} from '@angular/core';
 import {DataService} from "../services/data.service";
 import {Item} from "../models/item";
 import {ResourceService} from "../services/resource.service";
 import {Environment} from "../models/environment";
+import {ItemValue} from "../models/item-value";
+
+@Pipe({
+  name: 'orderBy'
+})
+export class ValueFilter implements PipeTransform {
+  transform(values: ItemValue[], args: any): ItemValue[] {
+    if(values) {
+      values.sort((a: any, b: any) => {
+        let v1 = parseFloat(a[args[0]]);
+        let v2 = parseFloat(b[args[0]]);
+        // sort by first argument, asc order
+        if (v1 < v2) {
+          return -1;
+        } else if (v1 > v2) {
+          return 1;
+        } else {
+          // sort by second argument, desc order
+          if (a[args[1]] < b[args[1]]) {
+            return 1;
+          } else if (a[args[1]] > b[args[1]]) {
+            return -1;
+          } else {
+            return 0;
+          }
+        }
+      });
+    }
+    return values;
+  }
+}
 
 @Component({
   selector: 'app-item-summary',

@@ -98,6 +98,7 @@ class TestService {
             def summary = new Summary(
                     patientCount: patientCount,
                     observationCount: rand(patientCount, patientCount + 50),
+                    patientsWithMissingCount: rand(0, 100) > 50 ? rand(0, patientCount) : null,
                     dataStability: 'Approved',
                     minValue: minValue,
                     avgValue: rand((int) minValue, (int) maxValue),
@@ -197,6 +198,7 @@ class TestService {
                 summary: new Summary(
                         patientCount: 100,
                         observationCount: 102,
+                        patientsWithMissingCount: 25,
                         dataStability: 'Committed')
                         .addToValues(new Value(label: 'Young', value: '<= 60'))
                         .addToValues(new Value(label: 'Old', value: '> 60'))
