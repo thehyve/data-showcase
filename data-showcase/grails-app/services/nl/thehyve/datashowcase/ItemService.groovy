@@ -88,6 +88,7 @@ class ItemService {
                     c.label as label,
                     c.labelLong as labelLong,
                     c.variableType as type,
+                    p.lineOfResearch as lineOfResearch,
                     p.name as projectName
                 from Item as i
                 join i.concept c
@@ -149,6 +150,7 @@ class ItemService {
                 .add(Projections.property("c.label").as("label"))
                 .add(Projections.property("c.labelLong").as("labelLong"))
                 .add(Projections.property("c.variableType").as("variableType"))
+                .add(Projections.property("p.lineOfResearch").as("lineOfResearch"))
                 .add(Projections.property("p.name").as("projectName")))
         if (concepts) {
             criteria.add(Restrictions.in('c.conceptCode', concepts))
