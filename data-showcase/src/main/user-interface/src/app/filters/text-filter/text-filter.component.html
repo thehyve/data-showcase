@@ -5,14 +5,14 @@
   -->
 
 <div class="text-filter-container">
-    <table>
+    <table style="width: 100%">
         <tr>
             <td width="20%" style="text-align: right; padding-right: 10px">
                 <div class="search-label">
                     Search by keywords, item name, <br/>item labels:
                 </div>
             </td>
-            <td width="70%">
+            <td width="60%">
                 <i class="fa fa-search" style="font-size:24px"></i>
                 <p-autoComplete [(ngModel)]="textFilter"
                                 placeholder="Enter search term"
@@ -24,7 +24,7 @@
                 <button pButton type="button" label="Search" class="export-button"
                         (click)="onFiltering($event);"></button>
             </td>
-            <td width="10%" style="text-align: left">
+            <td width="20%" style="text-align: left">
                 <app-info></app-info>
             </td>
         </tr>
