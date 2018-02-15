@@ -15,6 +15,7 @@
 body {
     background-color: #FCFCFC;
     cursor: auto;
+    font-size: small;
 }
 
 button,
@@ -291,7 +292,7 @@ body .ui-inputgroup .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
 
 /* Global text filter */
 .text-filter-container .ui-inputtext {
-    width: 900px;
+    width: 750px;
     height: 36px;
     padding: 0;
 }

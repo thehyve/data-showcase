@@ -4,7 +4,7 @@
   ~  (see accompanying file LICENSE).
   -->
 
-<p-dialog header="Shopping Cart" [(visible)]="display" [modal]="true" [width]="1500" [responsive]="true"
+<p-dialog header="Shopping Cart" [(visible)]="display" [modal]="true" [width]="dialogWidth" [responsive]="true"
           [closable]="true" [draggable]="false" [resizable]="false" (onHide)="onHide()">
     <div *ngIf="items.length==0; else item_table_content">
         Shopping Cart is empty.
