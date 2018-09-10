@@ -60,6 +60,8 @@ class Concept {
         version false
 
         keywords batchSize: 1000
+        labelLong type: 'text'
+        labelNlLong type: 'text'
     }
 
     static constraints = {
