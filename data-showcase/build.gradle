@@ -13,7 +13,7 @@ buildscript {
 }
 
 ext {
-    dataShowcaseVersion = '1.0.4-SNAPSHOT'
+    dataShowcaseVersion = '1.0.5-SNAPSHOT'
     nodeVersion = '7.10.1'
     modelMapperVersion = '1.1.0'
 }
