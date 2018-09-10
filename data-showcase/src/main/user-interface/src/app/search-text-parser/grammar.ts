@@ -1,8 +1,10 @@
-// Generated automatically by nearley
+// Generated automatically by nearley, version 2.15.1
 // http://github.com/Hardmath123/nearley
-function id(d:any[]):any {return d[0];}
-declare var word:any;
-declare var WS:any;
+// Bypasses TS6133. Allow declared but unused functions.
+// @ts-ignore
+function id(d: any[]): any { return d[0]; }
+declare var word: any;
+declare var WS: any;
 
 /*
  * Copyright (c) 2017  The Hyve B.V.
@@ -37,12 +39,28 @@ function buildLowercaseToken(d) {
     return d[0].value.toLowerCase();
 }
 
-export interface Token {value:any; [key: string]:any};
-export interface Lexer {reset:(chunk:string, info:any) => void; next:() => Token | undefined; save:() => any; formatError:(token:Token) => string; has:(tokenType:string) => boolean};
-export interface NearleyRule {name:string; symbols:NearleySymbol[]; postprocess?:(d:any[],loc?:number,reject?:{})=>any};
-export type NearleySymbol = string | {literal:any} | {test:(token:any) => boolean};
-export var Lexer:Lexer|undefined = syntax;
-export var ParserRules:NearleyRule[] = [
+
+export interface Token { value: any; [key: string]: any };
+
+export interface Lexer {
+  reset: (chunk: string, info: any) => void;
+  next: () => Token | undefined;
+  save: () => any;
+  formatError: (token: Token) => string;
+  has: (tokenType: string) => boolean
+};
+
+export interface NearleyRule {
+  name: string;
+  symbols: NearleySymbol[];
+  postprocess?: (d: any[], loc?: number, reject?: {}) => any
+};
+
+export type NearleySymbol = string | { literal: any } | { test: (token: any) => boolean };
+
+export var Lexer: Lexer | undefined = syntax;
+
+export var ParserRules: NearleyRule[] = [
     {"name": "search", "symbols": ["_", "expression", "_"], "postprocess": function(d) { return d[1]; }},
     {"name": "word", "symbols": [(syntax.has("word") ? {type: "word"} : word)], "postprocess": function(d) { return buildValue(stripQuotes(d[0])); }},
     {"name": "field", "symbols": [{"literal":"name"}], "postprocess": buildToken},
@@ -83,4 +101,5 @@ export var ParserRules:NearleyRule[] = [
     {"name": "_", "symbols": []},
     {"name": "_", "symbols": [(syntax.has("WS") ? {type: "WS"} : WS)], "postprocess": function(d) { return null; }}
 ];
-export var ParserStart:string = "search";
+
+export var ParserStart: string = "search";
