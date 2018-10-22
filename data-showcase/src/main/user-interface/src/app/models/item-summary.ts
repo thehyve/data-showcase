@@ -9,6 +9,9 @@ import {ItemValue} from "./item-value";
 export class ItemSummary {
   minValue: number;
   maxValue: number;
+  q1Value: number;
+  medianValue: number;
+  q3Value: number;
   avgValue: number;
   stdDevValue: number;
   values: ItemValue[];

@@ -57,8 +57,8 @@
         </tr>
     </table>
     <br/>
-    <div *ngIf="isInternal()">
-        <div *ngIf="item?.type == 'Numerical';then numerical_content;else cathegorical_content"></div>
+    <div *ngIf="internal">
+        <div *ngIf="item?.type == 'Numerical';then numerical_content;else categorical_content"></div>
         <ng-template #numerical_content>
             <table>
                 <tr>
@@ -79,7 +79,7 @@
                 </tr>
             </table>
         </ng-template>
-        <ng-template #cathegorical_content>
+        <ng-template #categorical_content>
             <table>
                 <tr>
                     <th>Value:</th>
@@ -93,6 +93,10 @@
                 </tr>
             </table>
         </ng-template>
+        <br/>
+        <div [class]="item?.type === 'Numerical' ? 'boxPlotWrapper' : 'barChartWrapper'">
+        <canvas #itemPlot></canvas>
+        </div>
         <br/>
     </div>
     <p-footer>

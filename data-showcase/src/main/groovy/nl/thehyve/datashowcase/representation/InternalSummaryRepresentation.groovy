@@ -22,6 +22,21 @@ class InternalSummaryRepresentation extends SummaryRepresentation {
     Double maxValue
 
     /**
+     * The first quartile value for the variable in the dataset.
+     */
+    Double q1Value
+
+    /**
+     * The median value for the variable in the dataset.
+     */
+    Double medianValue
+
+    /**
+     * The third quartile for the variable in the dataset.
+     */
+    Double q3Value
+
+    /**
      * The average of the values for the variable in the dataset.
      */
     Double avgValue

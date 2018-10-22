@@ -32,3 +32,13 @@ th {
 .export-button {
     width: auto;
 }
+
+.boxPlotWrapper {
+    height: 400px;
+    width: 400px;
+}
+
+.barChartWrapper {
+    height: 400px;
+    width: 600px;
+}

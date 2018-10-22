@@ -38,9 +38,24 @@ class Summary {
     Double minValue
 
     /**
-     * The maximul value for the variable in the dataset.
+     * The maximum value for the variable in the dataset.
      */
     Double maxValue
+
+    /**
+     * The first quartile value for the variable in the dataset.
+     */
+    Double q1Value
+
+    /**
+     * The median value for the variable in the dataset.
+     */
+    Double medianValue
+
+    /**
+     * The third quartile for the variable in the dataset.
+     */
+    Double q3Value
 
     /**
      * The average of the values for the variable in the dataset.
@@ -79,6 +94,9 @@ class Summary {
         dataStability               nullable: true
         minValue                    nullable: true
         maxValue                    nullable: true
+        q1Value                     nullable: true
+        medianValue                 nullable: true
+        q3Value                     nullable: true
         avgValue                    nullable: true
         stdDevValue                 nullable: true
     }

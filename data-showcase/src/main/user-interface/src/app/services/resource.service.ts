@@ -41,14 +41,14 @@ export class ResourceService {
     if (error instanceof Response) {
       let contentType = error.headers.get('Content-Type') || '';
       if (contentType == 'application/json') {
-          const body = error.json() || '';
-          errMsg = body.error || JSON.stringify(body);
+        const body = error.json() || '';
+        errMsg = body.error || JSON.stringify(body);
       } else {
         errMsg = `Error: ${error.statusText}`;
       }
       if (error.status in [0, 404]) {
-          console.error('Server not available.');
-          return Observable.never();
+        console.error('Server not available.');
+        return Observable.never();
       }
     } else {
       errMsg = error.message ? error.message : error.toString();
@@ -90,14 +90,14 @@ export class ResourceService {
     const url = this.endpoint.apiUrl + PATH_ITEMS;
 
     let body = {
-        conceptCodes: conceptCodes,
-        projects: projects,
-        searchQuery: jsonSearchQuery,
-        firstResult: firstResult,
-        maxResults: maxResults,
-        order: order,
-        propertyName: propertyName
-      };
+      conceptCodes: conceptCodes,
+      projects: projects,
+      searchQuery: jsonSearchQuery,
+      firstResult: firstResult,
+      maxResults: maxResults,
+      order: order,
+      propertyName: propertyName
+    };
 
     // use POST because of url length limits in some of the browsers (limit of characters)
     return this.http.post(url, body, options)

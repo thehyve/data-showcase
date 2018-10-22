@@ -95,14 +95,20 @@ class TestService {
         int patientCount = rand(100, 200)
         def summaries = []
         for (int i = 0; i < number; i++) {
+            def medianValue = rand((int) minValue, (int) maxValue)
+            def q1Value = rand((int) minValue, (int) medianValue)
+            def q3Value = rand((int) medianValue, (int) maxValue)
             def summary = new Summary(
                     patientCount: patientCount,
                     observationCount: rand(patientCount, patientCount + 50),
                     patientsWithMissingCount: rand(0, 100) > 50 ? rand(0, patientCount) : null,
                     dataStability: 'Approved',
                     minValue: minValue,
-                    avgValue: rand((int) minValue, (int) maxValue),
+                    q1Value: q1Value,
+                    medianValue: medianValue,
+                    q3Value: q3Value,
                     maxValue: maxValue,
+                    avgValue: rand((int) minValue, (int) maxValue),
                     stdDevValue: rand(1000, 2000) / 100
             ).addToValues(new Value(label: 'TestLabel1', value: '<= 60', frequency: 30))
              .addToValues(new Value(label: 'TestLabel2', value: '> 60', frequency: 60))
@@ -271,7 +277,11 @@ class TestService {
     }
 
     double rand(int min, int max) {
-        return Math.abs(new Random().nextInt() % max) + min
+        if (min == max) {
+            return min
+        }
+        return Math.abs(new Random().nextInt() % (max - min)) + min
     }
+
 }
 

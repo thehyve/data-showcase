@@ -4,12 +4,14 @@
  *  (see accompanying file LICENSE).
  */
 
-import {Component, OnInit, Pipe, PipeTransform} from '@angular/core';
+import { Component, ElementRef, Pipe, PipeTransform, ViewChild } from '@angular/core';
 import {DataService} from "../services/data.service";
 import {Item} from "../models/item";
 import {ResourceService} from "../services/resource.service";
 import {Environment} from "../models/environment";
 import {ItemValue} from "../models/item-value";
+import {Chart} from 'chart.js'
+require('chartjs-chart-box-and-violin-plot');
 
 @Pipe({
   name: 'orderBy'
@@ -46,7 +48,12 @@ export class ValueFilter implements PipeTransform {
   templateUrl: './item-summary.component.html',
   styleUrls: ['./item-summary.component.css']
 })
-export class ItemSummaryComponent implements OnInit {
+export class ItemSummaryComponent {
+
+  @ViewChild('itemPlot') itemPlotCanvas: ElementRef;
+  public context: CanvasRenderingContext2D;
+
+  plot: Chart = null;
 
   display: boolean = false;
   item: Item = null;
@@ -55,25 +62,106 @@ export class ItemSummaryComponent implements OnInit {
 
   constructor(public dataService: DataService,
               private resourceService: ResourceService) {
-    dataService.environment$.subscribe(
+    this.dataService.environment$.subscribe(
       environment => {
         this.environment = environment;
+        this.dataService.itemSummaryVisible$.subscribe(
+          visibleItem => {
+            this.display = true;
+            this.item = visibleItem;
+            if (visibleItem.concept) {
+              this.fetchKeywords(visibleItem.concept);
+            }
+            this.renderPlot();
+          });
       });
-    dataService.itemSummaryVisible$.subscribe(
-      visibleItem => {
-        this.display = true;
-        this.item = visibleItem;
-        if(visibleItem.concept) {
-          this.fetchKeywords(visibleItem.concept);
+  }
+
+  get internal(): boolean {
+    return this.environment && this.environment.environment == 'Internal';
+  }
+
+  renderBoxPlot() {
+    let summary = this.item.summary;
+    let boxplotData = {
+      labels: [],
+      datasets: [{
+        label: this.item.label,
+        backgroundColor: 'rgba(91, 192, 222, 0.47)',
+        borderColor: 'rgb(38, 168, 254)',
+        borderWidth: 1,
+        data: [{
+          min: summary.minValue,
+          q1: summary.q1Value,
+          median: summary.medianValue,
+          q3: summary.q3Value,
+          max: summary.maxValue
+        }],
+      }]
+    };
+    this.context = (<HTMLCanvasElement>this.itemPlotCanvas.nativeElement).getContext('2d');
+    this.plot = new Chart(this.context, {
+      type: 'boxplot',
+      data: boxplotData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          xAxes: [{
+            // Specific to Bar Controller
+            categoryPercentage: 0.9,
+            barPercentage: 0.8
+          }]
         }
-      });
+      }
+    });
   }
 
-  ngOnInit() {
+  renderBarChart() {
+    let labels: string[] = [];
+    let frequencies: number[] = [];
+    for (let value of this.item.summary.values) {
+      labels.push(`${value.label} (${value.value})`);
+      frequencies.push(value.frequency);
+    }
+    this.context = (<HTMLCanvasElement>this.itemPlotCanvas.nativeElement).getContext('2d');
+    this.plot = new Chart(this.context, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Value count',
+          backgroundColor: 'rgba(91, 192, 222, 0.47)',
+          borderColor: 'rgb(38, 168, 254)',
+          data: frequencies,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
   }
 
-  isInternal(): boolean {
-    return this.environment && this.environment.environment == "Internal";
+  renderPlot() {
+    if (this.plot) {
+      this.plot.destroy();
+    }
+    if (this.item.summary) {
+      if (this.item.type == 'Numerical') {
+        this.renderBoxPlot();
+      } else {
+        this.renderBarChart();
+      }
+    }
   }
 
   fetchKeywords(conceptCode: string) {
@@ -88,10 +176,11 @@ export class ItemSummaryComponent implements OnInit {
   }
 
   addToCart(){
-      this.dataService.addToShoppingCart([this.item]);
+    this.dataService.addToShoppingCart([this.item]);
   }
 
   close() {
     this.display = false;
   }
+
 }
