@@ -45,7 +45,7 @@ class InternalItemServiceSpec extends Specification {
             setupData()
         when:
             log.info "Running test ..."
-            List<InternalItemRepresentation> items = itemService.items.collect {
+            List<InternalItemRepresentation> items = itemService.getItems(0, 100, 'asc', 'project').collect {
                 itemService.getItem(it.id) as InternalItemRepresentation
             }
             def maxValues = items*.summary.maxValue as List<Double>
