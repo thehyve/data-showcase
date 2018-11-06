@@ -11,12 +11,12 @@
     </div>
     <ng-template #item_table_content>
         <p-dataTable #itemTable
+                     [responsive]="true"
                      [immutable]=false
                      [value]="items"
                      [style]="table-content"
                      [rows]="rowsPerPage" [paginator]="true"
                      [(first)]="firstOnPage">
-
             <p-column [style]="{ width: '3.5%'}" header="Del">
                 <ng-template let-item="rowData" pTemplate="body">
                     <button pButton type="button" (click)="deleteItem(item)" icon="fa-close"

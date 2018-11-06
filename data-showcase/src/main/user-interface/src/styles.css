@@ -281,7 +281,10 @@ body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon {
 
 /* Default dialog panel settings */
 .ui-dialog {
-    width: 90%;
+    width: 90% !important;
+}
+.ui-dialog.ui-dialog-responsive {
+    width: 90% !important;
 }
 .ui-dialog-footer {
     height: 65px;
