@@ -4,19 +4,19 @@
   ~  (see accompanying file LICENSE).
   -->
 
-<p-dialog header="Shopping Cart" [(visible)]="display" [modal]="true" [width]="dialogWidth" [responsive]="true"
+<p-dialog header="Shopping Cart" [(visible)]="display" [modal]="true" [responsive]="true"
           [closable]="true" [draggable]="false" [resizable]="false" (onHide)="onHide()">
     <div *ngIf="items.length==0; else item_table_content">
         Shopping Cart is empty.
     </div>
     <ng-template #item_table_content>
         <p-dataTable #itemTable
+                     [responsive]="true"
                      [immutable]=false
                      [value]="items"
                      [style]="table-content"
                      [rows]="rowsPerPage" [paginator]="true"
                      [(first)]="firstOnPage">
-
             <p-column [style]="{ width: '3.5%'}" header="Del">
                 <ng-template let-item="rowData" pTemplate="body">
                     <button pButton type="button" (click)="deleteItem(item)" icon="fa-close"

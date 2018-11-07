@@ -25,7 +25,6 @@ export class ShoppingCartComponent implements OnInit {
   disabled: boolean = true;
   firstOnPage: number = 0;
   rowsPerPage: number = 10;
-  dialogWidth: number;
 
   constructor(public dataService: DataService) {
     dataService.shoppingCartItems.subscribe(
@@ -36,7 +35,6 @@ export class ShoppingCartComponent implements OnInit {
           return item['name'];
         });
       });
-    this.dialogWidth = window.screen.width - 200
   }
 
   ngOnInit() {
