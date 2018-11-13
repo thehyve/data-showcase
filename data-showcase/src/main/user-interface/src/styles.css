@@ -52,7 +52,8 @@ body .ds-tree-container {
 .ds-tree-filter-input > input{
     font-size: small !important;
     height: 2.3em;
-    min-width: 200px;
+    width: 100%;
+    min-width: 100px;
     margin-top: 10px;
 }
 
@@ -278,6 +279,13 @@ body .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-icon {
     color: white;
 }
 
+/* Default dialog panel settings */
+.ui-dialog {
+    width: 90% !important;
+}
+.ui-dialog.ui-dialog-responsive {
+    width: 90% !important;
+}
 .ui-dialog-footer {
     height: 65px;
 }
@@ -290,10 +298,21 @@ body .ui-inputgroup .ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
     height: 36px;
 }
 
+/* Tree node filter */
+.ds-tree-filter-input .ui-autocomplete.ui-widget {
+    width: calc(100% - 85px);
+    min-width: 98px;
+}
+
 /* Global text filter */
-.text-filter-container .ui-inputtext {
-    width: 750px;
+.text-filter-container .ui-autocomplete.ui-widget {
+    width: calc(100% - 100px);
     height: 36px;
+}
+
+.ds-tree-filter-input .ui-inputtext,
+.text-filter-container .ui-inputtext {
+    width: 100%;
     padding: 0;
 }
 
