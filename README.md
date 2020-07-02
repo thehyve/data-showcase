@@ -98,9 +98,6 @@ cd data-showcase
 For end-to-end API tests, see [data-showcase-api-e2e](data-showcase-api-e2e).
 For user interface end-to-end tests, see [user-interface](data-showcase/src/main/user-interface).
 
-### Continuous integration
-
-Bamboo plan: [DS-DEV](https://ci.ctmmtrait.nl/browse/DS-DEV).
 
 ## License
 Copyright &copy; 2017&ndash;2018  The Hyve B.V.
