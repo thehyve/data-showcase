@@ -8,27 +8,27 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule, APP_INITIALIZER} from '@angular/core';
 
 import {AppComponent} from './app.component';
-import {TreeNodesModule} from "./tree-nodes/tree-nodes.module";
-import {FormsModule} from "@angular/forms";
-import {DataService} from "./services/data.service";
-import {ResourceService} from "./services/resource.service";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {ItemTableModule} from "./item-table/item-table.module";
-import {HttpModule} from "@angular/http";
-import {AppConfig} from "./config/app.config";
-import {ShoppingCartModule} from "./shopping-cart/shopping-cart.module";
-import {ItemSummaryModule} from "./item-summary/item-summary.module";
+import {TreeNodesModule} from './tree-nodes/tree-nodes.module';
+import {FormsModule} from '@angular/forms';
+import {DataService} from './services/data.service';
+import {ResourceService} from './services/resource.service';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {ItemTableModule} from './item-table/item-table.module';
+import {AppConfig} from './config/app.config';
+import {ShoppingCartModule} from './shopping-cart/shopping-cart.module';
+import {ItemSummaryModule} from './item-summary/item-summary.module';
 import {LogosComponent} from './logos/logos.component';
 import {PageRibbonComponent} from './page-ribbon/page-ribbon.component';
-import {FiltersModule} from "./filters/filters.module";
-import {SearchParserService} from "./services/search-parser.service";
-import {GrowlModule} from "primeng/primeng";
-import {DSMessageService} from "./services/ds-message.service";
-import {MessageService} from "primeng/components/common/messageservice";
+import {FiltersModule} from './filters/filters.module';
+import {SearchParserService} from './services/search-parser.service';
+import {GrowlModule} from 'primeng/primeng';
+import {DSMessageService} from './services/ds-message.service';
+import {MessageService} from 'primeng/components/common/messageservice';
 import { FooterComponent } from './footer/footer.component';
+import {HttpClientModule} from '@angular/common/http';
 
 export function initConfig(config: AppConfig) {
-  return () => config.load()
+  return () => config.load();
 }
 
 @NgModule({
@@ -40,7 +40,7 @@ export function initConfig(config: AppConfig) {
   ],
   imports: [
     BrowserModule,
-    HttpModule,
+    HttpClientModule,
     BrowserAnimationsModule,
     TreeNodesModule,
     FiltersModule,

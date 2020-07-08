@@ -1,4 +1,4 @@
-// Generated automatically by nearley, version 2.15.1
+// Generated automatically by nearley, version 2.19.4
 // http://github.com/Hardmath123/nearley
 // Bypasses TS6133. Allow declared but unused functions.
 // @ts-ignore
@@ -40,27 +40,35 @@ function buildLowercaseToken(d) {
 }
 
 
-export interface Token { value: any; [key: string]: any };
-
-export interface Lexer {
-  reset: (chunk: string, info: any) => void;
-  next: () => Token | undefined;
-  save: () => any;
-  formatError: (token: Token) => string;
-  has: (tokenType: string) => boolean
+interface NearleyToken {  value: any;
+  [key: string]: any;
 };
 
-export interface NearleyRule {
+interface NearleyLexer {
+  reset: (chunk: string, info: any) => void;
+  next: () => NearleyToken | undefined;
+  save: () => any;
+  formatError: (token: NearleyToken) => string;
+  has: (tokenType: string) => boolean;
+};
+
+interface NearleyRule {
   name: string;
   symbols: NearleySymbol[];
-  postprocess?: (d: any[], loc?: number, reject?: {}) => any
+  postprocess?: (d: any[], loc?: number, reject?: {}) => any;
 };
 
-export type NearleySymbol = string | { literal: any } | { test: (token: any) => boolean };
+type NearleySymbol = string | { literal: any } | { test: (token: any) => boolean };
 
-export var Lexer: Lexer | undefined = syntax;
+interface Grammar {
+  Lexer: NearleyLexer | undefined;
+  ParserRules: NearleyRule[];
+  ParserStart: string;
+};
 
-export var ParserRules: NearleyRule[] = [
+const grammar: Grammar = {
+  Lexer: syntax,
+  ParserRules: [
     {"name": "search", "symbols": ["_", "expression", "_"], "postprocess": function(d) { return d[1]; }},
     {"name": "word", "symbols": [(syntax.has("word") ? {type: "word"} : word)], "postprocess": function(d) { return buildValue(stripQuotes(d[0])); }},
     {"name": "field", "symbols": [{"literal":"name"}], "postprocess": buildToken},
@@ -100,6 +108,8 @@ export var ParserRules: NearleyRule[] = [
     {"name": "expression", "symbols": ["inner"], "postprocess": function(d) { return d[0]; }},
     {"name": "_", "symbols": []},
     {"name": "_", "symbols": [(syntax.has("WS") ? {type: "WS"} : WS)], "postprocess": function(d) { return null; }}
-];
+  ],
+  ParserStart: "search",
+};
 
-export var ParserStart: string = "search";
+export default grammar;
