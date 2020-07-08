@@ -36,11 +36,11 @@ gradle wrapper
 cd src/main/user-interface
 npm start
 
-# Package, creates build/lib/data-showcase-1.0.5.war
+# Package, creates build/lib/data-showcase-1.0.7.war
 ./gradlew assemble
 
 # Run the war
-java -jar build/libs/data-showcase-1.0.5.war
+java -jar build/libs/data-showcase-1.0.7.war
 ```
 
 ## Publish
@@ -55,7 +55,7 @@ Publish to Nexus:
 # Deploy to the Nexus repository https://repo.thehyve.nl
 ./gradlew publish
 ```
-This publishes the artifact `nl.thehyve:data-showcase:1.0.5:war`.
+This publishes the artifact `nl.thehyve:data-showcase:1.0.7:war`.
 
 ## Deploy
 For deployment, fetch the application war file from the Nexus repository,
@@ -64,7 +64,7 @@ and run the application with an external config file:
 MEMORY_OPTIONS="-Xms2g -Xmx2g -XX:MaxPermSize=512m"
 JAVA_OPTIONS="-server -Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom"
 APP_OPTIONS="-Dgrails.env=prod -Dspring.config.location=/home/user/data-showcase-internal.yml"
-java -jar ${JAVA_OPTIONS} ${MEMORY_OPTIONS} ${APP_OPTIONS} data-showcase-1.0.5.war
+java -jar ${JAVA_OPTIONS} ${MEMORY_OPTIONS} ${APP_OPTIONS} data-showcase-1.0.7.war
 ```
 
 Example configuration file `data-showcase-internal.yml`:
@@ -98,9 +98,6 @@ cd data-showcase
 For end-to-end API tests, see [data-showcase-api-e2e](data-showcase-api-e2e).
 For user interface end-to-end tests, see [user-interface](data-showcase/src/main/user-interface).
 
-### Continuous integration
-
-Bamboo plan: [DS-DEV](https://ci.ctmmtrait.nl/browse/DS-DEV).
 
 ## License
 Copyright &copy; 2017&ndash;2018  The Hyve B.V.

@@ -7,20 +7,28 @@
 import {Injectable} from '@angular/core';
 import {SelectItem, TreeNode as TreeNodeLib} from 'primeng/primeng';
 import {ResourceService} from './resource.service';
-import {TreeNode} from "../models/tree-node";
-import {Item} from "../models/item";
-import {Project} from "../models/project";
-import {Subject} from "rxjs/Subject";
-import {BehaviorSubject} from "rxjs/BehaviorSubject";
-import {Environment} from "../models/environment";
-import {ItemResponse} from "../models/itemResponse";
-import {DSMessageService} from "./ds-message.service";
+import {TreeNode} from '../models/tree-node';
+import {Item} from '../models/item';
+import {Project} from '../models/project';
+import {Subject} from 'rxjs/Subject';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Environment} from '../models/environment';
+import {ItemResponse} from '../models/itemResponse';
+import {DSMessageService} from './ds-message.service';
 
 type LoadingState = 'loading' | 'complete';
 type Order = 'asc' | 'desc';
 
 @Injectable()
 export class DataService {
+
+  constructor(private resourceService: ResourceService,
+              private dsMessageService: DSMessageService) {
+    this.fetchFilters();
+    this.fetchItems();
+    this.fetchAllTreeNodes();
+    this.setEnvironment();
+  }
 
   // the variable that holds the entire tree structure
   public treeNodes: TreeNodeLib[] = [];
@@ -35,10 +43,10 @@ export class DataService {
   // items selected in the itemTable
   private itemsSelectionSource = new Subject<Item[]>();
   public itemsSelection$ = this.itemsSelectionSource.asObservable();
-  //a number of items in the table
-  public totalItemsCount: number = 0;
+  // a number of items in the table
+  public totalItemsCount = 0;
   // if the select-all-items checkbox is selected
-  public allItemsSelected: boolean = false;
+  public allItemsSelected = false;
   // items added to the shopping cart
   public shoppingCartItems = new BehaviorSubject<Item[]>([]);
 
@@ -51,13 +59,13 @@ export class DataService {
 
   // item table pagination settings
   // the first result to retrieve, numbered from '0'
-  public itemsFirstResult: number = 0;
+  public itemsFirstResult = 0;
   // the maximum number of results
-  public itemsMaxResults: number = 10;
+  public itemsMaxResults = 10;
   // ascending/descending order
-  public itemsOrder: number = 1;
+  public itemsOrder = 1;
   // the property to order on
-  public itemsPropertyName: string = "";
+  public itemsPropertyName = '';
 
   // trigger checkboxFilters reload
   private rerenderCheckboxFiltersSource = new Subject<boolean>();
@@ -109,12 +117,41 @@ export class DataService {
     children: null
   }];
 
-  constructor(private resourceService: ResourceService,
-              private dsMessageService: DSMessageService) {
-    this.fetchFilters();
-    this.fetchItems();
-    this.fetchAllTreeNodes();
-    this.setEnvironment();
+  static treeConceptCodes(treeNode: TreeNode): Set<string> {
+    if (treeNode == null) {
+      return new Set();
+    }
+    const conceptCodes = new Set();
+    if (treeNode.concept != null) {
+      conceptCodes.add(treeNode.concept);
+    }
+    if (treeNode.children != null) {
+      treeNode.children.forEach((node: TreeNode) =>
+        DataService.treeConceptCodes(node).forEach((conceptCode: string) =>
+          conceptCodes.add(conceptCode)
+        )
+      );
+    }
+    return conceptCodes;
+  }
+
+  private static compareSelectItems(a: SelectItem, b: SelectItem) {
+    if (a.value < b.value) {
+      return -1;
+    } else if (a.value > b.value) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
+  private static collectUnique(element, list: SelectItem[]) {
+    const values = list.map(function (a) {
+      return a.value;
+    });
+    if (element && !values.includes(element)) {
+      list.push({label: element, value: element} as SelectItem);
+    }
   }
 
   // ------------------------- tree nodes -------------------------
@@ -123,11 +160,11 @@ export class DataService {
     if (nodes == null) {
       return [];
     }
-    let treeNodes: TreeNodeLib[] = [];
-    for (let node of nodes) {
+    const treeNodes: TreeNodeLib[] = [];
+    for (const node of nodes) {
       // filter out empty domains
-      if (!(node.accumulativeItemCount == 0 && node.label != this.nodesWithRoot[0].label && node.nodeType == 'Domain')) {
-        let newNode = this.processTreeNode(node);
+      if (!(node.accumulativeItemCount === 0 && node.label !== this.nodesWithRoot[0].label && node.nodeType === 'Domain')) {
+        const newNode = this.processTreeNode(node);
         treeNodes.push(newNode);
       }
     }
@@ -139,10 +176,10 @@ export class DataService {
       return null;
     }
     // Add PrimeNG visual properties for tree nodes
-    let newNode: TreeNodeLib = node;
+    const newNode: TreeNodeLib = node;
 
-    let count = node.accumulativeItemCount ? node.accumulativeItemCount : 0;
-    if(node.label == this.nodesWithRoot[0].label){
+    const count = node.accumulativeItemCount ? node.accumulativeItemCount : 0;
+    if (node.label === this.nodesWithRoot[0].label) {
       newNode.label = `${node.label}`;
       newNode.expanded = true;
     } else {
@@ -151,14 +188,14 @@ export class DataService {
 
     // If this node has children, drill down
     if (node.children) {
-      let children = this.processTreeNodes(node.children);
+      const children = this.processTreeNodes(node.children);
       if (children.length > 0) {
         newNode.children = children;
-        newNode.expandedIcon = 'fa-folder-open';
-        newNode.collapsedIcon = 'fa-folder';
+        newNode.expandedIcon = 'fa fa-folder-open';
+        newNode.collapsedIcon = 'fa fa-folder';
         newNode.icon = '';
       } else {
-        newNode.icon = 'fa-folder-o';
+        newNode.icon = 'fa fa-folder-o';
       }
     } else {
       switch (node.variableType) {
@@ -169,7 +206,7 @@ export class DataService {
           newNode.icon = 'icon-123';
           break;
         default: {
-          newNode.icon = 'fa-file-text';
+          newNode.icon = 'fa fa-file-text';
           break;
         }
       }
@@ -186,7 +223,7 @@ export class DataService {
           this.loadingTreeNodes = 'complete';
           this.nodesWithRoot[0].children = nodes;
           this.selectedTreeNode = this.nodesWithRoot[0];
-          let treeNodes = this.processTreeNodes(this.nodesWithRoot);
+          const treeNodes = this.processTreeNodes(this.nodesWithRoot);
           treeNodes.forEach((function (node) {
             this.treeNodes.push(node); // to ensure the treeNodes pointer remains unchanged
           }).bind(this));
@@ -196,7 +233,7 @@ export class DataService {
   }
 
   selectTreeNode(treeNode: TreeNode) {
-    if(treeNode == null){
+    if (treeNode == null) {
       treeNode = this.nodesWithRoot[0];
     }
     this.selectedTreeNode = treeNode;
@@ -207,7 +244,7 @@ export class DataService {
 
   projectToResearchLine(projectName: string): string {
     if (this.allProjects) {
-      return this.allProjects.find(p => p.name == projectName).lineOfResearch;
+      return this.allProjects.find(p => p.name === projectName).lineOfResearch;
     } else {
       return null;
     }
@@ -217,12 +254,12 @@ export class DataService {
     this.projects.length = 0;
     this.linesOfResearch.length = 0;
 
-    let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
-    let codes = Array.from(selectedConceptCodes);
+    const selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
+    const codes = Array.from(selectedConceptCodes);
 
     this.resourceService.getProjects(codes, this.searchQuery).subscribe(
       (projects: Project[]) => {
-        for (let project of projects) {
+        for (const project of projects) {
           this.allProjects.push(project);
           this.projects.push({label: project.name, value: project.name});
           DataService.collectUnique(project.lineOfResearch, this.linesOfResearch);
@@ -236,37 +273,37 @@ export class DataService {
   }
 
   fetchItems() {
-    let t1 = new Date();
+    const t1 = new Date();
     console.debug(`Fetching items ...`);
     this.loadingItems = 'loading';
     this.filteredItemsSource.next([]);
     this.clearErrorSearchMessage();
 
-    let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
-    let codes = Array.from(selectedConceptCodes);
-    let projects = this.getProjectsForSelectedResearchLines();
+    const selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
+    const codes = Array.from(selectedConceptCodes);
+    const projects = this.getProjectsForSelectedResearchLines();
 
-    let order: Order = this.orderFlagToOrderName(this.itemsOrder);
+    const order: Order = this.orderFlagToOrderName(this.itemsOrder);
 
     this.resourceService.getItems(this.itemsFirstResult, this.itemsMaxResults, order, this.itemsPropertyName,
       codes, projects, this.searchQuery).subscribe(
       (response: ItemResponse) => {
         this.totalItemsCount = response.totalCount;
-        if(this.nodesWithRoot[0].label == "root"){
+        if (this.nodesWithRoot[0].label === 'root') {
           this.nodesWithRoot[0].label += ` (${response.totalCount})`;
         }
-        for (let item of response.items) {
+        for (const item of response.items) {
           if (this.allProjects && this.allProjects.length > 0) {
             item.lineOfResearch = this.projectToResearchLine(item.project);
           }
         }
         this.filteredItemsSource.next(response.items);
-        this.loadingItems = "complete";
-        let t2 = new Date();
+        this.loadingItems = 'complete';
+        const t2 = new Date();
         console.info(`Found ${response.totalCount} items. (Took ${t2.getTime() - t1.getTime()} ms.)`);
       },
       err => {
-        if (err != String(undefined)) {
+        if (err !== String(undefined)) {
           this.searchErrorMessageSource.next(err);
         }
         console.error(err);
@@ -275,25 +312,25 @@ export class DataService {
     );
   }
 
-  orderFlagToOrderName(order: number){
-    return order == 1 ? "asc" : "desc";
+  orderFlagToOrderName(order: number) {
+    return order === 1 ? 'asc' : 'desc';
   }
 
-  clearErrorSearchMessage(){
+  clearErrorSearchMessage() {
     this.searchErrorMessageSource.next('');
   }
 
-  selectAllItems(selectAll: boolean){
-    if(selectAll){
-      let firstResult = 0;
-      let selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
-      let codes = Array.from(selectedConceptCodes);
-      let projects = this.getProjectsForSelectedResearchLines();
+  selectAllItems(selectAll: boolean) {
+    if (selectAll) {
+      const firstResult = 0;
+      const selectedConceptCodes = DataService.treeConceptCodes(this.selectedTreeNode);
+      const codes = Array.from(selectedConceptCodes);
+      const projects = this.getProjectsForSelectedResearchLines();
 
       this.resourceService.getItems(firstResult, null, null, null,
         codes, projects, this.searchQuery).subscribe(
         (response: ItemResponse) => {
-          for (let item of response.items) {
+          for (const item of response.items) {
             if (this.allProjects && this.allProjects.length > 0) {
               item.lineOfResearch = this.projectToResearchLine(item.project);
             }
@@ -301,7 +338,7 @@ export class DataService {
           this.itemsSelectionSource.next(response.items);
         },
         err => {
-          if (err != String(undefined)) {
+          if (err !== String(undefined)) {
             this.searchErrorMessageSource.next(err);
           }
           console.error(err);
@@ -310,24 +347,6 @@ export class DataService {
     } else {
       this.clearItemsSelection();
     }
-  }
-
-  static treeConceptCodes(treeNode: TreeNode): Set<string> {
-    if (treeNode == null) {
-      return new Set();
-    }
-    let conceptCodes = new Set();
-    if (treeNode.concept != null) {
-      conceptCodes.add(treeNode.concept);
-    }
-    if (treeNode.children != null) {
-      treeNode.children.forEach((node: TreeNode) =>
-        DataService.treeConceptCodes(node).forEach((conceptCode: string) =>
-          conceptCodes.add(conceptCode)
-        )
-      )
-    }
-    return conceptCodes;
   }
 
   updateItemTable() {
@@ -353,10 +372,10 @@ export class DataService {
   }
 
   getProjectsForSelectedResearchLines(): string[] {
-    if(this.selectedResearchLines.length && !this.selectedProjects.length) {
-      let projects: string[] = [];
+    if (this.selectedResearchLines.length && !this.selectedProjects.length) {
+      const projects: string[] = [];
       this.allProjects.forEach( p => {
-        if(this.selectedResearchLines.includes(p.lineOfResearch)) {
+        if (this.selectedResearchLines.includes(p.lineOfResearch)) {
           projects.push(p.name);
         }
       });
@@ -409,7 +428,7 @@ export class DataService {
 
   private getUniqueProjects() {
     this.allProjects.forEach(ap => {
-      if (!this.projects.find(p => p.value == ap.name)){
+      if (!this.projects.find(p => p.value === ap.name)) {
         if (!this.selectedResearchLines.length) {
           this.projects.push({label: ap.name, value: ap.name});
         } else {
@@ -421,16 +440,6 @@ export class DataService {
     });
   }
 
-  private static compareSelectItems(a: SelectItem, b: SelectItem) {
-    if (a.value < b.value) {
-      return -1;
-    } else if (a.value > b.value) {
-      return 1;
-    } else {
-      return 0;
-    }
-  }
-
   private sortLinesOfResearch() {
     this.linesOfResearch.sort(DataService.compareSelectItems);
   }
@@ -438,14 +447,14 @@ export class DataService {
   private getUniqueLinesOfResearch() {
     if (!this.selectedProjects.length) {
       this.allProjects.forEach(p => {
-        if(!this.linesOfResearch.find(l=> l.value == p.lineOfResearch)) {
+        if (!this.linesOfResearch.find(l => l.value === p.lineOfResearch)) {
           this.linesOfResearch.push({label: p.lineOfResearch, value: p.lineOfResearch});
         }
       });
     } else {
       this.selectedProjects.forEach(p => {
-        let researchLine = this.allProjects.find(ap => ap.name == p).lineOfResearch;
-        if(!this.linesOfResearch.find(l=> l.value == researchLine)) {
+        const researchLine = this.allProjects.find(ap => ap.name === p).lineOfResearch;
+        if (!this.linesOfResearch.find(l => l.value === researchLine)) {
           this.linesOfResearch.push({label: researchLine, value: researchLine});
         }
       });
@@ -453,34 +462,25 @@ export class DataService {
     this.sortLinesOfResearch();
   }
 
-  private static collectUnique(element, list: SelectItem[]) {
-    let values = list.map(function (a) {
-      return a.value;
-    });
-    if (element && !values.includes(element)) {
-      list.push({label: element, value: element} as SelectItem);
-    }
-  }
-
   // ------------------------- shopping cart -------------------------
 
 
   addToShoppingCart(newItemSelection: Item[]) {
-    let count: number = 0;
-    let newItems: Item[] = this.shoppingCartItems.getValue();
-    let itemNames = newItems.map((item) => item.name);
-    for (let item of newItemSelection) {
+    let count = 0;
+    const newItems: Item[] = this.shoppingCartItems.getValue();
+    const itemNames = newItems.map((item) => item.name);
+    for (const item of newItemSelection) {
       if (!itemNames.includes(item.name)) {
         newItems.push(item);
         count++;
       }
     }
-    if(count > 0) {
-      this.dsMessageService.addInfoMessage("success", "Shopping cart updated!", count + " item(s) added to the cart.")
-    } else if(newItemSelection.length > 0) {
-      this.dsMessageService.addInfoMessage("info", "No item added", "Item(s) already in the shopping cart.")
+    if (count > 0) {
+      this.dsMessageService.addInfoMessage('success', 'Shopping cart updated!', count + ' item(s) added to the cart.');
+    } else if (newItemSelection.length > 0) {
+      this.dsMessageService.addInfoMessage('info', 'No item added', 'Item(s) already in the shopping cart.');
     } else {
-       this.dsMessageService.addInfoMessage("info", "No item selected", "Select item(s) you want to add to the cart.")
+       this.dsMessageService.addInfoMessage('info', 'No item selected', 'Select item(s) you want to add to the cart.');
     }
     this.shoppingCartItems.next(newItems);
   }
@@ -495,7 +495,7 @@ export class DataService {
   displayPopup(item: Item) {
     this.resourceService.getItem(item.id).subscribe(extendedItem =>
       this.itemSummaryVisibleSource.next(extendedItem)
-    )
+    );
   }
 
   // ------------------------- environment label -------------------------
@@ -511,8 +511,8 @@ export class DataService {
     this.resourceService.getLogo(type)
       .subscribe(
         (blobContent) => {
-          let urlCreator = window.URL;
-          if (type == 'NTR') {
+          const urlCreator = window.URL;
+          if (type === 'NTR') {
             this.ntrLogoUrlSummary.next(urlCreator.createObjectURL(blobContent));
           } else {
             this.vuLogoUrlSummary.next(urlCreator.createObjectURL(blobContent));
