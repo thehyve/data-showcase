@@ -14,7 +14,7 @@ buildscript {
 }
 
 ext {
-    dataShowcaseVersion = '1.0.7-SNAPSHOT'
+    dataShowcaseVersion = '1.0.7'
     hibernateCoreVersion = '5.2.18.Final'
     nodeVersion = '10.21.0'
     modelMapperVersion = '2.3.0'
