@@ -79,7 +79,7 @@ dependencies {
     testRuntime 'net.sourceforge.htmlunit:htmlunit:2.18'
 }
 
-task wrapper(type: Wrapper) {
+wrapper {
     gradleVersion = gradleWrapperVersion
 }
 
